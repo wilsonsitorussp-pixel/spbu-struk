@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPBU Pro - Cetak Struk</title>
     <style>
-        /* === SEMUA CSS TETAP SAMA PERSIS DENGAN SEBELUMNYA === */
+        /* === SEMUA CSS TETAP SAMA === */
         :root {
             --bg: #0f1117;
             --surface: #1a1d27;
@@ -21,9 +21,7 @@
             --mono: 'Courier New', 'Lucida Console', monospace;
             --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         }
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
         body {
             font-family: var(--sans);
             background: var(--bg);
@@ -34,7 +32,6 @@
             flex-direction: column;
             align-items: center;
         }
-
         .app-header {
             width: 100%;
             max-width: 500px;
@@ -56,7 +53,6 @@
         }
         .app-header h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
         .app-header p { font-size: 11px; color: var(--text2); margin-top: 1px; }
-
         .bt-bar {
             width: 100%; max-width: 500px;
             padding: 10px 14px;
@@ -80,13 +76,10 @@
         .bt-bar.success .bt-dot { background:#10b981; }
         .bt-bar.error .bt-dot   { background:#ef4444; }
         .bt-bar.warning .bt-dot { background:#f59e0b; }
-
         @keyframes pulse {
             0%,100% { opacity:1; } 50% { opacity:0.3; }
         }
-
         .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
-
         .panel {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -107,7 +100,6 @@
             gap: 8px;
         }
         .panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
-
         label {
             font-size: 10px;
             font-weight: 600;
@@ -117,7 +109,6 @@
             display: block;
             margin-bottom: 5px;
         }
-
         input, select, textarea {
             width: 100%;
             padding: 10px 12px;
@@ -130,15 +121,11 @@
             outline: none;
             transition: border-color 0.2s;
         }
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--accent);
-        }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
         select option { background: var(--surface); }
         textarea { resize: vertical; line-height: 1.5; }
-
         .row { display: flex; gap: 8px; }
         .row > * { flex: 1; }
-
         .odo-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -157,7 +144,6 @@
             transition: all 0.15s;
         }
         .btn-odo:active { background: var(--accent); color: white; transform: scale(0.95); }
-
         .btn {
             padding: 10px 14px;
             border-radius: 8px;
@@ -176,9 +162,7 @@
         .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; }
         .btn-green { background: var(--surface2); border: 1px solid #1a5c3a; color: var(--green); }
         .btn-blue  { background: var(--surface2); border: 1px solid #1e2d4a; color: var(--accent); }
-
         .print-section { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
-
         .btn-print-bt {
             width: 100%;
             padding: 15px;
@@ -200,7 +184,6 @@
         .btn-print-bt:hover { background: linear-gradient(135deg, #2545a8, #3b2180); }
         .btn-print-bt:active { transform: scale(0.98); }
         .btn-print-bt:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
         .btn-print-thermer {
             width: 100%;
             padding: 13px;
@@ -220,7 +203,6 @@
         }
         .btn-print-thermer:hover { border-color: var(--yellow); color: var(--yellow); }
         .btn-print-thermer:active { transform: scale(0.98); }
-
         .btn-print-dialog {
             width: 100%;
             padding: 11px;
@@ -234,7 +216,6 @@
             transition: all 0.2s;
         }
         .btn-print-dialog:hover { border-color: var(--text2); color: var(--text); }
-
         .divider {
             display: flex;
             align-items: center;
@@ -249,7 +230,6 @@
             height:1px;
             background: var(--border);
         }
-
         .bt-connected {
             display: none;
             align-items: center;
@@ -265,7 +245,6 @@
         }
         .bt-connected.show { display: flex; }
         .bt-connected-dot { width:6px; height:6px; border-radius:50%; background:var(--green); }
-
         .receipt-wrap {
             display: flex;
             justify-content: center;
@@ -275,7 +254,6 @@
             border-top: 1px solid var(--border);
             overflow: hidden;
         }
-
         .receipt {
             background: #fff;
             width: 58mm;
@@ -298,7 +276,6 @@
         .receipt .lc { width: 22mm; }
         .receipt .cc { width: 4mm; text-align: center; }
         .receipt .footer-txt { margin-top: 8px; text-align: center; text-transform: uppercase; white-space: pre-wrap; }
-
         @media print {
             body { background: white; padding: 0; }
             .no-print { display: none !important; }
@@ -310,7 +287,6 @@
 </head>
 <body>
 
-<!-- Header -->
 <div class="app-header no-print">
     <div class="icon">⛽</div>
     <div>
@@ -319,15 +295,12 @@
     </div>
 </div>
 
-<!-- BT Status Bar -->
 <div id="btBar" class="bt-bar no-print">
     <div class="bt-dot"></div>
     <span id="btMsg">—</span>
 </div>
 
 <div class="container">
-
-    <!-- Panel: Config SPBU -->
     <div class="panel no-print">
         <div class="panel-header">⚙️ Konfigurasi SPBU</div>
         <div class="panel-body">
@@ -355,44 +328,26 @@
                 <div>
                     <label>Margin Logo</label>
                     <select id="inLogoMargin" onchange="render()">
-                        <option value="-10">-10mm</option>
-                        <option value="-8">-8mm</option>
-                        <option value="-5">-5mm</option>
-                        <option value="-2">-2mm</option>
+                        <option value="-10">-10mm</option><option value="-8">-8mm</option>
+                        <option value="-5">-5mm</option><option value="-2">-2mm</option>
                         <option value="0" selected>0mm (Normal)</option>
-                        <option value="2">+2mm</option>
-                        <option value="5">+5mm</option>
-                        <option value="8">+8mm</option>
+                        <option value="2">+2mm</option><option value="5">+5mm</option><option value="8">+8mm</option>
                     </select>
                 </div>
             </div>
-            <!-- Font Size Setting -->
             <div>
                 <label>Ukuran Font Struk</label>
                 <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
                     <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">5</span>
-                    <input 
-                        type="range" id="inFontSize" 
-                        min="5" max="15" value="9" step="1"
-                        oninput="updateFontSize()"
-                        style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;"
-                    >
+                    <input type="range" id="inFontSize" min="5" max="15" value="9" step="1" oninput="updateFontSize()" style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;">
                     <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">15</span>
-                    <span id="fontSizeLabel" style="
-                        font-size:12px; font-weight:700; font-family:var(--mono);
-                        color:var(--accent); background:var(--bg);
-                        border:1px solid var(--accent); border-radius:6px;
-                        padding:3px 8px; min-width:36px; text-align:center;
-                    ">9px</span>
+                    <span id="fontSizeLabel" style="font-size:12px; font-weight:700; font-family:var(--mono); color:var(--accent); background:var(--bg); border:1px solid var(--accent); border-radius:6px; padding:3px 8px; min-width:36px; text-align:center;">9px</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-top:6px; padding:8px 10px; background:var(--bg); border-radius:8px; border:1px solid var(--border);">
                     <span style="font-size:11px; color:var(--text2);">Preview:</span>
-                    <span id="fontPreviewText" style="font-family:'Courier New',monospace; color:var(--text); font-size:9px;">
-                        SPBU POLONIA — Rp 50.000
-                    </span>
+                    <span id="fontPreviewText" style="font-family:'Courier New',monospace; color:var(--text); font-size:9px;">SPBU POLONIA — Rp 50.000</span>
                 </div>
             </div>
-
             <div>
                 <label>Pesan Footer</label>
                 <textarea id="inPesan" rows="4" oninput="render()">ANDA MENDAPAT SUBSIDI DARI&#10;PEMERINTAHAN SEBESAR RP.2.750&#10;(PERHITUNGAN SUBSIDI UNAUDITED&#10;ATAU ESTIMASI).GUNAKAN BBM&#10;SUBSIDI SECARA BIJAK.</textarea>
@@ -400,21 +355,12 @@
         </div>
     </div>
 
-    <!-- Panel: Data Transaksi -->
     <div class="panel no-print">
         <div class="panel-header">🧾 Data Transaksi</div>
         <div class="panel-body">
             <div class="row">
-                <div>
-                    <label>Shift</label>
-                    <select id="inShift" onchange="render()"><option>1</option><option>2</option></select>
-                </div>
-                <div>
-                    <label>Pompa</label>
-                    <select id="inPompa" onchange="render()">
-                        <script>for(let i=1;i<=12;i++) document.write(`<option>${i}</option>`)</script>
-                    </select>
-                </div>
+                <div><label>Shift</label><select id="inShift" onchange="render()"><option>1</option><option>2</option></select></div>
+                <div><label>Pompa</label><select id="inPompa" onchange="render()"><script>for(let i=1;i<=12;i++) document.write(`<option>${i}</option>`)</script></select></div>
             </div>
             <div>
                 <label>No. Transaksi & Produk BBM</label>
@@ -422,24 +368,14 @@
                     <input type="text" id="inTrans" maxlength="6" oninput="render()" placeholder="Auto">
                     <button class="btn btn-green" onclick="generateAllRandom()">🔄 Random</button>
                     <select id="inBBM" onchange="render()" style="flex:1.5">
-                        <option>PERTALITE</option><option>PERTAMAX</option>
-                        <option>PERTAMAX TURBO</option><option>DEXLITE</option>
+                        <option>PERTALITE</option><option>PERTAMAX</option><option>PERTAMAX TURBO</option><option>DEXLITE</option>
                     </select>
                 </div>
             </div>
-            <div>
-                <label>Waktu Transaksi</label>
-                <input type="datetime-local" id="inWaktu" onchange="render()">
-            </div>
+            <div><label>Waktu Transaksi</label><input type="datetime-local" id="inWaktu" onchange="render()"></div>
             <div class="row">
-                <div>
-                    <label>Harga / Liter</label>
-                    <input type="number" id="inHarga" value="10000" oninput="render()">
-                </div>
-                <div>
-                    <label>Volume (L)</label>
-                    <input type="number" id="inLiter" value="5" oninput="render()">
-                </div>
+                <div><label>Harga / Liter</label><input type="number" id="inHarga" value="10000" oninput="render()"></div>
+                <div><label>Volume (L)</label><input type="number" id="inLiter" value="5" oninput="render()"></div>
             </div>
             <div>
                 <label>Operator</label>
@@ -451,60 +387,38 @@
                     <div style="padding:8px 12px; background:var(--surface2); font-size:10px; font-weight:700; color:var(--text2); letter-spacing:1px; text-transform:uppercase;">Database Operator</div>
                     <div id="opList" style="padding:8px; display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
                     <div style="padding:8px; border-top:1px solid var(--border); display:flex; gap:6px;">
-                        <input type="text" id="inNewOp" placeholder="Nama operator baru..."
-                            style="flex:1; padding:8px 10px; font-size:13px;"
-                            onkeydown="if(event.key==='Enter') addOperator()">
+                        <input type="text" id="inNewOp" placeholder="Nama operator baru..." style="flex:1; padding:8px 10px; font-size:13px;" onkeydown="if(event.key==='Enter') addOperator()">
                         <button class="btn btn-green" onclick="addOperator()" style="white-space:nowrap; padding:8px 12px;">+ Tambah</button>
                     </div>
                 </div>
             </div>
-            <div>
-                <label>No. Plat</label>
-                <input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()">
-            </div>
+            <div><label>No. Plat</label><input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()"></div>
             <div>
                 <label>Odo Meter (KM)</label>
                 <input type="number" id="inOdo" value="25430" oninput="render()">
                 <div class="odo-grid" style="margin-top:6px">
-                    <script>
-                        [5,10,15,20,25,30,40,50,100,150].forEach(v =>
-                            document.write(`<button class="btn-odo" onclick="adjOdo(${v})">+${v}</button>`)
-                        );
-                    </script>
+                    <script>[5,10,15,20,25,30,40,50,100,150].forEach(v => document.write(`<button class="btn-odo" onclick="adjOdo(${v})">+${v}</button>`));</script>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Panel: Cetak -->
     <div class="panel no-print">
         <div class="panel-header">🖨️ Cetak Struk</div>
         <div class="panel-body">
             <div class="print-section">
-
                 <div class="bt-connected" id="btConnected">
                     <div class="bt-connected-dot"></div>
                     <span id="btDeviceName">Printer terhubung</span>
                     <span style="margin-left:auto; cursor:pointer; color:#f87171" onclick="disconnectBT()">✕</span>
                 </div>
-
                 <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()">
-                    <span>🔵</span>
-                    <span id="btBtnLabel">CETAK VIA BLUETOOTH</span>
+                    <span>🔵</span><span id="btBtnLabel">CETAK VIA BLUETOOTH</span>
                 </button>
-
                 <div class="divider">ATAU</div>
-
-                <button class="btn-print-thermer" onclick="printThermer()">
-                    🟡 Cetak via Thermer App
-                </button>
-
-                <button class="btn-print-dialog" onclick="window.print()">
-                    🖨️ Print Dialog (Ctrl+P)
-                </button>
-
+                <button class="btn-print-thermer" onclick="printThermer()">🟡 Cetak via Thermer App</button>
+                <button class="btn-print-dialog" onclick="window.print()">🖨️ Print Dialog (Ctrl+P)</button>
             </div>
-
             <div style="font-size:10px; color:var(--text2); line-height:1.6; padding:8px; background:var(--bg); border-radius:8px; font-family:var(--mono);">
                 🔵 Bluetooth → Chrome only, BLE printer<br>
                 🟡 Thermer → Semua tipe BT, perlu install app<br>
@@ -513,7 +427,6 @@
         </div>
     </div>
 
-    <!-- Receipt Preview -->
     <div class="panel">
         <div class="panel-header no-print">
             👁️ Preview Struk
@@ -525,7 +438,7 @@
                 <div id="outAlamat" style="font-weight:bold;text-transform:uppercase;font-size:9.5px;margin-bottom:4px;white-space:pre-wrap;"></div>
                 <div style="display:flex;justify-content:space-between;font-size:8.5px;">
                     <span>Shift: <span id="outShift"></span></span>
-                    <span>No. Trans: <span id="outTrans"></span></span>   <!-- UBAH LABEL -->
+                    <span>No. Trans: <span id="outTrans"></span></span>
                 </div>
                 <div style="text-align:left;font-size:8.5px;margin-bottom:3px;">Waktu: <span id="outWaktu"></span></div>
                 <div class="r-line"></div>
@@ -551,13 +464,12 @@
             </div>
         </div>
     </div>
-
-</div><!-- /container -->
+</div>
 
 <script>
-// ─────────────────────────────────────────
-//  STATE & DB
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  STATE & LOCAL STORAGE
+// ─────────────────────────────────────────────────────────────────
 let randomSec = "00";
 const db = {
     get: (k,d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e){ return d; } },
@@ -565,12 +477,11 @@ const db = {
 };
 let operators  = db.get('spbu_ops',   ["DINDA HALIMAH"]);
 let savedLogos = db.get('spbu_logos', []);
-let btChar     = null;
-let btDevice   = null;
+let btChar = null, btDevice = null;
 
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 //  STATUS BAR
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 function setStatus(msg, type='info') {
     const bar = document.getElementById('btBar');
     const txt = document.getElementById('btMsg');
@@ -581,9 +492,9 @@ function clearStatus() {
     document.getElementById('btBar').className = 'bt-bar no-print';
 }
 
-// ─────────────────────────────────────────
-//  ESC/POS HELPERS
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  ESC/POS UTILITIES
+// ─────────────────────────────────────────────────────────────────
 const ESC=0x1B, GS=0x1D;
 const esc = {
     init:   ()    => [ESC,0x40],
@@ -592,62 +503,45 @@ const esc = {
     bold:   (on)  => [ESC,0x45, on?1:0],
     feed:   (n)   => [ESC,0x64,n],
     cut:    ()    => [GS,0x56,0x00],
-    feedMM: (mm)  => [ESC, 0x4A, Math.round(mm * 8.5)]
-    // ESC J n : print and feed paper n/216 inch
-    feedMM: (mm)  => [ESC, 0x4A, Math.round(mm * 8.5)]
+    feedMM: (mm)  => [ESC, 0x4A, Math.round(mm * 8.5)],
+    lineSpacing: (n) => [ESC, 0x33, n]   // n/144 inch
 };
 
-function toBytes(str) {
-    return Array.from(new TextEncoder().encode(str));
-}
-function line(n=32) {
-    return toBytes('-'.repeat(n)+'\n');
-}
+function toBytes(str) { return Array.from(new TextEncoder().encode(str)); }
+function line(n=32) { return toBytes('-'.repeat(n)+'\n'); }
 function row2(left, right, w=32) {
     const pad = Math.max(1, w - left.length - right.length);
     return toBytes(left + ' '.repeat(pad) + right + '\n');
 }
 
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 //  KONVERSI GAMBAR KE ESC/POS RASTER (GS v 0)
-//  Parameter widthMM menentukan lebar cetak dalam mm
-// ─────────────────────────────────────────
+//  widthMM = lebar cetak dalam mm (printer 8 dot/mm)
+// ─────────────────────────────────────────────────────────────────
 async function imageToEscPosRaster(imgElement, widthMM = 30) {
     if (!imgElement.complete || imgElement.naturalWidth === 0) {
         console.warn('Gambar belum dimuat, logo tidak dicetak.');
         return new Uint8Array([]);
     }
-
-    // Konversi mm ke dot (printer thermal 8 dot/mm)
     const maxWidth = Math.floor(widthMM * 8);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    
     const scale = maxWidth / imgElement.naturalWidth;
     canvas.width = maxWidth;
     canvas.height = Math.floor(imgElement.naturalHeight * scale);
-    
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
-    
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const pixels = imageData.data;
-    
     const bwPixels = [];
     for (let i = 0; i < pixels.length; i += 4) {
         const gray = 0.299 * pixels[i] + 0.587 * pixels[i+1] + 0.114 * pixels[i+2];
         bwPixels.push(gray < 128 ? 1 : 0);
     }
-    
     const widthBytes = Math.ceil(canvas.width / 8);
     const height = canvas.height;
-    const header = [
-        0x1D, 0x76, 0x30, 0x00,
-        widthBytes & 0xFF, (widthBytes >> 8) & 0xFF,
-        height & 0xFF, (height >> 8) & 0xFF
-    ];
-    
+    const header = [0x1D, 0x76, 0x30, 0x00, widthBytes & 0xFF, (widthBytes >> 8) & 0xFF, height & 0xFF, (height >> 8) & 0xFF];
     const raster = [...header];
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < widthBytes; x++) {
@@ -665,15 +559,14 @@ async function imageToEscPosRaster(imgElement, widthMM = 30) {
     return new Uint8Array(raster);
 }
 
-// ─────────────────────────────────────────
-//  BUILD ESC/POS (async + logo + margin)
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  BUILD DATA ESC/POS (dengan logo, line spacing, margin)
+// ─────────────────────────────────────────────────────────────────
 async function buildEscPos() {
     const f    = n => new Intl.NumberFormat('id-ID').format(n);
     const hrg  = parseFloat(document.getElementById('inHarga').value)||0;
     const ltr  = parseFloat(document.getElementById('inLiter').value)||0;
     const total= hrg*ltr;
-
     const get  = id => document.getElementById(id);
     const alamat   = get('inAlamat').value;
     const shift    = get('inShift').value;
@@ -689,7 +582,7 @@ async function buildEscPos() {
     let b = [];
     b = b.concat(esc.init());
 
-    // ** Logo **
+    // Logo
     const logoImg = document.getElementById('outLogo');
     if (logoImg.src && logoImg.src !== '' && logoImg.complete && logoImg.naturalWidth > 0) {
         b = b.concat(esc.center());
@@ -697,27 +590,34 @@ async function buildEscPos() {
         const logoRaster = await imageToEscPosRaster(logoImg, widthMM);
         b = b.concat(Array.from(logoRaster));
         
-        // 🟢 Atur jarak antar baris menjadi sangat kecil (1/144 inch ≈ 0.18mm)
+        // Atur line spacing kecil agar header menempel
         b = b.concat(esc.lineSpacing(1));
         
-        // ** Margin setelah logo **
+        // Tambahan margin jika pengguna mengisi
         const marginMM = parseFloat(get('inLogoMargin').value) || 0;
         if (marginMM !== 0) {
             b = b.concat(esc.feedMM(marginMM));
         }
     }
 
+    // Font size
     b = b.concat(escFontSize(getFontSize()));
+
+    // Header center bold
     b = b.concat(esc.center(), esc.bold(true));
     alamat.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
     b = b.concat(esc.bold(false));
+    
+    // Kembalikan line spacing ke default (31/144 inch ≈ 5.5mm)
+    b = b.concat(esc.lineSpacing(31));
+    
     b = b.concat(line());
-
     b = b.concat(esc.left());
-    b = b.concat(row2('Shift: '+shift, 'No. Trans: '+trans));   // UBAH LABEL
+    b = b.concat(row2('Shift: '+shift, 'No. Trans: '+trans));
     b = b.concat(toBytes('Waktu : '+waktu+'\n'));
     b = b.concat(line());
 
+    // Detail
     b = b.concat(toBytes('Pulau/Pompa : '+pompa+'\n'));
     b = b.concat(toBytes('Nama Produk : '+bbm+'\n'));
     b = b.concat(toBytes('Harga/Liter : Rp '+f(hrg)+'\n'));
@@ -726,6 +626,7 @@ async function buildEscPos() {
     b = b.concat(toBytes('Operator    : '+operator+'\n'));
     b = b.concat(line());
 
+    // Cash
     b = b.concat(esc.bold(true));
     b = b.concat(row2('CASH', f(total)));
     b = b.concat(esc.bold(false));
@@ -735,6 +636,7 @@ async function buildEscPos() {
     b = b.concat(toBytes('Odo Meter   : '+odo+'\n'));
     b = b.concat(line());
 
+    // Footer center
     b = b.concat(esc.center());
     pesan.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
 
@@ -744,9 +646,9 @@ async function buildEscPos() {
     return new Uint8Array(b);
 }
 
-// ─────────────────────────────────────────
-//  WEB BLUETOOTH (TIDAK BERUBAH)
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  WEB BLUETOOTH
+// ─────────────────────────────────────────────────────────────────
 const BT_UUIDS = [
     '000018f0-0000-1000-8000-00805f9b34fb',
     '00001101-0000-1000-8000-00805f9b34fb',
@@ -765,8 +667,7 @@ function showConnected(name) {
 
 function disconnectBT() {
     if (btDevice && btDevice.gatt.connected) btDevice.gatt.disconnect();
-    btChar  = null;
-    btDevice= null;
+    btChar = null; btDevice = null;
     document.getElementById('btConnected').classList.remove('show');
     document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
     clearStatus();
@@ -774,26 +675,21 @@ function disconnectBT() {
 
 async function getChar() {
     if (btChar && btDevice && btDevice.gatt.connected) return btChar;
-
     if (!navigator.bluetooth) throw new Error('Browser tidak support Web Bluetooth');
-
     setStatus('📡 Pilih printer Bluetooth...', 'info');
     btDevice = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true,
         optionalServices: BT_UUIDS
     });
-
     btDevice.addEventListener('gattserverdisconnected', () => {
         btChar = null;
         document.getElementById('btConnected').classList.remove('show');
         document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
         setStatus('⚠️ Printer terputus', 'warning');
     });
-
     setStatus('🔗 Menghubungkan ke ' + btDevice.name + '...', 'info');
     const server   = await btDevice.gatt.connect();
     const services = await server.getPrimaryServices();
-
     for (const svc of services) {
         try {
             const chars = await svc.getCharacteristics();
@@ -851,90 +747,68 @@ async function printBluetooth() {
     btn.disabled = false;
 }
 
-// ─────────────────────────────────────────
-//  THERMER INTENT (TIDAK BERUBAH)
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  THERMER (TEKS SAJA)
+// ─────────────────────────────────────────────────────────────────
 function buildThermerText() {
     const f    = n => new Intl.NumberFormat('id-ID').format(n);
     const hrg  = parseFloat(document.getElementById('inHarga').value)||0;
     const ltr  = parseFloat(document.getElementById('inLiter').value)||0;
     const total= hrg*ltr;
     const get  = id => document.getElementById(id);
-
     const line = '-'.repeat(32);
     return [
-        get('inAlamat').value,
-        line,
-        `Shift: ${get('inShift').value}    No. Trans: ${get('inTrans').value}`,  // UBAH LABEL
-        `Waktu: ${get('outWaktu').innerText}`,
-        line,
+        get('inAlamat').value, line,
+        `Shift: ${get('inShift').value}    No. Trans: ${get('inTrans').value}`,
+        `Waktu: ${get('outWaktu').innerText}`, line,
         `Pulau/Pompa : ${get('inPompa').value}`,
         `Nama Produk : ${get('inBBM').value}`,
         `Harga/Liter : Rp ${f(hrg)}`,
         `Volume      : (L) ${ltr}`,
         `Total Harga : Rp ${f(total)}`,
-        `Operator    : ${get('selOperator').value}`,
-        line,
-        `CASH             ${f(total)}`,
-        line,
+        `Operator    : ${get('selOperator').value}`, line,
+        `CASH             ${f(total)}`, line,
         `No. Plat    : ${get('inPlat').value.toUpperCase()}`,
-        `Odo Meter   : ${get('inOdo').value}`,
-        line,
+        `Odo Meter   : ${get('inOdo').value}`, line,
         get('inPesan').value,
     ].join('\n');
 }
-
 function printThermer() {
     const text = encodeURIComponent(buildThermerText());
     const intentUrl = `intent://print?text=${text}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
-    const ua = navigator.userAgent;
-    if (/android/i.test(ua)) {
+    if (/android/i.test(navigator.userAgent)) {
         window.location.href = intentUrl;
-        setTimeout(() => {
-            setStatus('💡 Install Thermer dari Play Store untuk print via Bluetooth Classic', 'warning');
-        }, 2000);
+        setTimeout(() => setStatus('💡 Install Thermer dari Play Store untuk print via Bluetooth Classic', 'warning'), 2000);
     } else {
         window.print();
     }
 }
 
-// ─────────────────────────────────────────
-//  FONT SIZE (TIDAK BERUBAH)
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  FONT SIZE
+// ─────────────────────────────────────────────────────────────────
 function updateFontSize() {
     const val = parseInt(document.getElementById('inFontSize').value);
     document.getElementById('fontSizeLabel').textContent = val + 'px';
-    const prev = document.getElementById('fontPreviewText');
-    prev.style.fontSize = val + 'px';
+    document.getElementById('fontPreviewText').style.fontSize = val + 'px';
     document.getElementById('struk').style.setProperty('--receipt-font', val + 'px');
     db.set('spbu_fontsize', val);
     render();
 }
-
-function getFontSize() {
-    return parseInt(document.getElementById('inFontSize').value) || 9;
-}
-
+function getFontSize() { return parseInt(document.getElementById('inFontSize').value) || 9; }
 function escFontSize(px) {
-    if (px <= 11) return [0x1D, 0x21, 0x00];
-    else           return [0x1D, 0x21, 0x11];
+    return (px <= 11) ? [0x1D, 0x21, 0x00] : [0x1D, 0x21, 0x11];
 }
 
-// ─────────────────────────────────────────
-//  FORM HELPERS (TIDAK BERUBAH)
-// ─────────────────────────────────────────
-function adjOdo(val) {
-    const el = document.getElementById('inOdo');
-    el.value = parseInt(el.value||0)+val;
-    render();
-}
-
+// ─────────────────────────────────────────────────────────────────
+//  FORM HELPERS
+// ─────────────────────────────────────────────────────────────────
+function adjOdo(v) { const el=document.getElementById('inOdo'); el.value = parseInt(el.value||0)+v; render(); }
 function generateAllRandom() {
     document.getElementById('inTrans').value = Math.floor(100000+Math.random()*900000);
     randomSec = Math.floor(Math.random()*60).toString().padStart(2,'0');
     render();
 }
-
 function handleNewLogo(e) {
     const reader = new FileReader();
     reader.onload = function() {
@@ -946,19 +820,14 @@ function handleNewLogo(e) {
     };
     reader.readAsDataURL(e.target.files[0]);
 }
-
 function updateLogoList() {
-    document.getElementById('selLogo').innerHTML =
-        savedLogos.map(l=>`<option value="${l.data}">${l.name}</option>`).join('') +
-        `<option value="">— Tanpa Logo —</option>`;
+    document.getElementById('selLogo').innerHTML = savedLogos.map(l=>`<option value="${l.data}">${l.name}</option>`).join('') + `<option value="">— Tanpa Logo —</option>`;
 }
-
 function applySavedLogo() {
     const data = document.getElementById('selLogo').value;
     document.getElementById('outLogo').src = data || '';
     render();
 }
-
 function toggleOpManager() {
     const mgr = document.getElementById('opManager');
     const btn = document.getElementById('btnOpMgr');
@@ -967,114 +836,74 @@ function toggleOpManager() {
     btn.textContent = isOpen ? '⚙️ Kelola' : '✕ Tutup';
     if (!isOpen) renderOpList();
 }
-
 function renderOpList() {
     const list = document.getElementById('opList');
     if (operators.length === 0) {
         list.innerHTML = '<div style="padding:8px; color:var(--text2); font-size:12px; text-align:center;">Belum ada operator</div>';
         return;
     }
-    list.innerHTML = operators.map((op, i) => `
+    list.innerHTML = operators.map((op,i)=>`
         <div style="display:flex; align-items:center; gap:6px; padding:6px 8px; background:var(--surface); border-radius:7px; border:1px solid var(--border);">
             <span style="font-size:12px; color:var(--text); flex:1; font-weight:500;">${op}</span>
-            <button onclick="selectOperator('${op}')" style="
-                background:var(--surface2); border:1px solid var(--border); color:var(--accent);
-                padding:4px 10px; border-radius:5px; font-size:11px; cursor:pointer;">
-                Pilih
-            </button>
-            <button onclick="deleteOperator(${i})" style="
-                background:transparent; border:none; color:#f87171;
-                padding:4px 8px; font-size:14px; cursor:pointer;">
-                ✕
-            </button>
+            <button onclick="selectOperator('${op}')" style="background:var(--surface2); border:1px solid var(--border); color:var(--accent); padding:4px 10px; border-radius:5px; font-size:11px; cursor:pointer;">Pilih</button>
+            <button onclick="deleteOperator(${i})" style="background:transparent; border:none; color:#f87171; padding:4px 8px; font-size:14px; cursor:pointer;">✕</button>
         </div>
     `).join('');
 }
-
-function selectOperator(name) {
-    document.getElementById('selOperator').value = name;
-    render();
-    toggleOpManager();
-}
-
+function selectOperator(name) { document.getElementById('selOperator').value = name; render(); toggleOpManager(); }
 function addOperator() {
     const inp = document.getElementById('inNewOp');
-    const val = inp ? inp.value.trim().toUpperCase() : null;
+    const val = inp.value.trim().toUpperCase();
     if (!val) return;
-    if (operators.includes(val)) {
-        inp.style.borderColor = 'var(--red)';
-        setTimeout(() => inp.style.borderColor = '', 1500);
-        return;
-    }
+    if (operators.includes(val)) { alert('Operator sudah ada'); return; }
     operators.push(val);
     db.set('spbu_ops', operators);
     inp.value = '';
-    inp.style.borderColor = 'var(--green)';
-    setTimeout(() => inp.style.borderColor = '', 1000);
     updateOpList();
     renderOpList();
     document.getElementById('selOperator').value = val;
     render();
 }
-
-function deleteOperator(idx) {
-    const name = operators[idx];
-    if (!confirm('Hapus operator "' + name + '"?')) return;
-    operators.splice(idx, 1);
-    db.set('spbu_ops', operators);
-    updateOpList();
-    renderOpList();
-    render();
-}
-
+function deleteOperator(idx) { if (confirm('Hapus operator?')) { operators.splice(idx,1); db.set('spbu_ops', operators); updateOpList(); renderOpList(); render(); } }
 function updateOpList() {
     const sel = document.getElementById('selOperator');
-    const current = sel.value;
+    const cur = sel.value;
     sel.innerHTML = operators.map(o=>`<option value="${o}">${o}</option>`).join('');
-    if (operators.includes(current)) sel.value = current;
+    if (operators.includes(cur)) sel.value = cur;
 }
 
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 //  RENDER PREVIEW
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 function render() {
     const get = id => document.getElementById(id);
-
-    get('outLogo').style.width        = get('inLogoWidth').value + 'mm';
+    get('outLogo').style.width = get('inLogoWidth').value + 'mm';
     get('outLogo').style.marginBottom = get('inLogoMargin').value + 'mm';
-    get('outAlamat').innerText        = get('inAlamat').value;
-    get('outPesan').innerText         = get('inPesan').value;
-    get('outShift').innerText         = get('inShift').value;
-    get('outTrans').innerText         = get('inTrans').value;
-
+    get('outAlamat').innerText = get('inAlamat').value;
+    get('outPesan').innerText = get('inPesan').value;
+    get('outShift').innerText = get('inShift').value;
+    get('outTrans').innerText = get('inTrans').value;
     const wt = get('inWaktu').value;
     if (wt) {
         const d = new Date(wt);
-        get('outWaktu').innerText =
-            d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear()+
-            ' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')+':'+randomSec;
+        get('outWaktu').innerText = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${randomSec}`;
     }
-
-    get('outPompa').innerText    = get('inPompa').value;
-    get('outBBM').innerText      = get('inBBM').value;
+    get('outPompa').innerText = get('inPompa').value;
+    get('outBBM').innerText = get('inBBM').value;
     get('outOperator').innerText = get('selOperator').value;
-    get('outPlat').innerText     = get('inPlat').value.toUpperCase();
-    get('outOdo').innerText      = get('inOdo').value;
-
-    const hrg   = parseFloat(get('inHarga').value)||0;
-    const ltr   = parseFloat(get('inLiter').value)||0;
-    const total = hrg*ltr;
-    const f     = n => new Intl.NumberFormat('id-ID').format(n);
-
-    get('outHarga').innerText = 'Rp '+f(hrg);
-    get('outLiter').innerText = '(L) '+ltr;
-    get('outTotal').innerText = 'Rp '+f(total);
-    get('outCash').innerText  = f(total);
+    get('outPlat').innerText = get('inPlat').value.toUpperCase();
+    get('outOdo').innerText = get('inOdo').value;
+    const h = parseFloat(get('inHarga').value)||0, l = parseFloat(get('inLiter').value)||0, tot = h*l;
+    const f = n => new Intl.NumberFormat('id-ID').format(n);
+    get('outHarga').innerText = 'Rp '+f(h);
+    get('outLiter').innerText = '(L) '+l;
+    get('outTotal').innerText = 'Rp '+f(tot);
+    get('outCash').innerText = f(tot);
 }
 
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 //  INIT
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 window.onload = function() {
     updateLogoList();
     if (savedLogos.length > 0) applySavedLogo();
@@ -1083,21 +912,14 @@ window.onload = function() {
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
-
     const savedFont = db.get('spbu_fontsize', 9);
-    const slider = document.getElementById('inFontSize');
-    slider.value = savedFont;
+    document.getElementById('inFontSize').value = savedFont;
     updateFontSize();
-
     render();
-
-    if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent)) {
-        if (/samsungbrowser/i.test(navigator.userAgent)) {
-            setStatus('⚠️ Samsung Browser: Web Bluetooth tidak support. Gunakan tombol Thermer.', 'warning');
-        }
+    if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent) && /samsungbrowser/i.test(navigator.userAgent)) {
+        setStatus('⚠️ Samsung Browser: Web Bluetooth tidak support. Gunakan tombol Thermer.', 'warning');
     }
 };
 </script>
-
 </body>
 </html>
