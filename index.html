@@ -1,989 +1,141 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SPBU Pro</title>
+<title>SPBU PRO ADVANCED</title>
+
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:12px;display:flex;flex-direction:column;align-items:center;}
+body{font-family:Arial;background:#0f1117;color:#fff;padding:10px}
+.panel{background:#1a1d27;padding:12px;margin-bottom:10px;border-radius:12px}
+input,select,textarea{width:100%;margin:6px 0;padding:8px;border-radius:6px;border:none}
+button{padding:10px;border:none;border-radius:8px;cursor:pointer}
 
-/* HEADER */
-.app-header{width:100%;max-width:500px;display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:14px 16px;background:#1a1d27;border:1px solid #2e3352;border-radius:14px;}
-.app-icon{width:38px;height:38px;background:linear-gradient(135deg,#4f8ef7,#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.app-title{font-size:16px;font-weight:700;color:#e2e8f0;letter-spacing:0.3px;}
-.app-sub{font-size:11px;color:#8892a4;margin-top:1px;}
+.receipt{background:#fff;color:#000;width:58mm;margin:auto;padding:6px;text-align:center}
+.logo-img{display:block;margin:auto}
+.r-line{border-top:1px dashed #000;margin:6px 0}
 
-/* STATUS BAR */
-.bt-bar{width:100%;max-width:500px;padding:10px 14px;border-radius:10px;font-size:12px;font-family:‘Courier New’,monospace;display:none;align-items:center;gap:8px;margin-bottom:8px;border:1px solid transparent;}
-.bt-bar.info{display:flex;background:#1e2d4a;border-color:#2d4a7a;color:#7ab3f5;}
-.bt-bar.success{display:flex;background:#0d2b20;border-color:#1a5c3a;color:#34d399;}
-.bt-bar.error{display:flex;background:#2b1010;border-color:#5c1a1a;color:#f87171;}
-.bt-bar.warning{display:flex;background:#2b2010;border-color:#5c3a1a;color:#fbbf24;}
-.bt-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.bt-bar.info .bt-dot{background:#4f8ef7;animation:pulse 1.5s infinite;}
-.bt-bar.success .bt-dot{background:#10b981;}
-.bt-bar.error .bt-dot{background:#ef4444;}
-.bt-bar.warning .bt-dot{background:#f59e0b;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
-
-/* CONTAINER */
-.container{width:100%;max-width:500px;display:flex;flex-direction:column;gap:10px;}
-
-/* PANEL */
-.panel{background:#1a1d27;border:1px solid #2e3352;border-radius:14px;overflow:hidden;}
-.panel-hdr{padding:11px 16px;background:#22263a;border-bottom:1px solid #2e3352;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8892a4;display:flex;align-items:center;gap:8px;}
-.panel-body{padding:14px 16px;display:flex;flex-direction:column;gap:11px;}
-
-/* FORM */
-label{font-size:10px;font-weight:700;color:#8892a4;text-transform:uppercase;letter-spacing:0.8px;display:block;margin-bottom:5px;}
-input,select,textarea{width:100%;padding:10px 12px;background:#0f1117;border:1px solid #2e3352;border-radius:8px;color:#e2e8f0;font-size:13px;font-family:inherit;outline:none;transition:border-color 0.2s;}
-input:focus,select:focus,textarea:focus{border-color:#4f8ef7;}
-select option{background:#1a1d27;color:#e2e8f0;}
-textarea{resize:vertical;line-height:1.5;}
-.row{display:flex;gap:8px;}
-.row>*{flex:1;}
-
-/* ODO */
-.odo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:6px;}
-.btn-odo{background:#22263a;border:1px solid #2e3352;color:#4f8ef7;padding:8px 2px;border-radius:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:‘Courier New’,monospace;}
-.btn-odo:active{background:#4f8ef7;color:#fff;}
-
-/* BUTTONS */
-.btn{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all 0.15s;font-family:inherit;}
-.btn:active{transform:scale(0.97);}
-.btn-grey{background:#22263a;border:1px solid #2e3352;color:#e2e8f0;}
-.btn-green{background:#22263a;border:1px solid #1a5c3a;color:#10b981;}
-.btn-blue{background:#22263a;border:1px solid #1e2d4a;color:#4f8ef7;}
-.btn-red{background:#22263a;border:1px solid #5c1a1a;color:#f87171;}
-
-/* PRINT BUTTONS */
-.btn-bt{width:100%;padding:15px;background:linear-gradient(135deg,#1e3a8a,#2d1b69);border:1px solid #3b5bdb;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.2s;}
-.btn-bt:active{transform:scale(0.98);}
-.btn-bt:disabled{opacity:0.5;cursor:not-allowed;}
-.btn-thermer{width:100%;padding:13px;background:#22263a;border:1px solid #2e3352;border-radius:12px;color:#8892a4;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;}
-.btn-thermer:active{transform:scale(0.98);}
-.btn-dialog{width:100%;padding:11px;background:transparent;border:1px dashed #2e3352;border-radius:10px;color:#8892a4;font-size:12px;font-family:inherit;cursor:pointer;transition:all 0.2s;}
-.btn-dialog:active{background:#22263a;}
-.divider{display:flex;align-items:center;gap:8px;color:#8892a4;font-size:10px;letter-spacing:1px;}
-.divider::before,.divider::after{content:’’;flex:1;height:1px;background:#2e3352;}
-
-/* BT CONNECTED */
-.bt-connected{display:none;align-items:center;gap:6px;font-size:11px;color:#10b981;font-family:‘Courier New’,monospace;padding:6px 10px;background:#0d2b20;border:1px solid #1a5c3a;border-radius:20px;margin-bottom:4px;}
-.bt-connected.show{display:flex;}
-.bt-cdot{width:6px;height:6px;border-radius:50%;background:#10b981;}
-
-/* FONT SLIDER */
-.slider-wrap{display:flex;align-items:center;gap:8px;margin-top:5px;}
-.slider-lbl{font-size:11px;color:#8892a4;font-family:‘Courier New’,monospace;width:18px;}
-input[type=range]{flex:1;accent-color:#4f8ef7;height:4px;cursor:pointer;}
-.font-badge{font-size:12px;font-weight:700;font-family:‘Courier New’,monospace;color:#4f8ef7;background:#0f1117;border:1px solid #4f8ef7;border-radius:6px;padding:3px 8px;min-width:38px;text-align:center;}
-.font-preview{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding:8px 10px;background:#0f1117;border-radius:8px;border:1px solid #2e3352;}
-
-/* OPERATOR MANAGER */
-.op-manager{display:none;margin-top:8px;background:#0f1117;border:1px solid #2e3352;border-radius:10px;overflow:hidden;}
-.op-manager-hdr{padding:8px 12px;background:#22263a;font-size:10px;font-weight:700;color:#8892a4;letter-spacing:1px;text-transform:uppercase;}
-.op-list{padding:8px;display:flex;flex-direction:column;gap:4px;max-height:180px;overflow-y:auto;}
-.op-item{display:flex;align-items:center;gap:6px;padding:7px 10px;background:#1a1d27;border-radius:7px;border:1px solid #2e3352;}
-.op-name{font-size:13px;color:#e2e8f0;flex:1;font-weight:500;}
-.op-pilih{background:#22263a;border:1px solid #2e3352;color:#4f8ef7;padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit;}
-.op-hapus{background:transparent;border:none;color:#f87171;padding:4px 8px;font-size:16px;cursor:pointer;line-height:1;}
-.op-input-row{padding:8px;border-top:1px solid #2e3352;display:flex;gap:6px;}
-.op-empty{padding:12px;color:#8892a4;font-size:12px;text-align:center;}
-
-/* INFO BOX */
-.info-box{font-size:10px;color:#8892a4;line-height:1.7;padding:10px;background:#0f1117;border-radius:8px;font-family:‘Courier New’,monospace;border:1px solid #2e3352;}
-
-/* RECEIPT WRAP */
-.receipt-wrap{display:flex;justify-content:center;align-items:flex-start;padding:20px 16px;background:#13151f;border-top:1px solid #2e3352;overflow:hidden;}
-
-/* RECEIPT 58mm */
-.receipt{background:#fff;width:58mm;min-width:58mm;max-width:58mm;padding:5mm 3mm;text-align:center;color:#000;line-height:1.4;font-family:‘Courier New’,Courier,monospace;box-shadow:0 8px 32px rgba(0,0,0,0.6);overflow:hidden;}
-.logo-img{display:block !important;margin:0 auto;max-width:100%;}
-.r-alamat{font-weight:bold;text-transform:uppercase;margin-bottom:4px;white-space:pre-wrap;text-align:center;}
-.r-line{border-top:1px dashed #000;margin:4px 0;}
-.r-table{width:100%;border-collapse:collapse;table-layout:fixed;}
-.r-table td{padding:1px 0;vertical-align:top;text-align:left;}
-.lc{width:22mm;}.cc{width:4mm;text-align:center;}
-.footer-txt{margin-top:8px;text-align:center;text-transform:uppercase;white-space:pre-wrap;}
-
-@media print{
-body{background:#fff;padding:0;}
-.no-print{display:none!important;}
-.receipt-wrap{padding:0;background:#fff;border:none;}
-.receipt{box-shadow:none;margin:0;padding:3mm 2mm;}
-.logo-img{display:block !important;margin:0 auto;max-width:100%;}
-@page{size:58mm auto;margin:0;}
-}
+.op-item{display:flex;justify-content:space-between;margin:4px 0}
 </style>
-
 </head>
+
 <body>
 
-<!-- HEADER -->
-
-<div class="app-header no-print">
-  <div class="app-icon">⛽</div>
-  <div>
-    <div class="app-title">SPBU PRO</div>
-    <div class="app-sub">Sistem Cetak Struk Digital</div>
-  </div>
+<div class="panel">
+<h3>Header</h3>
+<textarea id="inAlamat">SPBU POLONIA\nMEDAN</textarea>
 </div>
-
-<!-- STATUS BAR -->
-
-<div id="btBar" class="bt-bar no-print">
-  <div class="bt-dot"></div>
-  <span id="btMsg"></span>
-</div>
-
-<div class="container">
-
-<!-- ═══ PANEL KONFIGURASI ═══ -->
-
-<div class="panel no-print">
-  <div class="panel-hdr">⚙️ Konfigurasi SPBU</div>
-  <div class="panel-body">
-
-```
-<div>
-  <label>Header / Nama &amp; Alamat</label>
-  <textarea id="inAlamat" rows="4" oninput="render()">SPBU POLONIA
-```
-
-11.201.106
-JL. Imam Bonjol, Medan Polonia
-Tlp. 0614156892</textarea>
-<button class="btn btn-green" onclick="saveHeader()" style="width:100%;margin-top:6px;padding:9px;">💾 Simpan Header</button>
-<div id="headerSaveMsg" style="display:none;text-align:center;font-size:11px;color:#10b981;margin-top:4px;">✓ Header tersimpan!</div>
-</div>
-
-```
-<div>
-  <label>Logo</label>
-  <div class="row">
-    <select id="selLogo" onchange="applySavedLogo()" style="flex:2"></select>
-    <button class="btn btn-grey" onclick="document.getElementById('fileLogo').click()">+ Logo</button>
-    <input type="file" id="fileLogo" accept="image/*" style="display:none" onchange="handleNewLogo(event)">
-  </div>
-</div>
-
-<div class="row">
-  <div>
-    <label>Lebar Logo</label>
-    <select id="inLogoWidth" onchange="render()">
-      <option value="10">10mm</option><option value="15">15mm</option>
-      <option value="20">20mm</option><option value="25">25mm</option>
-      <option value="30" selected>30mm</option><option value="40">40mm</option>
-      <option value="50">50mm</option>
-    </select>
-  </div>
-  <div>
-    <label>Margin Logo</label>
-    <select id="inLogoMargin" onchange="render()">
-      <option value="-10">-10mm</option><option value="-8">-8mm</option>
-      <option value="-5">-5mm</option><option value="-2">-2mm</option>
-      <option value="0" selected>0mm</option>
-      <option value="2">+2mm</option><option value="5">+5mm</option>
-      <option value="8">+8mm</option><option value="10">+10mm</option>
-    </select>
-  </div>
-</div>
-
-<div>
-  <label>Ukuran Font Struk</label>
-  <div class="slider-wrap">
-    <span class="slider-lbl">5</span>
-    <input type="range" id="inFontSize" min="5" max="15" value="9" step="1" oninput="updateFontSize()">
-    <span class="slider-lbl">15</span>
-    <span class="font-badge" id="fontSizeLabel">9px</span>
-  </div>
-  <div class="font-preview">
-    <span style="font-size:11px;color:#8892a4;">Preview:</span>
-    <span id="fontPreviewText" style="font-family:'Courier New',monospace;color:#e2e8f0;font-size:9px;">SPBU POLONIA — Rp 50.000</span>
-  </div>
-</div>
-
-<div>
-  <label>Pesan Footer</label>
-
-  <!-- Pilih preset pesan -->
-  <select id="selPesan" onchange="loadPesan()" style="margin-bottom:6px;">
-  </select>
-  <div style="display:flex;gap:6px;margin-bottom:6px;">
-    <button class="btn btn-green" onclick="savePesan()" style="flex:1;padding:8px;">💾 Simpan Pesan</button>
-    <button class="btn btn-grey" onclick="newPesan()" style="flex:1;padding:8px;">➕ Pesan Baru</button>
-    <button class="btn btn-red" onclick="deletePesan()" style="padding:8px 12px;">🗑️</button>
-  </div>
-
-  <!-- Nama pesan aktif -->
-  <input type="text" id="inPesanNama" placeholder="Nama pesan (contoh: Subsidi, Promo, dll)"
-    style="margin-bottom:6px;" oninput="updatePesanName()">
-
-  <textarea id="inPesan" rows="4" oninput="render()">ANDA MENDAPAT SUBSIDI DARI
-```
-
-PEMERINTAHAN SEBESAR RP.2.750
-(PERHITUNGAN SUBSIDI UNAUDITED
-ATAU ESTIMASI).GUNAKAN BBM
-SUBSIDI SECARA BIJAK.</textarea>
-<div id="pesanSaveMsg" style="display:none;text-align:center;font-size:11px;color:#10b981;margin-top:4px;">✓ Pesan tersimpan!</div>
-</div>
-
-  </div>
-</div>
-
-<!-- ═══ PANEL TRANSAKSI ═══ -->
-
-<div class="panel no-print">
-  <div class="panel-hdr">🧾 Data Transaksi</div>
-  <div class="panel-body">
-
-```
-<div class="row">
-  <div>
-    <label>Shift</label>
-    <select id="inShift" onchange="render()"><option>1</option><option>2</option></select>
-  </div>
-  <div>
-    <label>Pompa</label>
-    <select id="inPompa" onchange="render()">
-      <option>1</option><option>2</option><option>3</option><option>4</option>
-      <option>5</option><option>6</option><option>7</option><option>8</option>
-      <option>9</option><option>10</option><option>11</option><option>12</option>
-    </select>
-  </div>
-</div>
-
-<div>
-  <label>No. Transaksi &amp; Produk BBM</label>
-  <div class="row">
-    <input type="text" id="inTrans" maxlength="6" oninput="render()" placeholder="Auto" style="flex:1;">
-    <button class="btn btn-green" onclick="generateAllRandom()">🔄</button>
-    <select id="inBBM" onchange="render()" style="flex:1.5;">
-      <option>PERTALITE</option><option>PERTAMAX</option>
-      <option>PERTAMAX TURBO</option><option>DEXLITE</option>
-    </select>
-  </div>
-</div>
-
-<div>
-  <label>Waktu Transaksi</label>
-  <input type="datetime-local" id="inWaktu" onchange="render()">
-</div>
-
-<div class="row">
-  <div>
-    <label>Harga / Liter</label>
-    <input type="number" id="inHarga" value="10000" oninput="render()">
-  </div>
-  <div>
-    <label>Volume (L)</label>
-    <input type="number" id="inLiter" value="5" step="0.01" oninput="render()">
-  </div>
-</div>
-
-<!-- OPERATOR -->
-<div>
-  <label>Operator</label>
-  <div class="row">
-    <select id="selOperator" onchange="render()" style="flex:1;"></select>
-    <button class="btn btn-blue" id="btnOpMgr" onclick="toggleOpManager()">⚙️ Kelola</button>
-  </div>
-  <div class="op-manager" id="opManager">
-    <div class="op-manager-hdr">📋 Database Operator</div>
-    <div class="op-list" id="opList"></div>
-    <div class="op-input-row">
-      <input type="text" id="inNewOp" placeholder="Nama operator baru..."
-        style="flex:1;padding:8px 10px;font-size:13px;"
-        onkeydown="if(event.key==='Enter')addOperator()">
-      <button class="btn btn-green" onclick="addOperator()" style="white-space:nowrap;padding:8px 14px;">+ Tambah</button>
-    </div>
-  </div>
-</div>
-
-<div>
-  <label>No. Plat Kendaraan</label>
-  <input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()">
-</div>
-
-<div>
-  <label>Odo Meter (KM)</label>
-  <input type="number" id="inOdo" value="25430" oninput="render()">
-  <div class="odo-grid">
-    <button class="btn-odo" onclick="adjOdo(5)">+5</button>
-    <button class="btn-odo" onclick="adjOdo(10)">+10</button>
-    <button class="btn-odo" onclick="adjOdo(15)">+15</button>
-    <button class="btn-odo" onclick="adjOdo(20)">+20</button>
-    <button class="btn-odo" onclick="adjOdo(25)">+25</button>
-    <button class="btn-odo" onclick="adjOdo(30)">+30</button>
-    <button class="btn-odo" onclick="adjOdo(40)">+40</button>
-    <button class="btn-odo" onclick="adjOdo(50)">+50</button>
-    <button class="btn-odo" onclick="adjOdo(100)">+100</button>
-    <button class="btn-odo" onclick="adjOdo(150)">+150</button>
-  </div>
-</div>
-```
-
-  </div>
-</div>
-
-<!-- ═══ PANEL CETAK ═══ -->
-
-<div class="panel no-print">
-  <div class="panel-hdr">🖨️ Cetak Struk</div>
-  <div class="panel-body">
-
-```
-<div class="bt-connected" id="btConnected">
-  <div class="bt-cdot"></div>
-  <span id="btDeviceName">Printer terhubung</span>
-  <span style="margin-left:auto;cursor:pointer;color:#f87171;" onclick="disconnectBT()">✕ Putus</span>
-</div>
-
-<button class="btn-bt" id="btBtn" onclick="printBluetooth()">
-  🔵 <span id="btBtnLabel">CETAK VIA BLUETOOTH</span>
-</button>
-
-<div class="divider">ATAU</div>
-
-<button class="btn-thermer" onclick="printThermer()">🟡 Cetak via Thermer App</button>
-<button class="btn-dialog" onclick="window.print()">🖨️ Print Dialog (Ctrl+P)</button>
-
-<div class="info-box">
-  🔵 Bluetooth → Chrome only, printer BLE<br>
-  🟡 Thermer → Semua tipe BT, perlu install app<br>
-  🖨️ Dialog → Ada print dialog, semua printer
-</div>
-```
-
-  </div>
-</div>
-
-<!-- ═══ PREVIEW STRUK 58mm ═══ -->
 
 <div class="panel">
-  <div class="panel-hdr no-print">
-    👁️ Preview Struk
-    <span style="margin-left:auto;font-size:10px;color:#4f8ef7;font-family:'Courier New',monospace;border:1px solid #4f8ef7;padding:2px 8px;border-radius:10px;">58mm</span>
-  </div>
-  <div class="receipt-wrap">
-    <div class="receipt" id="struk">
-      <img id="outLogo" src="" class="logo-img">
-      <div id="outAlamat" class="r-alamat"></div>
-      <table class="r-table">
-        <tr>
-          <td style="text-align:left;">Shift: <span id="outShift"></span></td>
-          <td style="text-align:right;">No. Trans: <span id="outTrans"></span></td>
-        </tr>
-      </table>
-      <div style="text-align:left;margin-bottom:3px;">Waktu: <span id="outWaktu"></span></div>
-      <div class="r-line"></div>
-      <table class="r-table">
-        <tr><td class="lc">Pulau/Pompa</td><td class="cc">:</td><td id="outPompa"></td></tr>
-        <tr><td class="lc">Nama Produk</td><td class="cc">:</td><td id="outBBM"></td></tr>
-        <tr><td class="lc">Harga/Liter</td><td class="cc">:</td><td id="outHarga"></td></tr>
-        <tr><td class="lc">Volume</td><td class="cc">:</td><td id="outLiter"></td></tr>
-        <tr><td class="lc">Total Harga</td><td class="cc">:</td><td id="outTotal"></td></tr>
-        <tr><td class="lc">Operator</td><td class="cc">:</td><td id="outOperator"></td></tr>
-      </table>
-      <div class="r-line"></div>
-      <table class="r-table">
-        <tr>
-          <td style="text-align:left;font-weight:bold;">CASH</td>
-          <td style="text-align:right;font-weight:bold;" id="outCash"></td>
-        </tr>
-      </table>
-      <div class="r-line"></div>
-      <table class="r-table">
-        <tr><td class="lc">No. Plat</td><td class="cc">:</td><td id="outPlat"></td></tr>
-        <tr><td class="lc">Odo Meter</td><td class="cc">:</td><td id="outOdo"></td></tr>
-      </table>
-      <div class="r-line"></div>
-      <div id="outPesan" class="footer-txt"></div>
-    </div>
-  </div>
+<h3>Logo</h3>
+<input type="file" id="fileLogo">
+<select id="logoWidth">
+<option value="20">20mm</option>
+<option value="30" selected>30mm</option>
+<option value="40">40mm</option>
+</select>
 </div>
 
-</div><!-- /container -->
+<div class="panel">
+<h3>Operator</h3>
+<input id="newOp" placeholder="Tambah operator">
+<button onclick="addOp()">Tambah</button>
+<div id="opList"></div>
+<select id="opSelect"></select>
+</div>
+
+<div class="panel">
+<h3>Transaksi</h3>
+<input id="harga" type="number" value="10000">
+<input id="liter" type="number" value="5">
+<button onclick="generateTrans()">Generate No Transaksi</button>
+<input id="trans">
+</div>
+
+<div class="panel">
+<h3>Font</h3>
+<input type="range" id="fontSize" min="5" max="15" value="9">
+</div>
+
+<div class="panel">
+<button onclick="render()">Preview</button>
+<button onclick="window.print()">Print</button>
+</div>
+
+<div class="receipt" id="struk">
+<img id="logo" class="logo-img">
+<div id="alamat"></div>
+<div class="r-line"></div>
+<div id="data"></div>
+</div>
 
 <script>
-// ═══════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════
-var randomSec = "00";
-var operators = [];
-var savedLogos = [];
-var btChar = null;
-var btDevice = null;
+let logoData = localStorage.getItem('logo') || '';
+let operators = JSON.parse(localStorage.getItem('ops')||'[]');
 
-// ═══════════════════════════════════════════
-//  STORAGE
-// ═══════════════════════════════════════════
-function dbGet(k, def) {
-  try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch(e) { return def; }
-}
-function dbSet(k, v) {
-  try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
-}
-
-// ═══════════════════════════════════════════
-//  STATUS BAR
-// ═══════════════════════════════════════════
-function setStatus(msg, type) {
-  var bar = document.getElementById('btBar');
-  var txt = document.getElementById('btMsg');
-  bar.className = 'bt-bar no-print ' + (type||'info');
-  txt.textContent = msg;
-}
-function clearStatus() {
-  document.getElementById('btBar').className = 'bt-bar no-print';
-}
-
-// ═══════════════════════════════════════════
-//  FONT SIZE
-// ═══════════════════════════════════════════
-function updateFontSize() {
-  var el = document.getElementById('inFontSize');
-  if (!el) return;
-  var val = parseInt(el.value) || 9;
-  var lbl = document.getElementById('fontSizeLabel');
-  if (lbl) lbl.textContent = val + 'px';
-  var prev = document.getElementById('fontPreviewText');
-  if (prev) prev.style.fontSize = val + 'px';
-  var struk = document.getElementById('struk');
-  if (!struk) return;
-  struk.style.fontSize = val + 'px';
-  var tds = struk.querySelectorAll('.r-table td');
-  for (var i=0; i<tds.length; i++) tds[i].style.fontSize = val + 'px';
-  var footer = struk.querySelector('.footer-txt');
-  if (footer) footer.style.fontSize = Math.max(6, val-1) + 'px';
-  var alamat = struk.querySelector('.r-alamat');
-  if (alamat) alamat.style.fontSize = val + 'px';
-  dbSet('spbu_fontsize', val);
-}
-
-function getFontSize() {
-  return parseInt(document.getElementById('inFontSize').value) || 9;
-}
-
-// ═══════════════════════════════════════════
-//  ESC/POS
-// ═══════════════════════════════════════════
-function toBytes(str) {
-  return Array.from(new TextEncoder().encode(str));
-}
-function escLine() { return toBytes('-'.repeat(32)+'\n'); }
-function escRow(left, right) {
-  var pad = Math.max(1, 32 - left.length - right.length);
-  return toBytes(left + ' '.repeat(pad) + right + '\n');
-}
-function escFontSize(px) {
-  if (px <= 11) return [0x1D,0x21,0x00];
-  else return [0x1D,0x21,0x11];
-}
-
-function buildEscPos() {
-  var f = function(n){ return new Intl.NumberFormat('id-ID').format(n); };
-  var hrg = parseFloat(document.getElementById('inHarga').value)||0;
-  var ltr = parseFloat(document.getElementById('inLiter').value)||0;
-  var total = hrg * ltr;
-  var g = function(id){ return document.getElementById(id); };
-
-  var b = [];
-  // Init
-  b = b.concat([0x1B,0x40]);
-  // Font size
-  b = b.concat(escFontSize(getFontSize()));
-  // Center + Bold
-  b = b.concat([0x1B,0x61,0x01,0x1B,0x45,0x01]);
-  g('inAlamat').value.split('\n').forEach(function(l){ b=b.concat(toBytes(l+'\n')); });
-  b = b.concat([0x1B,0x45,0x00]);
-  b = b.concat(escLine());
-  // Left
-  b = b.concat([0x1B,0x61,0x00]);
-  b = b.concat(escRow('Shift: '+g('inShift').value, 'Trans: '+g('inTrans').value));
-  b = b.concat(toBytes('Waktu : '+g('outWaktu').innerText+'\n'));
-  b = b.concat(escLine());
-  b = b.concat(toBytes('Pulau/Pompa : '+g('inPompa').value+'\n'));
-  b = b.concat(toBytes('Nama Produk : '+g('inBBM').value+'\n'));
-  b = b.concat(toBytes('Harga/Liter : Rp '+f(hrg)+'\n'));
-  b = b.concat(toBytes('Volume      : (L) '+ltr+'\n'));
-  b = b.concat(toBytes('Total Harga : Rp '+f(total)+'\n'));
-  b = b.concat(toBytes('Operator    : '+g('selOperator').value+'\n'));
-  b = b.concat(escLine());
-  b = b.concat([0x1B,0x45,0x01]);
-  b = b.concat(escRow('CASH', f(total)));
-  b = b.concat([0x1B,0x45,0x00]);
-  b = b.concat(escLine());
-  b = b.concat(toBytes('No. Plat    : '+g('inPlat').value.toUpperCase()+'\n'));
-  b = b.concat(toBytes('Odo Meter   : '+g('inOdo').value+'\n'));
-  b = b.concat(escLine());
-  b = b.concat([0x1B,0x61,0x01]);
-  g('inPesan').value.split('\n').forEach(function(l){ b=b.concat(toBytes(l+'\n')); });
-  b = b.concat([0x1B,0x64,0x04]);
-  b = b.concat([0x1D,0x56,0x00]);
-  return new Uint8Array(b);
-}
-
-// ═══════════════════════════════════════════
-//  WEB BLUETOOTH
-// ═══════════════════════════════════════════
-var BT_UUIDS = [
-  '000018f0-0000-1000-8000-00805f9b34fb',
-  '00001101-0000-1000-8000-00805f9b34fb',
-  'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
-  '49535343-fe7d-4ae5-8fa9-9fafd205e455',
-  '0000ff00-0000-1000-8000-00805f9b34fb',
-  '0000ffe0-0000-1000-8000-00805f9b34fb',
-];
-
-function showConnected(name) {
-  document.getElementById('btDeviceName').textContent = '🔵 ' + name;
-  document.getElementById('btConnected').className = 'bt-connected show';
-  document.getElementById('btBtnLabel').textContent = 'CETAK SEKARANG';
-}
-
-function disconnectBT() {
-  if (btDevice && btDevice.gatt.connected) btDevice.gatt.disconnect();
-  btChar = null; btDevice = null;
-  document.getElementById('btConnected').className = 'bt-connected';
-  document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
-  clearStatus();
-}
-
-async function getChar() {
-  if (btChar && btDevice && btDevice.gatt.connected) return btChar;
-  if (!navigator.bluetooth) throw new Error('Gunakan Chrome untuk Web Bluetooth');
-  setStatus('📡 Pilih printer Bluetooth...', 'info');
-  btDevice = await navigator.bluetooth.requestDevice({ acceptAllDevices:true, optionalServices:BT_UUIDS });
-  btDevice.addEventListener('gattserverdisconnected', function(){
-    btChar = null;
-    document.getElementById('btConnected').className = 'bt-connected';
-    document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
-    setStatus('⚠️ Printer terputus', 'warning');
-  });
-  setStatus('🔗 Menghubungkan ke ' + (btDevice.name||'printer') + '...', 'info');
-  var server = await btDevice.gatt.connect();
-  var services = await server.getPrimaryServices();
-  for (var s=0; s<services.length; s++) {
-    try {
-      var chars = await services[s].getCharacteristics();
-      for (var c=0; c<chars.length; c++) {
-        if (chars[c].properties.write || chars[c].properties.writeWithoutResponse) {
-          btChar = chars[c];
-          showConnected(btDevice.name || 'Printer');
-          return btChar;
-        }
-      }
-    } catch(e) {}
-  }
-  throw new Error('Characteristic tidak ditemukan. Printer mungkin bukan BLE.');
-}
-
-async function sendBytes(char, data) {
-  var CHUNK = 100;
-  for (var i=0; i<data.length; i+=CHUNK) {
-    var slice = data.slice(i, i+CHUNK);
-    if (char.properties.writeWithoutResponse) await char.writeValueWithoutResponse(slice);
-    else await char.writeValue(slice);
-    await new Promise(function(r){ setTimeout(r, 30); });
-  }
-}
-
-async function printBluetooth() {
-  if (!navigator.bluetooth) {
-    setStatus('❌ Gunakan Chrome. Atau coba tombol Thermer.', 'error');
-    return;
-  }
-  var btn = document.getElementById('btBtn');
-  btn.disabled = true;
-  try {
-    var ch = await getChar();
-    setStatus('🖨️ Mengirim data ke printer...', 'info');
-    await sendBytes(ch, buildEscPos());
-    setStatus('✅ Struk berhasil dicetak!', 'success');
-    setTimeout(clearStatus, 3000);
-  } catch(err) {
-    if (err.name !== 'NotFoundError') {
-      setStatus('❌ ' + err.message, 'error');
-      btChar = null; btDevice = null;
-      document.getElementById('btConnected').className = 'bt-connected';
-      document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
-    } else { clearStatus(); }
-  }
-  btn.disabled = false;
-}
-
-// ═══════════════════════════════════════════
-//  THERMER
-// ═══════════════════════════════════════════
-function buildThermerText() {
-  var f = function(n){ return new Intl.NumberFormat('id-ID').format(n); };
-  var hrg = parseFloat(document.getElementById('inHarga').value)||0;
-  var ltr = parseFloat(document.getElementById('inLiter').value)||0;
-  var g = function(id){ return document.getElementById(id); };
-  var ln = '-'.repeat(32);
-  return [
-    g('inAlamat').value, ln,
-    'Shift: '+g('inShift').value+'    Trans: '+g('inTrans').value,
-    'Waktu: '+g('outWaktu').innerText, ln,
-    'Pulau/Pompa : '+g('inPompa').value,
-    'Nama Produk : '+g('inBBM').value,
-    'Harga/Liter : Rp '+f(hrg),
-    'Volume      : (L) '+ltr,
-    'Total Harga : Rp '+f(hrg*ltr),
-    'Operator    : '+g('selOperator').value, ln,
-    'CASH             '+f(hrg*ltr), ln,
-    'No. Plat    : '+g('inPlat').value.toUpperCase(),
-    'Odo Meter   : '+g('inOdo').value, ln,
-    g('inPesan').value
-  ].join('\n');
-}
-
-function printThermer() {
-  var text = encodeURIComponent(buildThermerText());
-  if (/android/i.test(navigator.userAgent)) {
-    window.location.href = 'intent://print?text='+text+'#Intent;scheme=thermer;package=mate.bluetoothprint;end';
-    setTimeout(function(){ setStatus('💡 Install Thermer di Play Store jika belum ada', 'warning'); }, 2000);
-  } else { window.print(); }
-}
-
-// ═══════════════════════════════════════════
-//  OPERATOR MANAGER
-// ═══════════════════════════════════════════
-function toggleOpManager() {
-  var mgr = document.getElementById('opManager');
-  var btn = document.getElementById('btnOpMgr');
-  var open = mgr.style.display === 'block';
-  mgr.style.display = open ? 'none' : 'block';
-  btn.textContent = open ? '⚙️ Kelola' : '✕ Tutup';
-  if (!open) renderOpList();
-}
-
-function renderOpList() {
-  var list = document.getElementById('opList');
-  if (!operators.length) {
-    list.innerHTML = '<div class="op-empty">Belum ada operator. Tambah di bawah.</div>';
-    return;
-  }
-  list.innerHTML = operators.map(function(op, i) {
-    return '<div class="op-item">'
-      + '<span class="op-name">' + op + '</span>'
-      + '<button class="op-pilih" onclick="selectOperator(\'' + op + '\')">✓ Pilih</button>'
-      + '<button class="op-hapus" onclick="deleteOperator(' + i + ')">✕</button>'
-      + '</div>';
-  }).join('');
-}
-
-function selectOperator(name) {
-  document.getElementById('selOperator').value = name;
+// LOGO
+fileLogo.onchange = e => {
+ let r = new FileReader();
+ r.onload = () => {
+  logoData = r.result;
+  localStorage.setItem('logo', logoData);
   render();
-  toggleOpManager();
-}
-
-function addOperator() {
-  var inp = document.getElementById('inNewOp');
-  var val = inp.value.trim().toUpperCase();
-  if (!val) return;
-  if (operators.indexOf(val) !== -1) {
-    inp.style.borderColor = '#ef4444';
-    setTimeout(function(){ inp.style.borderColor = ''; }, 1500);
-    return;
-  }
-  operators.push(val);
-  dbSet('spbu_ops', operators);
-  inp.value = '';
-  inp.style.borderColor = '#10b981';
-  setTimeout(function(){ inp.style.borderColor = ''; }, 800);
-  updateOpList();
-  renderOpList();
-  document.getElementById('selOperator').value = val;
-  render();
-}
-
-function deleteOperator(idx) {
-  if (!confirm('Hapus operator "' + operators[idx] + '"?')) return;
-  operators.splice(idx, 1);
-  dbSet('spbu_ops', operators);
-  updateOpList();
-  renderOpList();
-  render();
-}
-
-function updateOpList() {
-  var sel = document.getElementById('selOperator');
-  var cur = sel.value;
-  sel.innerHTML = operators.map(function(o){ return '<option value="'+o+'">'+o+'</option>'; }).join('');
-  if (operators.indexOf(cur) !== -1) sel.value = cur;
-}
-
-// ═══════════════════════════════════════════
-//  LOGO
-// ═══════════════════════════════════════════
-function handleNewLogo(e) {
-  var reader = new FileReader();
-  reader.onload = function() {
-    var name = e.target.files[0].name.substring(0,10);
-    savedLogos.push({ name: name, data: reader.result });
-    dbSet('spbu_logos', savedLogos);
-    updateLogoList();
-    document.getElementById('selLogo').value = reader.result;
-    applySavedLogo();
-  };
-  reader.readAsDataURL(e.target.files[0]);
-}
-
-function updateLogoList() {
-  document.getElementById('selLogo').innerHTML =
-    savedLogos.map(function(l){ return '<option value="'+l.data+'">'+l.name+'</option>'; }).join('') +
-    '<option value="">— Tanpa Logo —</option>';
-}
-
-function applySavedLogo() {
-  var data = document.getElementById('selLogo').value;
-  var logo = document.getElementById('outLogo');
-  if (data) {
-    logo.src = data;
-    logo.style.display = 'block';
-  } else {
-    logo.src = '';
-    logo.style.display = 'none';
-  }
-  render();
-}
-
-// ═══════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════
-function adjOdo(val) {
-  var el = document.getElementById('inOdo');
-  el.value = parseInt(el.value||0) + val;
-  render();
-}
-
-function generateAllRandom() {
-  document.getElementById('inTrans').value = Math.floor(100000 + Math.random()*900000);
-  randomSec = Math.floor(Math.random()*60).toString().padStart(2,'0');
-  render();
-}
-
-// ═══════════════════════════════════════════
-//  RENDER PREVIEW
-// ═══════════════════════════════════════════
-function render() {
-  var g = function(id){ return document.getElementById(id); };
-  var fs = getFontSize();
-
-  // Logo
-  var logo = g('outLogo');
-  var logoSrc = logo.src || '';
-  logo.style.width = g('inLogoWidth').value + 'mm';
-  logo.style.marginBottom = g('inLogoMargin').value + 'mm';
-  logo.style.display = (logoSrc && logoSrc !== window.location.href) ? 'block' : 'none';
-
-  // Font size ke struk
-  var struk = g('struk');
-  struk.style.fontSize = fs + 'px';
-  var tds = struk.querySelectorAll('.r-table td');
-  for (var i=0; i<tds.length; i++) tds[i].style.fontSize = fs + 'px';
-  var ft = struk.querySelector('.footer-txt');
-  if (ft) ft.style.fontSize = (fs-1) + 'px';
-  var alamatEl = g('outAlamat');
-  if (alamatEl) alamatEl.style.fontSize = fs + 'px';
-
-  // Teks
-  var alamatEl = g('outAlamat');
-  if (alamatEl) { alamatEl.innerText = g('inAlamat').value; alamatEl.style.fontSize = fs+'px'; }
-  g('outPesan').innerText   = g('inPesan').value;
-  g('outShift').innerText   = g('inShift').value;
-  g('outTrans').innerText   = g('inTrans').value;
-  g('outPompa').innerText   = g('inPompa').value;
-  g('outBBM').innerText     = g('inBBM').value;
-  g('outOperator').innerText= g('selOperator').value;
-  g('outPlat').innerText    = g('inPlat').value.toUpperCase();
-  g('outOdo').innerText     = g('inOdo').value;
-
-  // Waktu
-  var wt = g('inWaktu').value;
-  if (wt) {
-    var d = new Date(wt);
-    g('outWaktu').innerText =
-      ('0'+d.getDate()).slice(-2)+'/'
-      +('0'+(d.getMonth()+1)).slice(-2)+'/'
-      +d.getFullYear()+' '
-      +('0'+d.getHours()).slice(-2)+':'
-      +('0'+d.getMinutes()).slice(-2)+':'
-      +randomSec;
-  }
-
-  // Harga
-  var hrg = parseFloat(g('inHarga').value)||0;
-  var ltr = parseFloat(g('inLiter').value)||0;
-  var total = hrg * ltr;
-  var f = function(n){ return new Intl.NumberFormat('id-ID').format(n); };
-  g('outHarga').innerText = 'Rp '+f(hrg);
-  g('outLiter').innerText = '(L) '+ltr;
-  g('outTotal').innerText = 'Rp '+f(total);
-  g('outCash').innerText  = f(total);
-}
-
-// ═══════════════════════════════════════════
-//  SAVE HEADER
-// ═══════════════════════════════════════════
-function saveHeader() {
-  var val = document.getElementById('inAlamat').value;
-  dbSet('spbu_header', val);
-  var msg = document.getElementById('headerSaveMsg');
-  msg.style.display = 'block';
-  setTimeout(function(){ msg.style.display = 'none'; }, 2000);
-}
-
-// ═══════════════════════════════════════════
-//  PESAN FOOTER MANAGER
-// ═══════════════════════════════════════════
-var pesanList = [];
-var pesanActiveIdx = 0;
-
-var DEFAULT_PESANS = [
-  {
-    nama: 'Subsidi BBM',
-    teks: 'ANDA MENDAPAT SUBSIDI DARI
-PEMERINTAHAN SEBESAR RP.2.750
-(PERHITUNGAN SUBSIDI UNAUDITED
-ATAU ESTIMASI).GUNAKAN BBM
-SUBSIDI SECARA BIJAK.'
-  },
-  {
-    nama: 'Terima Kasih',
-    teks: 'TERIMA KASIH TELAH MENGISI
-BBM DI SPBU KAMI.
-SELAMAT BERKENDARA
-DENGAN AMAN DAN NYAMAN.'
-  },
-  {
-    nama: 'Promo',
-    teks: 'DAPATKAN POIN REWARD
-SETIAP PEMBELIAN BBM.
-INFO LEBIH LANJUT HUBUNGI
-KASIR ATAU LIHAT BROSUR.'
-  }
-];
-
-function updatePesanList() {
-  var sel = document.getElementById('selPesan');
-  sel.innerHTML = pesanList.map(function(p, i){
-    return '<option value="'+i+'">'+p.nama+'</option>';
-  }).join('');
-  sel.value = pesanActiveIdx;
-}
-
-function loadPesan() {
-  var idx = parseInt(document.getElementById('selPesan').value);
-  if (isNaN(idx) || !pesanList[idx]) return;
-  pesanActiveIdx = idx;
-  document.getElementById('inPesanNama').value = pesanList[idx].nama;
-  document.getElementById('inPesan').value = pesanList[idx].teks;
-  render();
-}
-
-function savePesan() {
-  var nama = document.getElementById('inPesanNama').value.trim() || 'Pesan ' + (pesanActiveIdx+1);
-  var teks = document.getElementById('inPesan').value;
-  pesanList[pesanActiveIdx] = { nama: nama, teks: teks };
-  dbSet('spbu_pesans', pesanList);
-  updatePesanList();
-  document.getElementById('selPesan').value = pesanActiveIdx;
-  var msg = document.getElementById('pesanSaveMsg');
-  msg.style.display = 'block';
-  setTimeout(function(){ msg.style.display = 'none'; }, 2000);
-}
-
-function newPesan() {
-  var nama = prompt('Nama pesan baru:');
-  if (!nama) return;
-  pesanList.push({ nama: nama.trim(), teks: '' });
-  pesanActiveIdx = pesanList.length - 1;
-  dbSet('spbu_pesans', pesanList);
-  updatePesanList();
-  document.getElementById('inPesanNama').value = nama.trim();
-  document.getElementById('inPesan').value = '';
-  render();
-}
-
-function deletePesan() {
-  if (pesanList.length <= 1) {
-    alert('Minimal harus ada 1 pesan!');
-    return;
-  }
-  if (!confirm('Hapus pesan "' + pesanList[pesanActiveIdx].nama + '"?')) return;
-  pesanList.splice(pesanActiveIdx, 1);
-  pesanActiveIdx = Math.max(0, pesanActiveIdx - 1);
-  dbSet('spbu_pesans', pesanList);
-  updatePesanList();
-  loadPesan();
-}
-
-function updatePesanName() {
-  var nama = document.getElementById('inPesanNama').value;
-  if (pesanList[pesanActiveIdx]) {
-    pesanList[pesanActiveIdx].nama = nama;
-    updatePesanList();
-    document.getElementById('selPesan').value = pesanActiveIdx;
-  }
-}
-
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
-window.onload = function() {
-  // Load data
-  operators  = dbGet('spbu_ops',   ['DINDA HALIMAH']);
-  savedLogos = dbGet('spbu_logos', []);
-
-  updateLogoList();
-  var logoEl = document.getElementById('outLogo');
-  if (savedLogos.length > 0) {
-    logoEl.src = savedLogos[0].data;
-    logoEl.style.display = 'block';
-  } else {
-    logoEl.src = '';
-    logoEl.style.display = 'none';
-  }
-
-  updateOpList();
-  generateAllRandom();
-
-  // Waktu sekarang
-  var now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
-
-  // Font size
-  var savedFont = dbGet('spbu_fontsize', 9);
-  document.getElementById('inFontSize').value = savedFont;
-  updateFontSize();
-
-  // Load saved header
-  var savedHeader = dbGet('spbu_header', null);
-  if (savedHeader) document.getElementById('inAlamat').value = savedHeader;
-
-  // Load pesan list
-  var savedPesans = dbGet('spbu_pesans', null);
-  pesanList = savedPesans || DEFAULT_PESANS;
-  pesanActiveIdx = 0;
-  updatePesanList();
-  document.getElementById('inPesanNama').value = pesanList[0].nama;
-  document.getElementById('inPesan').value = pesanList[0].teks;
-
-  render();
-
-  // Deteksi Samsung Browser
-  if (/samsungbrowser/i.test(navigator.userAgent)) {
-    setStatus('⚠️ Samsung Browser: Web Bluetooth tidak support. Gunakan tombol Thermer.', 'warning');
-  }
+ };
+ r.readAsDataURL(e.target.files[0]);
 };
+
+// OPERATOR
+function addOp(){
+ let val = newOp.value.trim().toUpperCase();
+ if(!val) return;
+ operators.push(val);
+ localStorage.setItem('ops', JSON.stringify(operators));
+ newOp.value='';
+ loadOps();
+}
+
+function loadOps(){
+ opList.innerHTML = operators.map((o,i)=>
+ `<div class='op-item'>${o} <button onclick='delOp(${i})'>X</button></div>`).join('');
+ opSelect.innerHTML = operators.map(o=>`<option>${o}</option>`).join('');
+}
+
+function delOp(i){
+ operators.splice(i,1);
+ localStorage.setItem('ops', JSON.stringify(operators));
+ loadOps();
+}
+
+// TRANSAKSI
+function generateTrans(){
+ trans.value = Math.floor(100000+Math.random()*900000);
+}
+
+// RENDER
+function render(){
+ let h = parseFloat(harga.value)||0;
+ let l = parseFloat(liter.value)||0;
+ let t = h*l;
+
+ struk.style.fontSize = fontSize.value+'px';
+
+ if(logoData){
+  logo.src = logoData;
+  logo.style.width = logoWidth.value+'mm';
+ } else logo.style.display='none';
+
+ alamat.innerText = inAlamat.value;
+ data.innerHTML = `
+ No: ${trans.value}<br>
+ Harga: ${h}<br>
+ Liter: ${l}<br>
+ Total: ${t}<br>
+ Operator: ${opSelect.value}
+ `;
+}
+
+loadOps();
+render();
 </script>
 
 </body>
