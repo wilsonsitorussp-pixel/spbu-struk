@@ -461,7 +461,7 @@ function buildEscPos() {
   b = b.concat(escLine());
   // Left
   b = b.concat([0x1B,0x61,0x00]);
-  b = b.concat(escRow('Shift: '+g('inShift').value, 'Trans: '+g('inTrans').value));
+  b = b.concat(escRow('Shift: '+g('inShift').value, 'No. Trans: ' +g('outTrans').innerText));
   b = b.concat(toBytes('Waktu : '+g('outWaktu').innerText+'\n'));
   b = b.concat(escLine());
   b = b.concat(toBytes('Pulau/Pompa : '+g('inPompa').value+'\n'));
