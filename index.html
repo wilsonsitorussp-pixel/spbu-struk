@@ -452,6 +452,58 @@ function buildEscPos() {
   var b = [];
   // Init
   b = b.concat([0x1B,0x40]);
+  // === PRINT LOGO (SIMPLE - MONOCHROME) ===
+var logo = document.getElementById('outLogo');
+
+if (logo && logo.src) {
+  try {
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+
+    var img = new Image();
+    img.src = logo.src;
+
+    // tunggu gambar load
+    // NOTE: ini versi sync sederhana (biasanya sudah ke-cache)
+    canvas.width = 200; // lebar logo (bisa ubah)
+    canvas.height = 80; // tinggi logo (bisa ubah)
+
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var pixels = imgData.data;
+
+    var bytes = [];
+
+    for (var y = 0; y < canvas.height; y++) {
+      for (var x = 0; x < canvas.width; x += 8) {
+        var byte = 0;
+        for (var bit = 0; bit < 8; bit++) {
+          var i = ((y * canvas.width) + (x + bit)) * 4;
+          var avg = (pixels[i] + pixels[i+1] + pixels[i+2]) / 3;
+          if (avg < 128) {
+            byte |= (1 << (7 - bit));
+          }
+        }
+        bytes.push(byte);
+      }
+    }
+
+    // ESC/POS raster image
+    b = b.concat([0x1D, 0x76, 0x30, 0x00,
+      canvas.width / 8, 0x00,
+      canvas.height & 0xFF, (canvas.height >> 8) & 0xFF
+    ]);
+
+    b = b.concat(bytes);
+
+    // kasih jarak bawah
+    b = b.concat([0x0A, 0x0A]);
+
+  } catch (e) {
+    console.log('Logo gagal diproses', e);
+  }
+            }
   // Font size
   b = b.concat(escFontSize(getFontSize()));
   // Center + Bold
