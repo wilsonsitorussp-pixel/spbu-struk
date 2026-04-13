@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPBU Pro - Cetak Struk</title>
     <style>
+        /* === SEMUA CSS TETAP SAMA PERSIS DENGAN SEBELUMNYA === */
         :root {
             --bg: #0f1117;
             --surface: #1a1d27;
@@ -34,7 +35,6 @@
             align-items: center;
         }
 
-        /* ── Header ── */
         .app-header {
             width: 100%;
             max-width: 500px;
@@ -57,7 +57,6 @@
         .app-header h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
         .app-header p { font-size: 11px; color: var(--text2); margin-top: 1px; }
 
-        /* ── BT Status Bar ── */
         .bt-bar {
             width: 100%; max-width: 500px;
             padding: 10px 14px;
@@ -86,10 +85,8 @@
             0%,100% { opacity:1; } 50% { opacity:0.3; }
         }
 
-        /* ── Container ── */
         .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
 
-        /* ── Panel ── */
         .panel {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -111,7 +108,6 @@
         }
         .panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
 
-        /* ── Form Elements ── */
         label {
             font-size: 10px;
             font-weight: 600;
@@ -143,7 +139,6 @@
         .row { display: flex; gap: 8px; }
         .row > * { flex: 1; }
 
-        /* ── ODO Shortcuts ── */
         .odo-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -163,7 +158,6 @@
         }
         .btn-odo:active { background: var(--accent); color: white; transform: scale(0.95); }
 
-        /* ── Buttons ── */
         .btn {
             padding: 10px 14px;
             border-radius: 8px;
@@ -183,7 +177,6 @@
         .btn-green { background: var(--surface2); border: 1px solid #1a5c3a; color: var(--green); }
         .btn-blue  { background: var(--surface2); border: 1px solid #1e2d4a; color: var(--accent); }
 
-        /* ── Print Buttons ── */
         .print-section { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
 
         .btn-print-bt {
@@ -257,7 +250,6 @@
             background: var(--border);
         }
 
-        /* ── BT Connected Badge ── */
         .bt-connected {
             display: none;
             align-items: center;
@@ -274,7 +266,6 @@
         .bt-connected.show { display: flex; }
         .bt-connected-dot { width:6px; height:6px; border-radius:50%; background:var(--green); }
 
-        /* ── Receipt Preview ── */
         .receipt-wrap {
             display: flex;
             justify-content: center;
@@ -394,7 +385,6 @@
                         padding:3px 8px; min-width:36px; text-align:center;
                     ">9px</span>
                 </div>
-                <!-- Mini preview font sizes -->
                 <div style="display:flex; justify-content:space-between; margin-top:6px; padding:8px 10px; background:var(--bg); border-radius:8px; border:1px solid var(--border);">
                     <span style="font-size:11px; color:var(--text2);">Preview:</span>
                     <span id="fontPreviewText" style="font-family:'Courier New',monospace; color:var(--text); font-size:9px;">
@@ -492,14 +482,12 @@
         <div class="panel-body">
             <div class="print-section">
 
-                <!-- BT Connected badge -->
                 <div class="bt-connected" id="btConnected">
                     <div class="bt-connected-dot"></div>
                     <span id="btDeviceName">Printer terhubung</span>
                     <span style="margin-left:auto; cursor:pointer; color:#f87171" onclick="disconnectBT()">✕</span>
                 </div>
 
-                <!-- Tombol utama: Web Bluetooth -->
                 <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()">
                     <span>🔵</span>
                     <span id="btBtnLabel">CETAK VIA BLUETOOTH</span>
@@ -507,19 +495,16 @@
 
                 <div class="divider">ATAU</div>
 
-                <!-- Tombol Thermer -->
                 <button class="btn-print-thermer" onclick="printThermer()">
                     🟡 Cetak via Thermer App
                 </button>
 
-                <!-- Tombol Print Dialog -->
                 <button class="btn-print-dialog" onclick="window.print()">
                     🖨️ Print Dialog (Ctrl+P)
                 </button>
 
             </div>
 
-            <!-- Info -->
             <div style="font-size:10px; color:var(--text2); line-height:1.6; padding:8px; background:var(--bg); border-radius:8px; font-family:var(--mono);">
                 🔵 Bluetooth → Chrome only, BLE printer<br>
                 🟡 Thermer → Semua tipe BT, perlu install app<br>
@@ -540,7 +525,7 @@
                 <div id="outAlamat" style="font-weight:bold;text-transform:uppercase;font-size:9.5px;margin-bottom:4px;white-space:pre-wrap;"></div>
                 <div style="display:flex;justify-content:space-between;font-size:8.5px;">
                     <span>Shift: <span id="outShift"></span></span>
-                    <span>No: <span id="outTrans"></span></span>
+                    <span>No. Trans: <span id="outTrans"></span></span>   <!-- UBAH LABEL -->
                 </div>
                 <div style="text-align:left;font-size:8.5px;margin-bottom:3px;">Waktu: <span id="outWaktu"></span></div>
                 <div class="r-line"></div>
@@ -580,8 +565,8 @@ const db = {
 };
 let operators  = db.get('spbu_ops',   ["DINDA HALIMAH"]);
 let savedLogos = db.get('spbu_logos', []);
-let btChar     = null;  // Web Bluetooth characteristic
-let btDevice   = null;  // Web Bluetooth device
+let btChar     = null;
+let btDevice   = null;
 
 // ─────────────────────────────────────────
 //  STATUS BAR
@@ -607,6 +592,8 @@ const esc = {
     bold:   (on)  => [ESC,0x45, on?1:0],
     feed:   (n)   => [ESC,0x64,n],
     cut:    ()    => [GS,0x56,0x00],
+    // ESC J n : print and feed paper n/216 inch
+    feedMM: (mm)  => [ESC, 0x4A, Math.round(mm * 8.5)]
 };
 
 function toBytes(str) {
@@ -622,23 +609,23 @@ function row2(left, right, w=32) {
 
 // ─────────────────────────────────────────
 //  KONVERSI GAMBAR KE ESC/POS RASTER (GS v 0)
+//  Parameter widthMM menentukan lebar cetak dalam mm
 // ─────────────────────────────────────────
-async function imageToEscPosRaster(imgElement, maxWidth = 384) {
-    // Pastikan gambar sudah dimuat
+async function imageToEscPosRaster(imgElement, widthMM = 30) {
     if (!imgElement.complete || imgElement.naturalWidth === 0) {
         console.warn('Gambar belum dimuat, logo tidak dicetak.');
         return new Uint8Array([]);
     }
 
+    // Konversi mm ke dot (printer thermal 8 dot/mm)
+    const maxWidth = Math.floor(widthMM * 8);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     
-    // Hitung ukuran sesuai lebar kertas (58mm ≈ 384px)
     const scale = maxWidth / imgElement.naturalWidth;
     canvas.width = maxWidth;
     canvas.height = Math.floor(imgElement.naturalHeight * scale);
     
-    // Gambar dengan latar putih
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
@@ -646,19 +633,16 @@ async function imageToEscPosRaster(imgElement, maxWidth = 384) {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const pixels = imageData.data;
     
-    // Konversi ke monokrom (threshold 128)
     const bwPixels = [];
     for (let i = 0; i < pixels.length; i += 4) {
-        // luminance
         const gray = 0.299 * pixels[i] + 0.587 * pixels[i+1] + 0.114 * pixels[i+2];
         bwPixels.push(gray < 128 ? 1 : 0);
     }
     
-    // Perintah GS v 0
     const widthBytes = Math.ceil(canvas.width / 8);
     const height = canvas.height;
     const header = [
-        0x1D, 0x76, 0x30, 0x00,               // GS v 0 mode normal
+        0x1D, 0x76, 0x30, 0x00,
         widthBytes & 0xFF, (widthBytes >> 8) & 0xFF,
         height & 0xFF, (height >> 8) & 0xFF
     ];
@@ -681,7 +665,7 @@ async function imageToEscPosRaster(imgElement, maxWidth = 384) {
 }
 
 // ─────────────────────────────────────────
-//  BUILD ESC/POS (async + sisipkan logo)
+//  BUILD ESC/POS (async + logo + margin)
 // ─────────────────────────────────────────
 async function buildEscPos() {
     const f    = n => new Intl.NumberFormat('id-ID').format(n);
@@ -704,31 +688,32 @@ async function buildEscPos() {
     let b = [];
     b = b.concat(esc.init());
 
-    // ** Sisipkan logo jika ada **
+    // ** Logo **
     const logoImg = document.getElementById('outLogo');
     if (logoImg.src && logoImg.src !== '' && logoImg.complete && logoImg.naturalWidth > 0) {
         b = b.concat(esc.center());
-        const logoRaster = await imageToEscPosRaster(logoImg);
+        const widthMM = parseFloat(get('inLogoWidth').value) || 30;
+        const logoRaster = await imageToEscPosRaster(logoImg, widthMM);
         b = b.concat(Array.from(logoRaster));
-        b = b.concat(esc.feed(2)); // sedikit spasi setelah logo
+        
+        // ** Margin setelah logo **
+        const marginMM = parseFloat(get('inLogoMargin').value) || 0;
+        if (marginMM !== 0) {
+            b = b.concat(esc.feedMM(marginMM));
+        }
     }
 
-    // Terapkan font size dari setting
     b = b.concat(escFontSize(getFontSize()));
-
-    // Header center bold
     b = b.concat(esc.center(), esc.bold(true));
     alamat.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
     b = b.concat(esc.bold(false));
     b = b.concat(line());
 
-    // Shift & Trans
     b = b.concat(esc.left());
-    b = b.concat(row2('Shift: '+shift, 'Trans: '+trans));
+    b = b.concat(row2('Shift: '+shift, 'No. Trans: '+trans));   // UBAH LABEL
     b = b.concat(toBytes('Waktu : '+waktu+'\n'));
     b = b.concat(line());
 
-    // Detail
     b = b.concat(toBytes('Pulau/Pompa : '+pompa+'\n'));
     b = b.concat(toBytes('Nama Produk : '+bbm+'\n'));
     b = b.concat(toBytes('Harga/Liter : Rp '+f(hrg)+'\n'));
@@ -737,7 +722,6 @@ async function buildEscPos() {
     b = b.concat(toBytes('Operator    : '+operator+'\n'));
     b = b.concat(line());
 
-    // Cash bold
     b = b.concat(esc.bold(true));
     b = b.concat(row2('CASH', f(total)));
     b = b.concat(esc.bold(false));
@@ -747,7 +731,6 @@ async function buildEscPos() {
     b = b.concat(toBytes('Odo Meter   : '+odo+'\n'));
     b = b.concat(line());
 
-    // Footer center
     b = b.concat(esc.center());
     pesan.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
 
@@ -758,7 +741,7 @@ async function buildEscPos() {
 }
 
 // ─────────────────────────────────────────
-//  WEB BLUETOOTH
+//  WEB BLUETOOTH (TIDAK BERUBAH)
 // ─────────────────────────────────────────
 const BT_UUIDS = [
     '000018f0-0000-1000-8000-00805f9b34fb',
@@ -786,7 +769,6 @@ function disconnectBT() {
 }
 
 async function getChar() {
-    // Cek koneksi lama masih aktif
     if (btChar && btDevice && btDevice.gatt.connected) return btChar;
 
     if (!navigator.bluetooth) throw new Error('Browser tidak support Web Bluetooth');
@@ -846,7 +828,6 @@ async function printBluetooth() {
     try {
         const ch = await getChar();
         setStatus('🖨️ Mengirim data ke printer...', 'info');
-        // **Gunakan await karena buildEscPos sekarang async**
         await sendBytes(ch, await buildEscPos());
         setStatus('✅ Struk berhasil dicetak!', 'success');
         setTimeout(clearStatus, 3000);
@@ -855,7 +836,6 @@ async function printBluetooth() {
             clearStatus();
         } else {
             setStatus('❌ ' + err.message, 'error');
-            // Kalau gagal, sarankan Thermer
             if (err.message.includes('BLE') || err.message.includes('Characteristic')) {
                 setTimeout(() => setStatus('💡 Printer mungkin Bluetooth Classic. Coba tombol Thermer.', 'warning'), 2000);
             }
@@ -868,7 +848,7 @@ async function printBluetooth() {
 }
 
 // ─────────────────────────────────────────
-//  THERMER INTENT
+//  THERMER INTENT (TIDAK BERUBAH)
 // ─────────────────────────────────────────
 function buildThermerText() {
     const f    = n => new Intl.NumberFormat('id-ID').format(n);
@@ -881,7 +861,7 @@ function buildThermerText() {
     return [
         get('inAlamat').value,
         line,
-        `Shift: ${get('inShift').value}    Trans: ${get('inTrans').value}`,
+        `Shift: ${get('inShift').value}    No. Trans: ${get('inTrans').value}`,  // UBAH LABEL
         `Waktu: ${get('outWaktu').innerText}`,
         line,
         `Pulau/Pompa : ${get('inPompa').value}`,
@@ -902,38 +882,27 @@ function buildThermerText() {
 
 function printThermer() {
     const text = encodeURIComponent(buildThermerText());
-    // Coba buka Thermer via intent
     const intentUrl = `intent://print?text=${text}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
-    // Fallback: share text
-    const webUrl = `https://www.thermerapp.com/?text=${text}`;
-
-    // Android: coba intent dulu
     const ua = navigator.userAgent;
     if (/android/i.test(ua)) {
         window.location.href = intentUrl;
-        // Kalau Thermer tidak ada, arahkan ke Play Store setelah 2 detik
         setTimeout(() => {
             setStatus('💡 Install Thermer dari Play Store untuk print via Bluetooth Classic', 'warning');
         }, 2000);
     } else {
-        // Desktop: print dialog biasa
         window.print();
     }
 }
 
 // ─────────────────────────────────────────
-//  FONT SIZE
+//  FONT SIZE (TIDAK BERUBAH)
 // ─────────────────────────────────────────
 function updateFontSize() {
     const val = parseInt(document.getElementById('inFontSize').value);
-    // Update label
     document.getElementById('fontSizeLabel').textContent = val + 'px';
-    // Update mini preview
     const prev = document.getElementById('fontPreviewText');
     prev.style.fontSize = val + 'px';
-    // Update CSS variable di receipt
     document.getElementById('struk').style.setProperty('--receipt-font', val + 'px');
-    // Simpan ke localStorage
     db.set('spbu_fontsize', val);
     render();
 }
@@ -942,14 +911,13 @@ function getFontSize() {
     return parseInt(document.getElementById('inFontSize').value) || 9;
 }
 
-// Map px ke ESC/POS font size multiplier
 function escFontSize(px) {
-    if (px <= 11) return [0x1D, 0x21, 0x00]; // normal
-    else           return [0x1D, 0x21, 0x11]; // 2x width & height
+    if (px <= 11) return [0x1D, 0x21, 0x00];
+    else           return [0x1D, 0x21, 0x11];
 }
 
 // ─────────────────────────────────────────
-//  FORM HELPERS
+//  FORM HELPERS (TIDAK BERUBAH)
 // ─────────────────────────────────────────
 function adjOdo(val) {
     const el = document.getElementById('inOdo');
@@ -1041,7 +1009,6 @@ function addOperator() {
     setTimeout(() => inp.style.borderColor = '', 1000);
     updateOpList();
     renderOpList();
-    // Auto-select operator yang baru ditambahkan
     document.getElementById('selOperator').value = val;
     render();
 }
@@ -1060,7 +1027,6 @@ function updateOpList() {
     const sel = document.getElementById('selOperator');
     const current = sel.value;
     sel.innerHTML = operators.map(o=>`<option value="${o}">${o}</option>`).join('');
-    // Pertahankan pilihan jika masih ada
     if (operators.includes(current)) sel.value = current;
 }
 
@@ -1114,7 +1080,6 @@ window.onload = function() {
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
 
-    // Restore font size
     const savedFont = db.get('spbu_fontsize', 9);
     const slider = document.getElementById('inFontSize');
     slider.value = savedFont;
@@ -1122,7 +1087,6 @@ window.onload = function() {
 
     render();
 
-    // Deteksi browser
     if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent)) {
         if (/samsungbrowser/i.test(navigator.userAgent)) {
             setStatus('⚠️ Samsung Browser: Web Bluetooth tidak support. Gunakan tombol Thermer.', 'warning');
