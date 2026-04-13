@@ -100,6 +100,8 @@ input[type=range]{flex:1;accent-color:#4f8ef7;height:4px;cursor:pointer;}
 
 /* RECEIPT 58mm */
 .receipt{background:#fff;width:58mm;min-width:58mm;max-width:58mm;padding:5mm 3mm;text-align:center;color:#000;line-height:1.4;font-family:‘Courier New’,Courier,monospace;box-shadow:0 8px 32px rgba(0,0,0,0.6);overflow:hidden;}
+.logo-img{display:block !important;margin:0 auto;max-width:100%;}
+.r-alamat{font-weight:bold;text-transform:uppercase;margin-bottom:4px;white-space:pre-wrap;text-align:center;}
 .r-line{border-top:1px dashed #000;margin:4px 0;}
 .r-table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .r-table td{padding:1px 0;vertical-align:top;text-align:left;}
@@ -110,7 +112,8 @@ input[type=range]{flex:1;accent-color:#4f8ef7;height:4px;cursor:pointer;}
 body{background:#fff;padding:0;}
 .no-print{display:none!important;}
 .receipt-wrap{padding:0;background:#fff;border:none;}
-.receipt{box-shadow:none;}
+.receipt{box-shadow:none;margin:0;padding:3mm 2mm;}
+.logo-img{display:block !important;margin:0 auto;max-width:100%;}
 @page{size:58mm auto;margin:0;}
 }
 </style>
@@ -147,9 +150,13 @@ body{background:#fff;padding:0;}
 <div>
   <label>Header / Nama &amp; Alamat</label>
   <textarea id="inAlamat" rows="4" oninput="render()">SPBU POLONIA
+```
+
 11.201.106
 JL. Imam Bonjol, Medan Polonia
 Tlp. 0614156892</textarea>
+<button class="btn btn-green" onclick="saveHeader()" style="width:100%;margin-top:6px;padding:9px;">💾 Simpan Header</button>
+<div id="headerSaveMsg" style="display:none;text-align:center;font-size:11px;color:#10b981;margin-top:4px;">✓ Header tersimpan!</div>
 </div>
 
 ```
@@ -200,11 +207,28 @@ Tlp. 0614156892</textarea>
 
 <div>
   <label>Pesan Footer</label>
+
+  <!-- Pilih preset pesan -->
+  <select id="selPesan" onchange="loadPesan()" style="margin-bottom:6px;">
+  </select>
+  <div style="display:flex;gap:6px;margin-bottom:6px;">
+    <button class="btn btn-green" onclick="savePesan()" style="flex:1;padding:8px;">💾 Simpan Pesan</button>
+    <button class="btn btn-grey" onclick="newPesan()" style="flex:1;padding:8px;">➕ Pesan Baru</button>
+    <button class="btn btn-red" onclick="deletePesan()" style="padding:8px 12px;">🗑️</button>
+  </div>
+
+  <!-- Nama pesan aktif -->
+  <input type="text" id="inPesanNama" placeholder="Nama pesan (contoh: Subsidi, Promo, dll)"
+    style="margin-bottom:6px;" oninput="updatePesanName()">
+
   <textarea id="inPesan" rows="4" oninput="render()">ANDA MENDAPAT SUBSIDI DARI
+```
+
 PEMERINTAHAN SEBESAR RP.2.750
 (PERHITUNGAN SUBSIDI UNAUDITED
 ATAU ESTIMASI).GUNAKAN BBM
 SUBSIDI SECARA BIJAK.</textarea>
+<div id="pesanSaveMsg" style="display:none;text-align:center;font-size:11px;color:#10b981;margin-top:4px;">✓ Pesan tersimpan!</div>
 </div>
 
   </div>
@@ -225,7 +249,9 @@ SUBSIDI SECARA BIJAK.</textarea>
   <div>
     <label>Pompa</label>
     <select id="inPompa" onchange="render()">
-      <script>for(var i=1;i<=12;i++)document.write('<option>'+i+'</option>')</script>
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+      <option>5</option><option>6</option><option>7</option><option>8</option>
+      <option>9</option><option>10</option><option>11</option><option>12</option>
     </select>
   </div>
 </div>
@@ -286,11 +312,16 @@ SUBSIDI SECARA BIJAK.</textarea>
   <label>Odo Meter (KM)</label>
   <input type="number" id="inOdo" value="25430" oninput="render()">
   <div class="odo-grid">
-    <script>
-      [5,10,15,20,25,30,40,50,100,150].forEach(function(v){
-        document.write('<button class="btn-odo" onclick="adjOdo('+v+')">+'+v+'</button>');
-      });
-    </script>
+    <button class="btn-odo" onclick="adjOdo(5)">+5</button>
+    <button class="btn-odo" onclick="adjOdo(10)">+10</button>
+    <button class="btn-odo" onclick="adjOdo(15)">+15</button>
+    <button class="btn-odo" onclick="adjOdo(20)">+20</button>
+    <button class="btn-odo" onclick="adjOdo(25)">+25</button>
+    <button class="btn-odo" onclick="adjOdo(30)">+30</button>
+    <button class="btn-odo" onclick="adjOdo(40)">+40</button>
+    <button class="btn-odo" onclick="adjOdo(50)">+50</button>
+    <button class="btn-odo" onclick="adjOdo(100)">+100</button>
+    <button class="btn-odo" onclick="adjOdo(150)">+150</button>
   </div>
 </div>
 ```
@@ -339,12 +370,14 @@ SUBSIDI SECARA BIJAK.</textarea>
   </div>
   <div class="receipt-wrap">
     <div class="receipt" id="struk">
-      <img id="outLogo" src="" style="display:block;margin:0 auto;">
-      <div id="outAlamat" style="font-weight:bold;text-transform:uppercase;margin-bottom:4px;white-space:pre-wrap;"></div>
-      <div style="display:flex;justify-content:space-between;">
-        <span>Shift: <span id="outShift"></span></span>
-        <span>No. Trans:<span id="outTrans"></span></span>
-      </div>
+      <img id="outLogo" src="" class="logo-img">
+      <div id="outAlamat" class="r-alamat"></div>
+      <table class="r-table">
+        <tr>
+          <td style="text-align:left;">Shift: <span id="outShift"></span></td>
+          <td style="text-align:right;">No. Trans: <span id="outTrans"></span></td>
+        </tr>
+      </table>
       <div style="text-align:left;margin-bottom:3px;">Waktu: <span id="outWaktu"></span></div>
       <div class="r-line"></div>
       <table class="r-table">
@@ -356,9 +389,12 @@ SUBSIDI SECARA BIJAK.</textarea>
         <tr><td class="lc">Operator</td><td class="cc">:</td><td id="outOperator"></td></tr>
       </table>
       <div class="r-line"></div>
-      <div style="display:flex;justify-content:space-between;font-weight:bold;">
-        <span>CASH</span><span id="outCash"></span>
-      </div>
+      <table class="r-table">
+        <tr>
+          <td style="text-align:left;font-weight:bold;">CASH</td>
+          <td style="text-align:right;font-weight:bold;" id="outCash"></td>
+        </tr>
+      </table>
       <div class="r-line"></div>
       <table class="r-table">
         <tr><td class="lc">No. Plat</td><td class="cc">:</td><td id="outPlat"></td></tr>
@@ -409,16 +445,22 @@ function clearStatus() {
 //  FONT SIZE
 // ═══════════════════════════════════════════
 function updateFontSize() {
-  var val = parseInt(document.getElementById('inFontSize').value);
-  document.getElementById('fontSizeLabel').textContent = val + 'px';
-  document.getElementById('fontPreviewText').style.fontSize = val + 'px';
+  var el = document.getElementById('inFontSize');
+  if (!el) return;
+  var val = parseInt(el.value) || 9;
+  var lbl = document.getElementById('fontSizeLabel');
+  if (lbl) lbl.textContent = val + 'px';
+  var prev = document.getElementById('fontPreviewText');
+  if (prev) prev.style.fontSize = val + 'px';
   var struk = document.getElementById('struk');
+  if (!struk) return;
   struk.style.fontSize = val + 'px';
-  // Update semua td di tabel juga
   var tds = struk.querySelectorAll('.r-table td');
   for (var i=0; i<tds.length; i++) tds[i].style.fontSize = val + 'px';
   var footer = struk.querySelector('.footer-txt');
-  if (footer) footer.style.fontSize = (val-1) + 'px';
+  if (footer) footer.style.fontSize = Math.max(6, val-1) + 'px';
+  var alamat = struk.querySelector('.r-alamat');
+  if (alamat) alamat.style.fontSize = val + 'px';
   dbSet('spbu_fontsize', val);
 }
 
@@ -452,58 +494,6 @@ function buildEscPos() {
   var b = [];
   // Init
   b = b.concat([0x1B,0x40]);
-  // === PRINT LOGO (SIMPLE - MONOCHROME) ===
-var logo = document.getElementById('outLogo');
-
-if (logo && logo.src) {
-  try {
-    var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
-
-    var img = new Image();
-    img.src = logo.src;
-
-    // tunggu gambar load
-    // NOTE: ini versi sync sederhana (biasanya sudah ke-cache)
-    canvas.width = 200; // lebar logo (bisa ubah)
-    canvas.height = 80; // tinggi logo (bisa ubah)
-
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    var pixels = imgData.data;
-
-    var bytes = [];
-
-    for (var y = 0; y < canvas.height; y++) {
-      for (var x = 0; x < canvas.width; x += 8) {
-        var byte = 0;
-        for (var bit = 0; bit < 8; bit++) {
-          var i = ((y * canvas.width) + (x + bit)) * 4;
-          var avg = (pixels[i] + pixels[i+1] + pixels[i+2]) / 3;
-          if (avg < 128) {
-            byte |= (1 << (7 - bit));
-          }
-        }
-        bytes.push(byte);
-      }
-    }
-
-    // ESC/POS raster image
-    b = b.concat([0x1D, 0x76, 0x30, 0x00,
-      canvas.width / 8, 0x00,
-      canvas.height & 0xFF, (canvas.height >> 8) & 0xFF
-    ]);
-
-    b = b.concat(bytes);
-
-    // kasih jarak bawah
-    b = b.concat([0x0A, 0x0A]);
-
-  } catch (e) {
-    console.log('Logo gagal diproses', e);
-  }
-            }
   // Font size
   b = b.concat(escFontSize(getFontSize()));
   // Center + Bold
@@ -513,7 +503,7 @@ if (logo && logo.src) {
   b = b.concat(escLine());
   // Left
   b = b.concat([0x1B,0x61,0x00]);
-  b = b.concat(escRow('Shift: '+g('inShift').value, 'No. Trans: ' +g('outTrans').innerText));
+  b = b.concat(escRow('Shift: '+g('inShift').value, 'Trans: '+g('inTrans').value));
   b = b.concat(toBytes('Waktu : '+g('outWaktu').innerText+'\n'));
   b = b.concat(escLine());
   b = b.concat(toBytes('Pulau/Pompa : '+g('inPompa').value+'\n'));
@@ -753,8 +743,14 @@ function updateLogoList() {
 
 function applySavedLogo() {
   var data = document.getElementById('selLogo').value;
-  document.getElementById('outLogo').src = data || '';
-  document.getElementById('outLogo').style.display = data ? 'block' : 'none';
+  var logo = document.getElementById('outLogo');
+  if (data) {
+    logo.src = data;
+    logo.style.display = 'block';
+  } else {
+    logo.src = '';
+    logo.style.display = 'none';
+  }
   render();
 }
 
@@ -782,8 +778,10 @@ function render() {
 
   // Logo
   var logo = g('outLogo');
+  var logoSrc = logo.src || '';
   logo.style.width = g('inLogoWidth').value + 'mm';
   logo.style.marginBottom = g('inLogoMargin').value + 'mm';
+  logo.style.display = (logoSrc && logoSrc !== window.location.href) ? 'block' : 'none';
 
   // Font size ke struk
   var struk = g('struk');
@@ -796,7 +794,8 @@ function render() {
   if (alamatEl) alamatEl.style.fontSize = fs + 'px';
 
   // Teks
-  g('outAlamat').innerText  = g('inAlamat').value;
+  var alamatEl = g('outAlamat');
+  if (alamatEl) { alamatEl.innerText = g('inAlamat').value; alamatEl.style.fontSize = fs+'px'; }
   g('outPesan').innerText   = g('inPesan').value;
   g('outShift').innerText   = g('inShift').value;
   g('outTrans').innerText   = g('inTrans').value;
@@ -831,6 +830,111 @@ function render() {
 }
 
 // ═══════════════════════════════════════════
+//  SAVE HEADER
+// ═══════════════════════════════════════════
+function saveHeader() {
+  var val = document.getElementById('inAlamat').value;
+  dbSet('spbu_header', val);
+  var msg = document.getElementById('headerSaveMsg');
+  msg.style.display = 'block';
+  setTimeout(function(){ msg.style.display = 'none'; }, 2000);
+}
+
+// ═══════════════════════════════════════════
+//  PESAN FOOTER MANAGER
+// ═══════════════════════════════════════════
+var pesanList = [];
+var pesanActiveIdx = 0;
+
+var DEFAULT_PESANS = [
+  {
+    nama: 'Subsidi BBM',
+    teks: 'ANDA MENDAPAT SUBSIDI DARI
+PEMERINTAHAN SEBESAR RP.2.750
+(PERHITUNGAN SUBSIDI UNAUDITED
+ATAU ESTIMASI).GUNAKAN BBM
+SUBSIDI SECARA BIJAK.'
+  },
+  {
+    nama: 'Terima Kasih',
+    teks: 'TERIMA KASIH TELAH MENGISI
+BBM DI SPBU KAMI.
+SELAMAT BERKENDARA
+DENGAN AMAN DAN NYAMAN.'
+  },
+  {
+    nama: 'Promo',
+    teks: 'DAPATKAN POIN REWARD
+SETIAP PEMBELIAN BBM.
+INFO LEBIH LANJUT HUBUNGI
+KASIR ATAU LIHAT BROSUR.'
+  }
+];
+
+function updatePesanList() {
+  var sel = document.getElementById('selPesan');
+  sel.innerHTML = pesanList.map(function(p, i){
+    return '<option value="'+i+'">'+p.nama+'</option>';
+  }).join('');
+  sel.value = pesanActiveIdx;
+}
+
+function loadPesan() {
+  var idx = parseInt(document.getElementById('selPesan').value);
+  if (isNaN(idx) || !pesanList[idx]) return;
+  pesanActiveIdx = idx;
+  document.getElementById('inPesanNama').value = pesanList[idx].nama;
+  document.getElementById('inPesan').value = pesanList[idx].teks;
+  render();
+}
+
+function savePesan() {
+  var nama = document.getElementById('inPesanNama').value.trim() || 'Pesan ' + (pesanActiveIdx+1);
+  var teks = document.getElementById('inPesan').value;
+  pesanList[pesanActiveIdx] = { nama: nama, teks: teks };
+  dbSet('spbu_pesans', pesanList);
+  updatePesanList();
+  document.getElementById('selPesan').value = pesanActiveIdx;
+  var msg = document.getElementById('pesanSaveMsg');
+  msg.style.display = 'block';
+  setTimeout(function(){ msg.style.display = 'none'; }, 2000);
+}
+
+function newPesan() {
+  var nama = prompt('Nama pesan baru:');
+  if (!nama) return;
+  pesanList.push({ nama: nama.trim(), teks: '' });
+  pesanActiveIdx = pesanList.length - 1;
+  dbSet('spbu_pesans', pesanList);
+  updatePesanList();
+  document.getElementById('inPesanNama').value = nama.trim();
+  document.getElementById('inPesan').value = '';
+  render();
+}
+
+function deletePesan() {
+  if (pesanList.length <= 1) {
+    alert('Minimal harus ada 1 pesan!');
+    return;
+  }
+  if (!confirm('Hapus pesan "' + pesanList[pesanActiveIdx].nama + '"?')) return;
+  pesanList.splice(pesanActiveIdx, 1);
+  pesanActiveIdx = Math.max(0, pesanActiveIdx - 1);
+  dbSet('spbu_pesans', pesanList);
+  updatePesanList();
+  loadPesan();
+}
+
+function updatePesanName() {
+  var nama = document.getElementById('inPesanNama').value;
+  if (pesanList[pesanActiveIdx]) {
+    pesanList[pesanActiveIdx].nama = nama;
+    updatePesanList();
+    document.getElementById('selPesan').value = pesanActiveIdx;
+  }
+}
+
+// ═══════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════
 window.onload = function() {
@@ -839,10 +943,13 @@ window.onload = function() {
   savedLogos = dbGet('spbu_logos', []);
 
   updateLogoList();
+  var logoEl = document.getElementById('outLogo');
   if (savedLogos.length > 0) {
-    document.getElementById('outLogo').src = savedLogos[0].data;
+    logoEl.src = savedLogos[0].data;
+    logoEl.style.display = 'block';
   } else {
-    document.getElementById('outLogo').style.display = 'none';
+    logoEl.src = '';
+    logoEl.style.display = 'none';
   }
 
   updateOpList();
@@ -857,6 +964,18 @@ window.onload = function() {
   var savedFont = dbGet('spbu_fontsize', 9);
   document.getElementById('inFontSize').value = savedFont;
   updateFontSize();
+
+  // Load saved header
+  var savedHeader = dbGet('spbu_header', null);
+  if (savedHeader) document.getElementById('inAlamat').value = savedHeader;
+
+  // Load pesan list
+  var savedPesans = dbGet('spbu_pesans', null);
+  pesanList = savedPesans || DEFAULT_PESANS;
+  pesanActiveIdx = 0;
+  updatePesanList();
+  document.getElementById('inPesanNama').value = pesanList[0].nama;
+  document.getElementById('inPesan').value = pesanList[0].teks;
 
   render();
 
