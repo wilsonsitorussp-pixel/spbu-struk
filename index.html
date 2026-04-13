@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPBU Pro - Cetak Struk</title>
     <style>
-        /* === CSS dengan tambahan style thin === */
+        /* === CSS SAMA SEPERTI SEBELUMNYA === */
         :root {
             --bg: #0f1117;
             --surface: #1a1d27;
@@ -270,16 +270,6 @@
         .receipt .lc { width: 22mm; }
         .receipt .cc { width: 4mm; text-align: center; }
         .receipt .footer-txt { margin-top: 8px; text-align: center; text-transform: uppercase; white-space: pre-wrap; }
-
-        /* Tambahan untuk thin style di preview */
-        .receipt.thin-style {
-            font-weight: 300 !important;
-        }
-        .receipt.thin-style .r-table td,
-        .receipt.thin-style div {
-            font-weight: 300 !important;
-        }
-
         @media print {
             body { background: white; padding: 0; }
             .no-print { display: none !important; }
@@ -329,18 +319,18 @@
                 </div>
             </div>
             <div>
-                <label>Ukuran Font Struk (3-15px)</label>
+                <label>Ukuran Font Struk</label>
                 <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
                     <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">3</span>
-                    <input type="range" id="inFontSize" min="3" max="15" value="9" step="1" oninput="updateFontSize()" style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;">
-                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">15</span>
+                    <input type="range" id="inFontSize" min="3" max="20" value="9" step="1" oninput="updateFontSize()" style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;">
+                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">20</span>
                     <span id="fontSizeLabel" style="font-size:12px; font-weight:700; font-family:var(--mono); color:var(--accent); background:var(--bg); border:1px solid var(--accent); border-radius:6px; padding:3px 8px; min-width:36px; text-align:center;">9px</span>
                 </div>
             </div>
             <div>
                 <label>Ketebalan Teks</label>
                 <select id="inBold" onchange="render()">
-                    <option value="thin">Tipis (Thin)</option>
+                    <option value="thin">Thin (Tipis)</option>
                     <option value="normal" selected>Normal</option>
                     <option value="bold">Tebal (Bold)</option>
                 </select>
@@ -353,7 +343,7 @@
         </div>
     </div>
 
-    <!-- Panel Data Transaksi (tidak berubah) -->
+    <!-- Panel Data Transaksi -->
     <div class="panel no-print">
         <div class="panel-header">🧾 Data Transaksi</div>
         <div class="panel-body">
@@ -494,7 +484,9 @@ const esc = {
     feed:   (n)   => [ESC,0x64,n],
     cut:    ()    => [GS,0x56,0x00],
     feedMM: (mm)  => [ESC, 0x4A, Math.round(mm * 8.5)],
-    lineSpacing: (n) => [ESC, 0x33, n]
+    lineSpacing: (n) => [ESC, 0x33, n],
+    // Thin font: ESC M 1 (font B) + ESC ! 0 (normal width/height)
+    thinFont: ()  => [ESC, 0x4D, 0x01, ESC, 0x21, 0x00]
 };
 function toBytes(str) { return Array.from(new TextEncoder().encode(str)); }
 function line(n=32) { return toBytes('-'.repeat(n)+'\n'); }
@@ -545,7 +537,7 @@ async function imageToEscPosRaster(imgElement, widthMM = 30) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  BUILD ESC/POS (dengan ketebalan dan ukuran font minimal 3px)
+//  BUILD ESC/POS (dengan dukungan Thin/Normal/Bold)
 // ─────────────────────────────────────────────────────────────────
 async function buildEscPos() {
     const f = n => new Intl.NumberFormat('id-ID').format(n);
@@ -563,15 +555,17 @@ async function buildEscPos() {
     const plat = get('inPlat').value.toUpperCase();
     const odo = get('inOdo').value;
     const pesan = get('inPesan').value;
-    const weight = get('inBold').value; // 'thin', 'normal', 'bold'
+    const weight = get('inBold').value; // "thin", "normal", "bold"
 
     let b = [];
     b = b.concat(esc.init());
 
-    // Bold global hanya jika weight === 'bold'
-    const isBold = (weight === 'bold');
-    if (isBold) b = b.concat(esc.bold(true));
-    // 'thin' tidak ada perintah khusus, jadi sama dengan normal
+    // Atur font sesuai pilihan
+    if (weight === 'thin') {
+        b = b.concat(esc.thinFont());
+    } else if (weight === 'bold') {
+        b = b.concat(esc.bold(true));
+    } // normal tidak perlu tambahan
 
     // Logo
     const logoImg = document.getElementById('outLogo');
@@ -585,15 +579,16 @@ async function buildEscPos() {
         if (marginMM !== 0) b = b.concat(esc.feedMM(marginMM));
     }
 
-    // Font size (ESC/POS hanya mendukung normal/double, tidak ada pengaturan halus)
-    // Kita gunakan fungsi yang sudah ada
     b = b.concat(escFontSize(getFontSize()));
-
     b = b.concat(esc.center());
-    // Header: jika weight bukan bold, kita boldkan header saja, lalu matikan
-    if (!isBold) b = b.concat(esc.bold(true));
+    // Header selalu bold, kecuali jika sudah bold global atau thin
+    if (weight === 'normal' || weight === 'thin') {
+        b = b.concat(esc.bold(true));
+    }
     alamat.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
-    if (!isBold) b = b.concat(esc.bold(false));
+    if (weight === 'normal' || weight === 'thin') {
+        b = b.concat(esc.bold(false));
+    }
     b = b.concat(esc.lineSpacing(31));
     b = b.concat(line());
     b = b.concat(esc.left());
@@ -609,9 +604,10 @@ async function buildEscPos() {
     b = b.concat(toBytes('Operator    : '+operator+'\n'));
     b = b.concat(line());
 
-    if (!isBold) b = b.concat(esc.bold(true));
+    // Cash bold jika tidak dalam mode bold global
+    if (weight !== 'bold') b = b.concat(esc.bold(true));
     b = b.concat(row2('CASH', f(total)));
-    if (!isBold) b = b.concat(esc.bold(false));
+    if (weight !== 'bold') b = b.concat(esc.bold(false));
     b = b.concat(line());
 
     b = b.concat(toBytes('No. Plat    : '+plat+'\n'));
@@ -621,8 +617,13 @@ async function buildEscPos() {
     b = b.concat(esc.center());
     pesan.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
 
-    // Matikan bold global jika diaktifkan
-    if (isBold) b = b.concat(esc.bold(false));
+    // Kembalikan ke normal jika sebelumnya thin atau bold
+    if (weight === 'thin') {
+        // Kembalikan ke font A normal
+        b = b.concat([ESC, 0x4D, 0x00, ESC, 0x21, 0x00]);
+    } else if (weight === 'bold') {
+        b = b.concat(esc.bold(false));
+    }
 
     b = b.concat(esc.feed(4));
     b = b.concat(esc.cut());
@@ -630,7 +631,7 @@ async function buildEscPos() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  WEB BLUETOOTH (tidak berubah)
+//  WEB BLUETOOTH
 // ─────────────────────────────────────────────────────────────────
 const BT_UUIDS = [
     '000018f0-0000-1000-8000-00805f9b34fb', '00001101-0000-1000-8000-00805f9b34fb',
@@ -741,7 +742,7 @@ function printThermer() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  FONT SIZE (min 3px)
+//  FONT SIZE
 // ─────────────────────────────────────────────────────────────────
 function updateFontSize() {
     const val = parseInt(document.getElementById('inFontSize').value);
@@ -753,14 +754,13 @@ function updateFontSize() {
 }
 function getFontSize() { return parseInt(document.getElementById('inFontSize').value) || 9; }
 function escFontSize(px) {
-    // Printer thermal hanya mendukung normal (1x) dan double (2x)
-    // Untuk ukuran kecil (3-7px) tetap pakai normal, karena tidak bisa lebih kecil dari font bawaan
-    if (px <= 11) return [0x1D, 0x21, 0x00]; // normal
-    else           return [0x1D, 0x21, 0x11]; // double width & height
+    if (px <= 8) return [0x1D, 0x21, 0x00]; // normal width/height
+    else if (px <= 12) return [0x1D, 0x21, 0x11]; // double width & height
+    else return [0x1D, 0x21, 0x22]; // triple width & height (opsional)
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  FORM HELPERS (termasuk save/load)
+//  FORM HELPERS & SAVE/LOAD SETTINGS
 // ─────────────────────────────────────────────────────────────────
 function adjOdo(v) { const el=document.getElementById('inOdo'); el.value = parseInt(el.value||0)+v; render(); }
 function generateAllRandom() {
@@ -831,9 +831,7 @@ function updateOpList() {
     if (operators.includes(cur)) sel.value = cur;
 }
 
-// ─────────────────────────────────────────────────────────────────
-//  SAVE & LOAD SETTINGS
-// ─────────────────────────────────────────────────────────────────
+// Simpan semua konfigurasi
 function saveSettings() {
     const settings = {
         alamat: document.getElementById('inAlamat').value,
@@ -849,6 +847,7 @@ function saveSettings() {
     setTimeout(clearStatus, 2000);
 }
 
+// Muat konfigurasi - dipanggil setelah semua elemen siap
 function loadSettings() {
     const settings = db.get('spbu_settings', null);
     if (!settings) return;
@@ -862,33 +861,32 @@ function loadSettings() {
     }
     if (settings.bold) document.getElementById('inBold').value = settings.bold;
     if (settings.pesan) document.getElementById('inPesan').value = settings.pesan;
-    
+
+    // Logo: restore jika ada di daftar
     if (settings.selectedLogo) {
         const sel = document.getElementById('selLogo');
-        setTimeout(() => {
-            if ([...sel.options].some(opt => opt.value === settings.selectedLogo)) {
-                sel.value = settings.selectedLogo;
-                applySavedLogo();
-            }
-        }, 100);
+        // Pastikan daftar logo sudah terisi
+        if ([...sel.options].some(opt => opt.value === settings.selectedLogo)) {
+            sel.value = settings.selectedLogo;
+            applySavedLogo();
+        } else {
+            // Mungkin logo belum di-load? Coba lagi nanti
+            setTimeout(() => {
+                if ([...sel.options].some(opt => opt.value === settings.selectedLogo)) {
+                    sel.value = settings.selectedLogo;
+                    applySavedLogo();
+                }
+            }, 200);
+        }
     }
-    render();
+    // render() akan dipanggil setelah loadSettings di onload
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  RENDER PREVIEW (termasuk thin style)
+//  RENDER PREVIEW
 // ─────────────────────────────────────────────────────────────────
 function render() {
     const get = id => document.getElementById(id);
-    const weight = get('inBold').value;
-
-    // Update class untuk preview thin
-    const struk = document.getElementById('struk');
-    struk.classList.remove('thin-style');
-    if (weight === 'thin') {
-        struk.classList.add('thin-style');
-    }
-
     get('outLogo').style.width = get('inLogoWidth').value + 'mm';
     get('outLogo').style.marginBottom = get('inLogoMargin').value + 'mm';
     get('outAlamat').innerText = get('inAlamat').value;
@@ -918,15 +916,28 @@ function render() {
 // ─────────────────────────────────────────────────────────────────
 window.onload = function() {
     updateLogoList();
-    if (savedLogos.length > 0) applySavedLogo();
+    // Jangan panggil applySavedLogo dulu, biar loadSettings yang atur
     updateOpList();
-    generateAllRandom();
+    // Set waktu default
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
 
+    // Load settings sebelum render lainnya
     loadSettings();
-    render();
+
+    // Jika setelah loadSettings logo masih kosong dan ada logo tersimpan, apply yang pertama
+    if (!document.getElementById('outLogo').src && savedLogos.length > 0) {
+        document.getElementById('selLogo').value = savedLogos[0].data;
+        applySavedLogo();
+    }
+
+    generateAllRandom(); // ini akan render()
+    // render() tambahan tidak perlu karena generateAllRandom sudah render
+
+    const savedFont = db.get('spbu_fontsize', 9);
+    document.getElementById('inFontSize').value = savedFont;
+    updateFontSize();
 
     if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent)) {
         setStatus('⚠️ Gunakan Chrome untuk fitur Bluetooth.', 'warning');
