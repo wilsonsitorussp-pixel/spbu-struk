@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPBU Pro - Cetak Struk</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
 ```
     :root {
@@ -21,8 +20,8 @@
         --red: #ef4444;
         --text: #e2e8f0;
         --text2: #8892a4;
-        --mono: 'IBM Plex Mono', monospace;
-        --sans: 'IBM Plex Sans', sans-serif;
+        --mono: 'Courier New', 'Lucida Console', monospace;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -461,12 +460,25 @@
             </div>
         </div>
         <div>
-            <label>Operator & No. Plat</label>
+            <label>Operator</label>
             <div class="row">
-                <select id="selOperator" onchange="render()" style="flex:1.5"></select>
-                <button class="btn btn-icon" onclick="addOperator()">+</button>
-                <input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()">
+                <select id="selOperator" onchange="render()" style="flex:1"></select>
+                <button class="btn btn-blue" onclick="toggleOpManager()" id="btnOpMgr">&#9881; Kelola</button>
             </div>
+            <div id="opManager" style="display:none; margin-top:8px; background:var(--bg); border:1px solid var(--border); border-radius:10px; overflow:hidden;">
+                <div style="padding:8px 12px; background:var(--surface2); font-size:10px; font-weight:700; color:var(--text2); letter-spacing:1px; text-transform:uppercase;">Database Operator</div>
+                <div id="opList" style="padding:8px; display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
+                <div style="padding:8px; border-top:1px solid var(--border); display:flex; gap:6px;">
+                    <input type="text" id="inNewOp" placeholder="Nama operator baru..."
+                        style="flex:1; padding:8px 10px; font-size:13px;"
+                        onkeydown="if(event.key==='Enter') addOperator()">
+                    <button class="btn btn-green" onclick="addOperator()" style="white-space:nowrap; padding:8px 12px;">+ Tambah</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <label>No. Plat</label>
+            <input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()">
         </div>
         <div>
             <label>Odo Meter (KM)</label>
@@ -918,20 +930,81 @@ function applySavedLogo() {
     render();
 }
 
-function addOperator() {
-    const val = prompt("Nama Operator:");
-    if (val) {
-        operators.push(val.toUpperCase());
-        db.set('spbu_ops', operators);
-        updateOpList();
-        document.getElementById('selOperator').value = val.toUpperCase();
-        render();
+function toggleOpManager() {
+    const mgr = document.getElementById('opManager');
+    const btn = document.getElementById('btnOpMgr');
+    const isOpen = mgr.style.display !== 'none';
+    mgr.style.display = isOpen ? 'none' : 'block';
+    btn.textContent = isOpen ? '⚙️ Kelola' : '✕ Tutup';
+    if (!isOpen) renderOpList();
+}
+
+function renderOpList() {
+    const list = document.getElementById('opList');
+    if (operators.length === 0) {
+        list.innerHTML = '<div style="padding:8px; color:var(--text2); font-size:12px; text-align:center;">Belum ada operator</div>';
+        return;
     }
+    list.innerHTML = operators.map((op, i) => `
+        <div style="display:flex; align-items:center; gap:6px; padding:6px 8px; background:var(--surface); border-radius:7px; border:1px solid var(--border);">
+            <span style="font-size:12px; color:var(--text); flex:1; font-weight:500;">${op}</span>
+            <button onclick="selectOperator('${op}')" style="
+                background:var(--surface2); border:1px solid var(--border); color:var(--accent);
+                padding:4px 10px; border-radius:5px; font-size:11px; cursor:pointer;">
+                Pilih
+            </button>
+            <button onclick="deleteOperator(${i})" style="
+                background:transparent; border:none; color:#f87171;
+                padding:4px 8px; font-size:14px; cursor:pointer;">
+                ✕
+            </button>
+        </div>
+    `).join('');
+}
+
+function selectOperator(name) {
+    document.getElementById('selOperator').value = name;
+    render();
+    toggleOpManager();
+}
+
+function addOperator() {
+    const inp = document.getElementById('inNewOp');
+    const val = inp ? inp.value.trim().toUpperCase() : null;
+    if (!val) return;
+    if (operators.includes(val)) {
+        inp.style.borderColor = 'var(--red)';
+        setTimeout(() => inp.style.borderColor = '', 1500);
+        return;
+    }
+    operators.push(val);
+    db.set('spbu_ops', operators);
+    inp.value = '';
+    inp.style.borderColor = 'var(--green)';
+    setTimeout(() => inp.style.borderColor = '', 1000);
+    updateOpList();
+    renderOpList();
+    // Auto-select operator yang baru ditambahkan
+    document.getElementById('selOperator').value = val;
+    render();
+}
+
+function deleteOperator(idx) {
+    const name = operators[idx];
+    if (!confirm('Hapus operator "' + name + '"?')) return;
+    operators.splice(idx, 1);
+    db.set('spbu_ops', operators);
+    updateOpList();
+    renderOpList();
+    render();
 }
 
 function updateOpList() {
-    document.getElementById('selOperator').innerHTML =
-        operators.map(o=>`<option value="${o}">${o}</option>`).join('');
+    const sel = document.getElementById('selOperator');
+    const current = sel.value;
+    sel.innerHTML = operators.map(o=>`<option value="${o}">${o}</option>`).join('');
+    // Pertahankan pilihan jika masih ada
+    if (operators.includes(current)) sel.value = current;
 }
 
 // ─────────────────────────────────────────
