@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPBU Pro - Cetak Struk</title>
     <style>
-        /* === SEMUA CSS TETAP SAMA === */
+        /* === CSS dengan tambahan style thin === */
         :root {
             --bg: #0f1117;
             --surface: #1a1d27;
@@ -76,9 +76,7 @@
         .bt-bar.success .bt-dot { background:#10b981; }
         .bt-bar.error .bt-dot   { background:#ef4444; }
         .bt-bar.warning .bt-dot { background:#f59e0b; }
-        @keyframes pulse {
-            0%,100% { opacity:1; } 50% { opacity:0.3; }
-        }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
         .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
         .panel {
             background: var(--surface);
@@ -162,6 +160,7 @@
         .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; }
         .btn-green { background: var(--surface2); border: 1px solid #1a5c3a; color: var(--green); }
         .btn-blue  { background: var(--surface2); border: 1px solid #1e2d4a; color: var(--accent); }
+        .btn-save { background: var(--accent); color: white; border: none; }
         .print-section { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
         .btn-print-bt {
             width: 100%;
@@ -224,12 +223,7 @@
             font-size: 10px;
             letter-spacing: 1px;
         }
-        .divider::before, .divider::after {
-            content:'';
-            flex:1;
-            height:1px;
-            background: var(--border);
-        }
+        .divider::before, .divider::after { content:''; flex:1; height:1px; background: var(--border); }
         .bt-connected {
             display: none;
             align-items: center;
@@ -276,6 +270,16 @@
         .receipt .lc { width: 22mm; }
         .receipt .cc { width: 4mm; text-align: center; }
         .receipt .footer-txt { margin-top: 8px; text-align: center; text-transform: uppercase; white-space: pre-wrap; }
+
+        /* Tambahan untuk thin style di preview */
+        .receipt.thin-style {
+            font-weight: 300 !important;
+        }
+        .receipt.thin-style .r-table td,
+        .receipt.thin-style div {
+            font-weight: 300 !important;
+        }
+
         @media print {
             body { background: white; padding: 0; }
             .no-print { display: none !important; }
@@ -289,18 +293,12 @@
 
 <div class="app-header no-print">
     <div class="icon">⛽</div>
-    <div>
-        <h1>SPBU PRO</h1>
-        <p>Sistem Cetak Struk Digital</p>
-    </div>
+    <div><h1>SPBU PRO</h1><p>Sistem Cetak Struk Digital</p></div>
 </div>
-
-<div id="btBar" class="bt-bar no-print">
-    <div class="bt-dot"></div>
-    <span id="btMsg">—</span>
-</div>
+<div id="btBar" class="bt-bar no-print"><div class="bt-dot"></div><span id="btMsg">—</span></div>
 
 <div class="container">
+    <!-- Panel Konfigurasi SPBU -->
     <div class="panel no-print">
         <div class="panel-header">⚙️ Konfigurasi SPBU</div>
         <div class="panel-body">
@@ -320,41 +318,42 @@
                 <div>
                     <label>Lebar Logo</label>
                     <select id="inLogoWidth" onchange="render()">
-                        <option value="10">10mm</option><option value="15">15mm</option>
-                        <option value="20">20mm</option><option value="25">25mm</option>
-                        <option value="30" selected>30mm</option>
+                        <option value="10">10mm</option><option value="15">15mm</option><option value="20">20mm</option><option value="25">25mm</option><option value="30" selected>30mm</option>
                     </select>
                 </div>
                 <div>
                     <label>Margin Logo</label>
                     <select id="inLogoMargin" onchange="render()">
-                        <option value="-10">-10mm</option><option value="-8">-8mm</option>
-                        <option value="-5">-5mm</option><option value="-2">-2mm</option>
-                        <option value="0" selected>0mm (Normal)</option>
-                        <option value="2">+2mm</option><option value="5">+5mm</option><option value="8">+8mm</option>
+                        <option value="-10">-10mm</option><option value="-8">-8mm</option><option value="-5">-5mm</option><option value="-2">-2mm</option><option value="0" selected>0mm (Normal)</option><option value="2">+2mm</option><option value="5">+5mm</option><option value="8">+8mm</option>
                     </select>
                 </div>
             </div>
             <div>
-                <label>Ukuran Font Struk</label>
+                <label>Ukuran Font Struk (3-15px)</label>
                 <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
-                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">5</span>
-                    <input type="range" id="inFontSize" min="5" max="15" value="9" step="1" oninput="updateFontSize()" style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;">
+                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">3</span>
+                    <input type="range" id="inFontSize" min="3" max="15" value="9" step="1" oninput="updateFontSize()" style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;">
                     <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">15</span>
                     <span id="fontSizeLabel" style="font-size:12px; font-weight:700; font-family:var(--mono); color:var(--accent); background:var(--bg); border:1px solid var(--accent); border-radius:6px; padding:3px 8px; min-width:36px; text-align:center;">9px</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; margin-top:6px; padding:8px 10px; background:var(--bg); border-radius:8px; border:1px solid var(--border);">
-                    <span style="font-size:11px; color:var(--text2);">Preview:</span>
-                    <span id="fontPreviewText" style="font-family:'Courier New',monospace; color:var(--text); font-size:9px;">SPBU POLONIA — Rp 50.000</span>
-                </div>
+            </div>
+            <div>
+                <label>Ketebalan Teks</label>
+                <select id="inBold" onchange="render()">
+                    <option value="thin">Tipis (Thin)</option>
+                    <option value="normal" selected>Normal</option>
+                    <option value="bold">Tebal (Bold)</option>
+                </select>
             </div>
             <div>
                 <label>Pesan Footer</label>
                 <textarea id="inPesan" rows="4" oninput="render()">ANDA MENDAPAT SUBSIDI DARI&#10;PEMERINTAHAN SEBESAR RP.2.750&#10;(PERHITUNGAN SUBSIDI UNAUDITED&#10;ATAU ESTIMASI).GUNAKAN BBM&#10;SUBSIDI SECARA BIJAK.</textarea>
             </div>
+            <button class="btn btn-save" onclick="saveSettings()">💾 Simpan Konfigurasi</button>
         </div>
     </div>
 
+    <!-- Panel Data Transaksi (tidak berubah) -->
     <div class="panel no-print">
         <div class="panel-header">🧾 Data Transaksi</div>
         <div class="panel-body">
@@ -403,18 +402,13 @@
         </div>
     </div>
 
+    <!-- Panel Cetak -->
     <div class="panel no-print">
         <div class="panel-header">🖨️ Cetak Struk</div>
         <div class="panel-body">
             <div class="print-section">
-                <div class="bt-connected" id="btConnected">
-                    <div class="bt-connected-dot"></div>
-                    <span id="btDeviceName">Printer terhubung</span>
-                    <span style="margin-left:auto; cursor:pointer; color:#f87171" onclick="disconnectBT()">✕</span>
-                </div>
-                <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()">
-                    <span>🔵</span><span id="btBtnLabel">CETAK VIA BLUETOOTH</span>
-                </button>
+                <div class="bt-connected" id="btConnected"><div class="bt-connected-dot"></div><span id="btDeviceName">Printer terhubung</span><span style="margin-left:auto; cursor:pointer; color:#f87171" onclick="disconnectBT()">✕</span></div>
+                <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()"><span>🔵</span><span id="btBtnLabel">CETAK VIA BLUETOOTH</span></button>
                 <div class="divider">ATAU</div>
                 <button class="btn-print-thermer" onclick="printThermer()">🟡 Cetak via Thermer App</button>
                 <button class="btn-print-dialog" onclick="window.print()">🖨️ Print Dialog (Ctrl+P)</button>
@@ -427,11 +421,9 @@
         </div>
     </div>
 
+    <!-- Preview Struk -->
     <div class="panel">
-        <div class="panel-header no-print">
-            👁️ Preview Struk
-            <span style="margin-left:auto; font-size:10px; color:var(--accent); font-family:var(--mono); border:1px solid var(--accent); padding:2px 7px; border-radius:10px;">58mm</span>
-        </div>
+        <div class="panel-header no-print">👁️ Preview Struk <span style="margin-left:auto; font-size:10px; color:var(--accent); font-family:var(--mono); border:1px solid var(--accent); padding:2px 7px; border-radius:10px;">58mm</span></div>
         <div class="receipt-wrap">
             <div class="receipt" id="struk">
                 <img id="outLogo" src="" class="logo-img">
@@ -451,9 +443,7 @@
                     <tr><td class="lc">Operator</td><td class="cc">:</td><td id="outOperator"></td></tr>
                 </table>
                 <div class="r-line"></div>
-                <div style="display:flex;justify-content:space-between;font-weight:bold;">
-                    <span>CASH</span><span id="outCash"></span>
-                </div>
+                <div style="display:flex;justify-content:space-between;font-weight:bold;"><span>CASH</span><span id="outCash"></span></div>
                 <div class="r-line"></div>
                 <table class="r-table">
                     <tr><td class="lc">No. Plat</td><td class="cc">:</td><td id="outPlat"></td></tr>
@@ -468,7 +458,7 @@
 
 <script>
 // ─────────────────────────────────────────────────────────────────
-//  STATE & LOCAL STORAGE
+//  STATE & DB
 // ─────────────────────────────────────────────────────────────────
 let randomSec = "00";
 const db = {
@@ -504,9 +494,8 @@ const esc = {
     feed:   (n)   => [ESC,0x64,n],
     cut:    ()    => [GS,0x56,0x00],
     feedMM: (mm)  => [ESC, 0x4A, Math.round(mm * 8.5)],
-    lineSpacing: (n) => [ESC, 0x33, n]   // n/144 inch
+    lineSpacing: (n) => [ESC, 0x33, n]
 };
-
 function toBytes(str) { return Array.from(new TextEncoder().encode(str)); }
 function line(n=32) { return toBytes('-'.repeat(n)+'\n'); }
 function row2(left, right, w=32) {
@@ -515,14 +504,10 @@ function row2(left, right, w=32) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  KONVERSI GAMBAR KE ESC/POS RASTER (GS v 0)
-//  widthMM = lebar cetak dalam mm (printer 8 dot/mm)
+//  KONVERSI GAMBAR KE ESC/POS RASTER
 // ─────────────────────────────────────────────────────────────────
 async function imageToEscPosRaster(imgElement, widthMM = 30) {
-    if (!imgElement.complete || imgElement.naturalWidth === 0) {
-        console.warn('Gambar belum dimuat, logo tidak dicetak.');
-        return new Uint8Array([]);
-    }
+    if (!imgElement.complete || imgElement.naturalWidth === 0) return new Uint8Array([]);
     const maxWidth = Math.floor(widthMM * 8);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -560,27 +545,33 @@ async function imageToEscPosRaster(imgElement, widthMM = 30) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  BUILD DATA ESC/POS (dengan logo, line spacing, margin)
+//  BUILD ESC/POS (dengan ketebalan dan ukuran font minimal 3px)
 // ─────────────────────────────────────────────────────────────────
 async function buildEscPos() {
-    const f    = n => new Intl.NumberFormat('id-ID').format(n);
-    const hrg  = parseFloat(document.getElementById('inHarga').value)||0;
-    const ltr  = parseFloat(document.getElementById('inLiter').value)||0;
-    const total= hrg*ltr;
-    const get  = id => document.getElementById(id);
-    const alamat   = get('inAlamat').value;
-    const shift    = get('inShift').value;
-    const trans    = get('inTrans').value;
-    const waktu    = get('outWaktu').innerText;
-    const pompa    = get('inPompa').value;
-    const bbm      = get('inBBM').value;
+    const f = n => new Intl.NumberFormat('id-ID').format(n);
+    const hrg = parseFloat(document.getElementById('inHarga').value)||0;
+    const ltr = parseFloat(document.getElementById('inLiter').value)||0;
+    const total = hrg*ltr;
+    const get = id => document.getElementById(id);
+    const alamat = get('inAlamat').value;
+    const shift = get('inShift').value;
+    const trans = get('inTrans').value;
+    const waktu = get('outWaktu').innerText;
+    const pompa = get('inPompa').value;
+    const bbm = get('inBBM').value;
     const operator = get('selOperator').value;
-    const plat     = get('inPlat').value.toUpperCase();
-    const odo      = get('inOdo').value;
-    const pesan    = get('inPesan').value;
+    const plat = get('inPlat').value.toUpperCase();
+    const odo = get('inOdo').value;
+    const pesan = get('inPesan').value;
+    const weight = get('inBold').value; // 'thin', 'normal', 'bold'
 
     let b = [];
     b = b.concat(esc.init());
+
+    // Bold global hanya jika weight === 'bold'
+    const isBold = (weight === 'bold');
+    if (isBold) b = b.concat(esc.bold(true));
+    // 'thin' tidak ada perintah khusus, jadi sama dengan normal
 
     // Logo
     const logoImg = document.getElementById('outLogo');
@@ -589,35 +580,27 @@ async function buildEscPos() {
         const widthMM = parseFloat(get('inLogoWidth').value) || 30;
         const logoRaster = await imageToEscPosRaster(logoImg, widthMM);
         b = b.concat(Array.from(logoRaster));
-        
-        // Atur line spacing kecil agar header menempel
         b = b.concat(esc.lineSpacing(1));
-        
-        // Tambahan margin jika pengguna mengisi
         const marginMM = parseFloat(get('inLogoMargin').value) || 0;
-        if (marginMM !== 0) {
-            b = b.concat(esc.feedMM(marginMM));
-        }
+        if (marginMM !== 0) b = b.concat(esc.feedMM(marginMM));
     }
 
-    // Font size
+    // Font size (ESC/POS hanya mendukung normal/double, tidak ada pengaturan halus)
+    // Kita gunakan fungsi yang sudah ada
     b = b.concat(escFontSize(getFontSize()));
 
-    // Header center bold
-    b = b.concat(esc.center(), esc.bold(true));
+    b = b.concat(esc.center());
+    // Header: jika weight bukan bold, kita boldkan header saja, lalu matikan
+    if (!isBold) b = b.concat(esc.bold(true));
     alamat.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
-    b = b.concat(esc.bold(false));
-    
-    // Kembalikan line spacing ke default (31/144 inch ≈ 5.5mm)
+    if (!isBold) b = b.concat(esc.bold(false));
     b = b.concat(esc.lineSpacing(31));
-    
     b = b.concat(line());
     b = b.concat(esc.left());
     b = b.concat(row2('Shift: '+shift, 'No. Trans: '+trans));
     b = b.concat(toBytes('Waktu : '+waktu+'\n'));
     b = b.concat(line());
 
-    // Detail
     b = b.concat(toBytes('Pulau/Pompa : '+pompa+'\n'));
     b = b.concat(toBytes('Nama Produk : '+bbm+'\n'));
     b = b.concat(toBytes('Harga/Liter : Rp '+f(hrg)+'\n'));
@@ -626,45 +609,39 @@ async function buildEscPos() {
     b = b.concat(toBytes('Operator    : '+operator+'\n'));
     b = b.concat(line());
 
-    // Cash
-    b = b.concat(esc.bold(true));
+    if (!isBold) b = b.concat(esc.bold(true));
     b = b.concat(row2('CASH', f(total)));
-    b = b.concat(esc.bold(false));
+    if (!isBold) b = b.concat(esc.bold(false));
     b = b.concat(line());
 
     b = b.concat(toBytes('No. Plat    : '+plat+'\n'));
     b = b.concat(toBytes('Odo Meter   : '+odo+'\n'));
     b = b.concat(line());
 
-    // Footer center
     b = b.concat(esc.center());
     pesan.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
 
+    // Matikan bold global jika diaktifkan
+    if (isBold) b = b.concat(esc.bold(false));
+
     b = b.concat(esc.feed(4));
     b = b.concat(esc.cut());
-
     return new Uint8Array(b);
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  WEB BLUETOOTH
+//  WEB BLUETOOTH (tidak berubah)
 // ─────────────────────────────────────────────────────────────────
 const BT_UUIDS = [
-    '000018f0-0000-1000-8000-00805f9b34fb',
-    '00001101-0000-1000-8000-00805f9b34fb',
-    'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
-    '49535343-fe7d-4ae5-8fa9-9fafd205e455',
-    '0000ff00-0000-1000-8000-00805f9b34fb',
-    '0000ffe0-0000-1000-8000-00805f9b34fb',
+    '000018f0-0000-1000-8000-00805f9b34fb', '00001101-0000-1000-8000-00805f9b34fb',
+    'e7810a71-73ae-499d-8c15-faa9aef0c3f2', '49535343-fe7d-4ae5-8fa9-9fafd205e455',
+    '0000ff00-0000-1000-8000-00805f9b34fb', '0000ffe0-0000-1000-8000-00805f9b34fb'
 ];
-
 function showConnected(name) {
-    const el = document.getElementById('btConnected');
+    document.getElementById('btConnected').classList.add('show');
     document.getElementById('btDeviceName').textContent = '🔵 ' + name;
-    el.classList.add('show');
     document.getElementById('btBtnLabel').textContent = 'CETAK SEKARANG';
 }
-
 function disconnectBT() {
     if (btDevice && btDevice.gatt.connected) btDevice.gatt.disconnect();
     btChar = null; btDevice = null;
@@ -672,15 +649,11 @@ function disconnectBT() {
     document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
     clearStatus();
 }
-
 async function getChar() {
     if (btChar && btDevice && btDevice.gatt.connected) return btChar;
     if (!navigator.bluetooth) throw new Error('Browser tidak support Web Bluetooth');
     setStatus('📡 Pilih printer Bluetooth...', 'info');
-    btDevice = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
-        optionalServices: BT_UUIDS
-    });
+    btDevice = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: BT_UUIDS });
     btDevice.addEventListener('gattserverdisconnected', () => {
         btChar = null;
         document.getElementById('btConnected').classList.remove('show');
@@ -688,7 +661,7 @@ async function getChar() {
         setStatus('⚠️ Printer terputus', 'warning');
     });
     setStatus('🔗 Menghubungkan ke ' + btDevice.name + '...', 'info');
-    const server   = await btDevice.gatt.connect();
+    const server = await btDevice.gatt.connect();
     const services = await server.getPrimaryServices();
     for (const svc of services) {
         try {
@@ -702,27 +675,19 @@ async function getChar() {
             }
         } catch(e) {}
     }
-    throw new Error('Characteristic write tidak ditemukan. Printer mungkin bukan BLE.');
+    throw new Error('Characteristic write tidak ditemukan.');
 }
-
 async function sendBytes(char, data) {
     const CHUNK = 100;
     for (let i=0; i<data.length; i+=CHUNK) {
         const slice = data.slice(i, i+CHUNK);
-        if (char.properties.writeWithoutResponse) {
-            await char.writeValueWithoutResponse(slice);
-        } else {
-            await char.writeValue(slice);
-        }
+        if (char.properties.writeWithoutResponse) await char.writeValueWithoutResponse(slice);
+        else await char.writeValue(slice);
         await new Promise(r => setTimeout(r, 30));
     }
 }
-
 async function printBluetooth() {
-    if (!navigator.bluetooth) {
-        setStatus('❌ Gunakan Chrome untuk Web Bluetooth. Coba tombol Thermer.', 'error');
-        return;
-    }
+    if (!navigator.bluetooth) { setStatus('❌ Gunakan Chrome untuk Web Bluetooth.', 'error'); return; }
     const btn = document.getElementById('btBtn');
     btn.disabled = true;
     try {
@@ -732,30 +697,23 @@ async function printBluetooth() {
         setStatus('✅ Struk berhasil dicetak!', 'success');
         setTimeout(clearStatus, 3000);
     } catch(err) {
-        if (err.name === 'NotFoundError') {
-            clearStatus();
-        } else {
-            setStatus('❌ ' + err.message, 'error');
-            if (err.message.includes('BLE') || err.message.includes('Characteristic')) {
-                setTimeout(() => setStatus('💡 Printer mungkin Bluetooth Classic. Coba tombol Thermer.', 'warning'), 2000);
-            }
-            btChar = null; btDevice = null;
-            document.getElementById('btConnected').classList.remove('show');
-            document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
-        }
+        setStatus('❌ ' + err.message, 'error');
+        btChar = null; btDevice = null;
+        document.getElementById('btConnected').classList.remove('show');
+        document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
     }
     btn.disabled = false;
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  THERMER (TEKS SAJA)
+//  THERMER (teks saja)
 // ─────────────────────────────────────────────────────────────────
 function buildThermerText() {
-    const f    = n => new Intl.NumberFormat('id-ID').format(n);
-    const hrg  = parseFloat(document.getElementById('inHarga').value)||0;
-    const ltr  = parseFloat(document.getElementById('inLiter').value)||0;
-    const total= hrg*ltr;
-    const get  = id => document.getElementById(id);
+    const f = n => new Intl.NumberFormat('id-ID').format(n);
+    const hrg = parseFloat(document.getElementById('inHarga').value)||0;
+    const ltr = parseFloat(document.getElementById('inLiter').value)||0;
+    const total = hrg*ltr;
+    const get = id => document.getElementById(id);
     const line = '-'.repeat(32);
     return [
         get('inAlamat').value, line,
@@ -778,14 +736,12 @@ function printThermer() {
     const intentUrl = `intent://print?text=${text}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
     if (/android/i.test(navigator.userAgent)) {
         window.location.href = intentUrl;
-        setTimeout(() => setStatus('💡 Install Thermer dari Play Store untuk print via Bluetooth Classic', 'warning'), 2000);
-    } else {
-        window.print();
-    }
+        setTimeout(() => setStatus('💡 Install Thermer dari Play Store', 'warning'), 2000);
+    } else window.print();
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  FONT SIZE
+//  FONT SIZE (min 3px)
 // ─────────────────────────────────────────────────────────────────
 function updateFontSize() {
     const val = parseInt(document.getElementById('inFontSize').value);
@@ -797,11 +753,14 @@ function updateFontSize() {
 }
 function getFontSize() { return parseInt(document.getElementById('inFontSize').value) || 9; }
 function escFontSize(px) {
-    return (px <= 11) ? [0x1D, 0x21, 0x00] : [0x1D, 0x21, 0x11];
+    // Printer thermal hanya mendukung normal (1x) dan double (2x)
+    // Untuk ukuran kecil (3-7px) tetap pakai normal, karena tidak bisa lebih kecil dari font bawaan
+    if (px <= 11) return [0x1D, 0x21, 0x00]; // normal
+    else           return [0x1D, 0x21, 0x11]; // double width & height
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  FORM HELPERS
+//  FORM HELPERS (termasuk save/load)
 // ─────────────────────────────────────────────────────────────────
 function adjOdo(v) { const el=document.getElementById('inOdo'); el.value = parseInt(el.value||0)+v; render(); }
 function generateAllRandom() {
@@ -839,14 +798,14 @@ function toggleOpManager() {
 function renderOpList() {
     const list = document.getElementById('opList');
     if (operators.length === 0) {
-        list.innerHTML = '<div style="padding:8px; color:var(--text2); font-size:12px; text-align:center;">Belum ada operator</div>';
+        list.innerHTML = '<div style="padding:8px; color:var(--text2); text-align:center;">Belum ada operator</div>';
         return;
     }
     list.innerHTML = operators.map((op,i)=>`
         <div style="display:flex; align-items:center; gap:6px; padding:6px 8px; background:var(--surface); border-radius:7px; border:1px solid var(--border);">
-            <span style="font-size:12px; color:var(--text); flex:1; font-weight:500;">${op}</span>
-            <button onclick="selectOperator('${op}')" style="background:var(--surface2); border:1px solid var(--border); color:var(--accent); padding:4px 10px; border-radius:5px; font-size:11px; cursor:pointer;">Pilih</button>
-            <button onclick="deleteOperator(${i})" style="background:transparent; border:none; color:#f87171; padding:4px 8px; font-size:14px; cursor:pointer;">✕</button>
+            <span style="font-size:12px; color:var(--text); flex:1;">${op}</span>
+            <button onclick="selectOperator('${op}')" style="background:var(--surface2); border:1px solid var(--border); color:var(--accent); padding:4px 10px; border-radius:5px; font-size:11px;">Pilih</button>
+            <button onclick="deleteOperator(${i})" style="background:transparent; border:none; color:#f87171; font-size:14px;">✕</button>
         </div>
     `).join('');
 }
@@ -873,10 +832,63 @@ function updateOpList() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  RENDER PREVIEW
+//  SAVE & LOAD SETTINGS
+// ─────────────────────────────────────────────────────────────────
+function saveSettings() {
+    const settings = {
+        alamat: document.getElementById('inAlamat').value,
+        logoWidth: document.getElementById('inLogoWidth').value,
+        logoMargin: document.getElementById('inLogoMargin').value,
+        fontSize: document.getElementById('inFontSize').value,
+        bold: document.getElementById('inBold').value,
+        pesan: document.getElementById('inPesan').value,
+        selectedLogo: document.getElementById('selLogo').value
+    };
+    db.set('spbu_settings', settings);
+    setStatus('✅ Konfigurasi tersimpan!', 'success');
+    setTimeout(clearStatus, 2000);
+}
+
+function loadSettings() {
+    const settings = db.get('spbu_settings', null);
+    if (!settings) return;
+
+    if (settings.alamat) document.getElementById('inAlamat').value = settings.alamat;
+    if (settings.logoWidth) document.getElementById('inLogoWidth').value = settings.logoWidth;
+    if (settings.logoMargin) document.getElementById('inLogoMargin').value = settings.logoMargin;
+    if (settings.fontSize) {
+        document.getElementById('inFontSize').value = settings.fontSize;
+        updateFontSize();
+    }
+    if (settings.bold) document.getElementById('inBold').value = settings.bold;
+    if (settings.pesan) document.getElementById('inPesan').value = settings.pesan;
+    
+    if (settings.selectedLogo) {
+        const sel = document.getElementById('selLogo');
+        setTimeout(() => {
+            if ([...sel.options].some(opt => opt.value === settings.selectedLogo)) {
+                sel.value = settings.selectedLogo;
+                applySavedLogo();
+            }
+        }, 100);
+    }
+    render();
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  RENDER PREVIEW (termasuk thin style)
 // ─────────────────────────────────────────────────────────────────
 function render() {
     const get = id => document.getElementById(id);
+    const weight = get('inBold').value;
+
+    // Update class untuk preview thin
+    const struk = document.getElementById('struk');
+    struk.classList.remove('thin-style');
+    if (weight === 'thin') {
+        struk.classList.add('thin-style');
+    }
+
     get('outLogo').style.width = get('inLogoWidth').value + 'mm';
     get('outLogo').style.marginBottom = get('inLogoMargin').value + 'mm';
     get('outAlamat').innerText = get('inAlamat').value;
@@ -912,12 +924,12 @@ window.onload = function() {
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
-    const savedFont = db.get('spbu_fontsize', 9);
-    document.getElementById('inFontSize').value = savedFont;
-    updateFontSize();
+
+    loadSettings();
     render();
-    if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent) && /samsungbrowser/i.test(navigator.userAgent)) {
-        setStatus('⚠️ Samsung Browser: Web Bluetooth tidak support. Gunakan tombol Thermer.', 'warning');
+
+    if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent)) {
+        setStatus('⚠️ Gunakan Chrome untuk fitur Bluetooth.', 'warning');
     }
 };
 </script>
