@@ -1,141 +1,1077 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SPBU PRO ADVANCED</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPBU Pro - Cetak Struk</title>
+    <style>
 
-<style>
-body{font-family:Arial;background:#0f1117;color:#fff;padding:10px}
-.panel{background:#1a1d27;padding:12px;margin-bottom:10px;border-radius:12px}
-input,select,textarea{width:100%;margin:6px 0;padding:8px;border-radius:6px;border:none}
-button{padding:10px;border:none;border-radius:8px;cursor:pointer}
+```
+    :root {
+        --bg: #0f1117;
+        --surface: #1a1d27;
+        --surface2: #22263a;
+        --border: #2e3352;
+        --accent: #4f8ef7;
+        --accent2: #7c3aed;
+        --green: #10b981;
+        --yellow: #f59e0b;
+        --red: #ef4444;
+        --text: #e2e8f0;
+        --text2: #8892a4;
+        --mono: 'Courier New', 'Lucida Console', monospace;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
 
-.receipt{background:#fff;color:#000;width:58mm;margin:auto;padding:6px;text-align:center}
-.logo-img{display:block;margin:auto}
-.r-line{border-top:1px dashed #000;margin:6px 0}
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
-.op-item{display:flex;justify-content:space-between;margin:4px 0}
+    body {
+        font-family: var(--sans);
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* ── Header ── */
+    .app-header {
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding: 14px 18px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+    }
+    .app-header .icon {
+        width: 36px; height: 36px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 18px;
+    }
+    .app-header h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
+    .app-header p { font-size: 11px; color: var(--text2); margin-top: 1px; }
+
+    /* ── BT Status Bar ── */
+    .bt-bar {
+        width: 100%; max-width: 500px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-family: var(--mono);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        border: 1px solid transparent;
+        transition: all 0.3s;
+        display: none;
+    }
+    .bt-bar.info    { display:flex; background:#1e2d4a; border-color:#2d4a7a; color:#7ab3f5; }
+    .bt-bar.success { display:flex; background:#0d2b20; border-color:#1a5c3a; color:#34d399; }
+    .bt-bar.error   { display:flex; background:#2b1010; border-color:#5c1a1a; color:#f87171; }
+    .bt-bar.warning { display:flex; background:#2b2010; border-color:#5c3a1a; color:#fbbf24; }
+    .bt-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .bt-bar.info .bt-dot    { background:#4f8ef7; animation: pulse 1.5s infinite; }
+    .bt-bar.success .bt-dot { background:#10b981; }
+    .bt-bar.error .bt-dot   { background:#ef4444; }
+    .bt-bar.warning .bt-dot { background:#f59e0b; }
+
+    @keyframes pulse {
+        0%,100% { opacity:1; } 50% { opacity:0.3; }
+    }
+
+    /* ── Container ── */
+    .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── Panel ── */
+    .panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+    }
+    .panel-header {
+        padding: 12px 16px;
+        background: var(--surface2);
+        border-bottom: 1px solid var(--border);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--text2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── Form Elements ── */
+    label {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--text2);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 10px 12px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 13px;
+        font-family: var(--sans);
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+        border-color: var(--accent);
+    }
+    select option { background: var(--surface); }
+    textarea { resize: vertical; line-height: 1.5; }
+
+    .row { display: flex; gap: 8px; }
+    .row > * { flex: 1; }
+
+    /* ── ODO Shortcuts ── */
+    .odo-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+    }
+    .btn-odo {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--accent);
+        padding: 8px 2px;
+        border-radius: 7px;
+        font-size: 10px;
+        font-weight: 600;
+        font-family: var(--mono);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+    .btn-odo:active { background: var(--accent); color: white; transform: scale(0.95); }
+
+    /* ── Buttons ── */
+    .btn {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.15s;
+        font-family: var(--sans);
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; }
+    .btn-green { background: var(--surface2); border: 1px solid #1a5c3a; color: var(--green); }
+    .btn-blue  { background: var(--surface2); border: 1px solid #1e2d4a; color: var(--accent); }
+
+    /* ── Print Buttons ── */
+    .print-section { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+
+    .btn-print-bt {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #1e3a8a, #2d1b69);
+        border: 1px solid #3b5bdb;
+        border-radius: 12px;
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        font-family: var(--sans);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.2s;
+        letter-spacing: 0.3px;
+    }
+    .btn-print-bt:hover { background: linear-gradient(135deg, #2545a8, #3b2180); }
+    .btn-print-bt:active { transform: scale(0.98); }
+    .btn-print-bt:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-print-thermer {
+        width: 100%;
+        padding: 13px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: var(--text2);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: var(--sans);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+    .btn-print-thermer:hover { border-color: var(--yellow); color: var(--yellow); }
+    .btn-print-thermer:active { transform: scale(0.98); }
+
+    .btn-print-dialog {
+        width: 100%;
+        padding: 11px;
+        background: transparent;
+        border: 1px dashed var(--border);
+        border-radius: 10px;
+        color: var(--text2);
+        font-size: 12px;
+        font-family: var(--sans);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-print-dialog:hover { border-color: var(--text2); color: var(--text); }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text2);
+        font-size: 10px;
+        letter-spacing: 1px;
+    }
+    .divider::before, .divider::after {
+        content:'';
+        flex:1;
+        height:1px;
+        background: var(--border);
+    }
+
+    /* ── BT Connected Badge ── */
+    .bt-connected {
+        display: none;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: var(--green);
+        font-family: var(--mono);
+        padding: 6px 10px;
+        background: #0d2b20;
+        border: 1px solid #1a5c3a;
+        border-radius: 20px;
+        margin-bottom: 4px;
+    }
+    .bt-connected.show { display: flex; }
+    .bt-connected-dot { width:6px; height:6px; border-radius:50%; background:var(--green); }
+
+    /* ── Receipt Preview ── */
+    .receipt-wrap {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 20px 16px;
+        background: #13151f;
+        border-top: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .receipt {
+        background: #fff;
+        width: 58mm;
+        min-width: 58mm;
+        max-width: 58mm;
+        padding: 6mm 3mm;
+        text-align: center;
+        font-size: var(--receipt-font, 9px);
+        color: #000;
+        line-height: 1.4;
+        font-family: 'Courier New', Courier, monospace;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        overflow: hidden;
+        zoom: 1;
+    }
+    .receipt .logo-img { display: block; margin: 0 auto; }
+    .receipt .r-line { border-top: 1px dashed #000; margin: 4px 0; }
+    .receipt .r-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .receipt .r-table td { padding: 1px 0; vertical-align: top; text-align: left; font-size: var(--receipt-font, 9px); }
+    .receipt .lc { width: 22mm; }
+    .receipt .cc { width: 4mm; text-align: center; }
+    .receipt .footer-txt { margin-top: 8px; text-align: center; text-transform: uppercase; white-space: pre-wrap; }
+
+    @media print {
+        body { background: white; padding: 0; }
+        .no-print { display: none !important; }
+        .receipt-wrap { padding: 0; background: white; border: none; }
+        .receipt { box-shadow: none; width: 58mm; }
+        @page { size: 58mm auto; margin: 0; }
+    }
 </style>
-</head>
+```
 
+</head>
 <body>
 
-<div class="panel">
-<h3>Header</h3>
-<textarea id="inAlamat">SPBU POLONIA\nMEDAN</textarea>
+<!-- Header -->
+
+<div class="app-header no-print">
+    <div class="icon">⛽</div>
+    <div>
+        <h1>SPBU PRO</h1>
+        <p>Sistem Cetak Struk Digital</p>
+    </div>
 </div>
 
-<div class="panel">
-<h3>Logo</h3>
-<input type="file" id="fileLogo">
-<select id="logoWidth">
-<option value="20">20mm</option>
-<option value="30" selected>30mm</option>
-<option value="40">40mm</option>
-</select>
+<!-- BT Status Bar -->
+
+<div id="btBar" class="bt-bar no-print">
+    <div class="bt-dot"></div>
+    <span id="btMsg">—</span>
 </div>
 
-<div class="panel">
-<h3>Operator</h3>
-<input id="newOp" placeholder="Tambah operator">
-<button onclick="addOp()">Tambah</button>
-<div id="opList"></div>
-<select id="opSelect"></select>
+<div class="container">
+
+```
+<!-- Panel: Config SPBU -->
+<div class="panel no-print">
+    <div class="panel-header">⚙️ Konfigurasi SPBU</div>
+    <div class="panel-body">
+        <div>
+            <label>Header / Nama & Alamat</label>
+            <textarea id="inAlamat" rows="3" oninput="render()">SPBU POLONIA&#10;11.201.106&#10;JL. Imam Bonjol, Medan Polonia&#10;Tlp. 0614156892</textarea>
+        </div>
+        <div>
+            <label>Logo</label>
+            <div class="row">
+                <select id="selLogo" onchange="applySavedLogo()" style="flex:2"></select>
+                <button class="btn btn-icon" onclick="document.getElementById('fileLogo').click()">+ Logo</button>
+                <input type="file" id="fileLogo" accept="image/*" style="display:none" onchange="handleNewLogo(event)">
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>Lebar Logo</label>
+                <select id="inLogoWidth" onchange="render()">
+                    <option value="10">10mm</option><option value="15">15mm</option>
+                    <option value="20">20mm</option><option value="25">25mm</option>
+                    <option value="30" selected>30mm</option>
+                </select>
+            </div>
+            <div>
+                <label>Margin Logo</label>
+                <select id="inLogoMargin" onchange="render()">
+                    <option value="-10">-10mm</option>
+                    <option value="-8">-8mm</option>
+                    <option value="-5">-5mm</option>
+                    <option value="-2">-2mm</option>
+                    <option value="0" selected>0mm (Normal)</option>
+                    <option value="2">+2mm</option>
+                    <option value="5">+5mm</option>
+                    <option value="8">+8mm</option>
+                </select>
+            </div>
+        </div>
+        <!-- Font Size Setting -->
+        <div>
+            <label>Ukuran Font Struk</label>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
+                <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">5</span>
+                <input 
+                    type="range" id="inFontSize" 
+                    min="5" max="15" value="9" step="1"
+                    oninput="updateFontSize()"
+                    style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;"
+                >
+                <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">15</span>
+                <span id="fontSizeLabel" style="
+                    font-size:12px; font-weight:700; font-family:var(--mono);
+                    color:var(--accent); background:var(--bg);
+                    border:1px solid var(--accent); border-radius:6px;
+                    padding:3px 8px; min-width:36px; text-align:center;
+                ">9px</span>
+            </div>
+            <!-- Mini preview font sizes -->
+            <div style="display:flex; justify-content:space-between; margin-top:6px; padding:8px 10px; background:var(--bg); border-radius:8px; border:1px solid var(--border);">
+                <span style="font-size:11px; color:var(--text2);">Preview:</span>
+                <span id="fontPreviewText" style="font-family:'Courier New',monospace; color:var(--text); font-size:9px;">
+                    SPBU POLONIA — Rp 50.000
+                </span>
+            </div>
+        </div>
+
+        <div>
+            <label>Pesan Footer</label>
+            <textarea id="inPesan" rows="4" oninput="render()">ANDA MENDAPAT SUBSIDI DARI&#10;PEMERINTAHAN SEBESAR RP.2.750&#10;(PERHITUNGAN SUBSIDI UNAUDITED&#10;ATAU ESTIMASI).GUNAKAN BBM&#10;SUBSIDI SECARA BIJAK.</textarea>
+        </div>
+    </div>
 </div>
 
-<div class="panel">
-<h3>Transaksi</h3>
-<input id="harga" type="number" value="10000">
-<input id="liter" type="number" value="5">
-<button onclick="generateTrans()">Generate No Transaksi</button>
-<input id="trans">
+<!-- Panel: Data Transaksi -->
+<div class="panel no-print">
+    <div class="panel-header">🧾 Data Transaksi</div>
+    <div class="panel-body">
+        <div class="row">
+            <div>
+                <label>Shift</label>
+                <select id="inShift" onchange="render()"><option>1</option><option>2</option></select>
+            </div>
+            <div>
+                <label>Pompa</label>
+                <select id="inPompa" onchange="render()">
+                    <script>for(let i=1;i<=12;i++) document.write(`<option>${i}</option>`)</script>
+                </select>
+            </div>
+        </div>
+        <div>
+            <label>No. Transaksi & Produk BBM</label>
+            <div class="row">
+                <input type="text" id="inTrans" maxlength="6" oninput="render()" placeholder="Auto">
+                <button class="btn btn-green" onclick="generateAllRandom()">🔄 Random</button>
+                <select id="inBBM" onchange="render()" style="flex:1.5">
+                    <option>PERTALITE</option><option>PERTAMAX</option>
+                    <option>PERTAMAX TURBO</option><option>DEXLITE</option>
+                </select>
+            </div>
+        </div>
+        <div>
+            <label>Waktu Transaksi</label>
+            <input type="datetime-local" id="inWaktu" onchange="render()">
+        </div>
+        <div class="row">
+            <div>
+                <label>Harga / Liter</label>
+                <input type="number" id="inHarga" value="10000" oninput="render()">
+            </div>
+            <div>
+                <label>Volume (L)</label>
+                <input type="number" id="inLiter" value="5" oninput="render()">
+            </div>
+        </div>
+        <div>
+            <label>Operator</label>
+            <div class="row">
+                <select id="selOperator" onchange="render()" style="flex:1"></select>
+                <button class="btn btn-blue" onclick="toggleOpManager()" id="btnOpMgr">&#9881; Kelola</button>
+            </div>
+            <div id="opManager" style="display:none; margin-top:8px; background:var(--bg); border:1px solid var(--border); border-radius:10px; overflow:hidden;">
+                <div style="padding:8px 12px; background:var(--surface2); font-size:10px; font-weight:700; color:var(--text2); letter-spacing:1px; text-transform:uppercase;">Database Operator</div>
+                <div id="opList" style="padding:8px; display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
+                <div style="padding:8px; border-top:1px solid var(--border); display:flex; gap:6px;">
+                    <input type="text" id="inNewOp" placeholder="Nama operator baru..."
+                        style="flex:1; padding:8px 10px; font-size:13px;"
+                        onkeydown="if(event.key==='Enter') addOperator()">
+                    <button class="btn btn-green" onclick="addOperator()" style="white-space:nowrap; padding:8px 12px;">+ Tambah</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <label>No. Plat</label>
+            <input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()">
+        </div>
+        <div>
+            <label>Odo Meter (KM)</label>
+            <input type="number" id="inOdo" value="25430" oninput="render()">
+            <div class="odo-grid" style="margin-top:6px">
+                <script>
+                    [5,10,15,20,25,30,40,50,100,150].forEach(v =>
+                        document.write(`<button class="btn-odo" onclick="adjOdo(${v})">+${v}</button>`)
+                    );
+                </script>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="panel">
-<h3>Font</h3>
-<input type="range" id="fontSize" min="5" max="15" value="9">
+<!-- Panel: Cetak -->
+<div class="panel no-print">
+    <div class="panel-header">🖨️ Cetak Struk</div>
+    <div class="panel-body">
+        <div class="print-section">
+
+            <!-- BT Connected badge -->
+            <div class="bt-connected" id="btConnected">
+                <div class="bt-connected-dot"></div>
+                <span id="btDeviceName">Printer terhubung</span>
+                <span style="margin-left:auto; cursor:pointer; color:#f87171" onclick="disconnectBT()">✕</span>
+            </div>
+
+            <!-- Tombol utama: Web Bluetooth -->
+            <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()">
+                <span>🔵</span>
+                <span id="btBtnLabel">CETAK VIA BLUETOOTH</span>
+            </button>
+
+            <div class="divider">ATAU</div>
+
+            <!-- Tombol Thermer -->
+            <button class="btn-print-thermer" onclick="printThermer()">
+                🟡 Cetak via Thermer App
+            </button>
+
+            <!-- Tombol Print Dialog -->
+            <button class="btn-print-dialog" onclick="window.print()">
+                🖨️ Print Dialog (Ctrl+P)
+            </button>
+
+        </div>
+
+        <!-- Info -->
+        <div style="font-size:10px; color:var(--text2); line-height:1.6; padding:8px; background:var(--bg); border-radius:8px; font-family:var(--mono);">
+            🔵 Bluetooth → Chrome only, BLE printer<br>
+            🟡 Thermer → Semua tipe BT, perlu install app<br>
+            🖨️ Dialog → Semua printer, ada print dialog
+        </div>
+    </div>
 </div>
 
+<!-- Receipt Preview -->
 <div class="panel">
-<button onclick="render()">Preview</button>
-<button onclick="window.print()">Print</button>
+    <div class="panel-header no-print">
+        👁️ Preview Struk
+        <span style="margin-left:auto; font-size:10px; color:var(--accent); font-family:var(--mono); border:1px solid var(--accent); padding:2px 7px; border-radius:10px;">58mm</span>
+    </div>
+    <div class="receipt-wrap">
+        <div class="receipt" id="struk">
+            <img id="outLogo" src="" class="logo-img">
+            <div id="outAlamat" style="font-weight:bold;text-transform:uppercase;font-size:9.5px;margin-bottom:4px;white-space:pre-wrap;"></div>
+            <div style="display:flex;justify-content:space-between;font-size:8.5px;">
+                <span>Shift: <span id="outShift"></span></span>
+                <span>No: <span id="outTrans"></span></span>
+            </div>
+            <div style="text-align:left;font-size:8.5px;margin-bottom:3px;">Waktu: <span id="outWaktu"></span></div>
+            <div class="r-line"></div>
+            <table class="r-table">
+                <tr><td class="lc">Pulau/Pompa</td><td class="cc">:</td><td id="outPompa"></td></tr>
+                <tr><td class="lc">Nama Produk</td><td class="cc">:</td><td id="outBBM"></td></tr>
+                <tr><td class="lc">Harga/Liter</td><td class="cc">:</td><td id="outHarga"></td></tr>
+                <tr><td class="lc">Volume</td><td class="cc">:</td><td id="outLiter"></td></tr>
+                <tr><td class="lc">Total Harga</td><td class="cc">:</td><td id="outTotal"></td></tr>
+                <tr><td class="lc">Operator</td><td class="cc">:</td><td id="outOperator"></td></tr>
+            </table>
+            <div class="r-line"></div>
+            <div style="display:flex;justify-content:space-between;font-weight:bold;">
+                <span>CASH</span><span id="outCash"></span>
+            </div>
+            <div class="r-line"></div>
+            <table class="r-table">
+                <tr><td class="lc">No. Plat</td><td class="cc">:</td><td id="outPlat"></td></tr>
+                <tr><td class="lc">Odo Meter</td><td class="cc">:</td><td id="outOdo"></td></tr>
+            </table>
+            <div class="r-line"></div>
+            <div id="outPesan" class="footer-txt"></div>
+        </div>
+    </div>
 </div>
+```
 
-<div class="receipt" id="struk">
-<img id="logo" class="logo-img">
-<div id="alamat"></div>
-<div class="r-line"></div>
-<div id="data"></div>
-</div>
+</div><!-- /container -->
 
 <script>
-let logoData = localStorage.getItem('logo') || '';
-let operators = JSON.parse(localStorage.getItem('ops')||'[]');
+// ─────────────────────────────────────────
+//  STATE & DB
+// ─────────────────────────────────────────
+let randomSec = "00";
+const db = {
+    get: (k,d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e){ return d; } },
+    set: (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+let operators  = db.get('spbu_ops',   ["DINDA HALIMAH"]);
+let savedLogos = db.get('spbu_logos', []);
+let btChar     = null;  // Web Bluetooth characteristic
+let btDevice   = null;  // Web Bluetooth device
 
-// LOGO
-fileLogo.onchange = e => {
- let r = new FileReader();
- r.onload = () => {
-  logoData = r.result;
-  localStorage.setItem('logo', logoData);
-  render();
- };
- r.readAsDataURL(e.target.files[0]);
+// ─────────────────────────────────────────
+//  STATUS BAR
+// ─────────────────────────────────────────
+function setStatus(msg, type='info') {
+    const bar = document.getElementById('btBar');
+    const txt = document.getElementById('btMsg');
+    bar.className = 'bt-bar no-print ' + type;
+    txt.textContent = msg;
+}
+function clearStatus() {
+    document.getElementById('btBar').className = 'bt-bar no-print';
+}
+
+// ─────────────────────────────────────────
+//  ESC/POS HELPERS
+// ─────────────────────────────────────────
+const ESC=0x1B, GS=0x1D;
+const esc = {
+    init:   ()    => [ESC,0x40],
+    center: ()    => [ESC,0x61,0x01],
+    left:   ()    => [ESC,0x61,0x00],
+    bold:   (on)  => [ESC,0x45, on?1:0],
+    feed:   (n)   => [ESC,0x64,n],
+    cut:    ()    => [GS,0x56,0x00],
 };
 
-// OPERATOR
-function addOp(){
- let val = newOp.value.trim().toUpperCase();
- if(!val) return;
- operators.push(val);
- localStorage.setItem('ops', JSON.stringify(operators));
- newOp.value='';
- loadOps();
+function toBytes(str) {
+    return Array.from(new TextEncoder().encode(str));
+}
+function line(n=32) {
+    return toBytes('-'.repeat(n)+'\n');
+}
+function row2(left, right, w=32) {
+    const pad = Math.max(1, w - left.length - right.length);
+    return toBytes(left + ' '.repeat(pad) + right + '\n');
 }
 
-function loadOps(){
- opList.innerHTML = operators.map((o,i)=>
- `<div class='op-item'>${o} <button onclick='delOp(${i})'>X</button></div>`).join('');
- opSelect.innerHTML = operators.map(o=>`<option>${o}</option>`).join('');
+// ─────────────────────────────────────────
+//  BUILD ESC/POS
+// ─────────────────────────────────────────
+function buildEscPos() {
+    const f    = n => new Intl.NumberFormat('id-ID').format(n);
+    const hrg  = parseFloat(document.getElementById('inHarga').value)||0;
+    const ltr  = parseFloat(document.getElementById('inLiter').value)||0;
+    const total= hrg*ltr;
+
+    const get  = id => document.getElementById(id);
+    const alamat   = get('inAlamat').value;
+    const shift    = get('inShift').value;
+    const trans    = get('inTrans').value;
+    const waktu    = get('outWaktu').innerText;
+    const pompa    = get('inPompa').value;
+    const bbm      = get('inBBM').value;
+    const operator = get('selOperator').value;
+    const plat     = get('inPlat').value.toUpperCase();
+    const odo      = get('inOdo').value;
+    const pesan    = get('inPesan').value;
+
+    let b = [];
+    b = b.concat(esc.init());
+
+    // Terapkan font size dari setting
+    b = b.concat(escFontSize(getFontSize()));
+
+    // Header center bold
+    b = b.concat(esc.center(), esc.bold(true));
+    alamat.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
+    b = b.concat(esc.bold(false));
+    b = b.concat(line());
+
+    // Shift & Trans
+    b = b.concat(esc.left());
+    b = b.concat(row2('Shift: '+shift, 'Trans: '+trans));
+    b = b.concat(toBytes('Waktu : '+waktu+'\n'));
+    b = b.concat(line());
+
+    // Detail
+    b = b.concat(toBytes('Pulau/Pompa : '+pompa+'\n'));
+    b = b.concat(toBytes('Nama Produk : '+bbm+'\n'));
+    b = b.concat(toBytes('Harga/Liter : Rp '+f(hrg)+'\n'));
+    b = b.concat(toBytes('Volume      : (L) '+ltr+'\n'));
+    b = b.concat(toBytes('Total Harga : Rp '+f(total)+'\n'));
+    b = b.concat(toBytes('Operator    : '+operator+'\n'));
+    b = b.concat(line());
+
+    // Cash bold
+    b = b.concat(esc.bold(true));
+    b = b.concat(row2('CASH', f(total)));
+    b = b.concat(esc.bold(false));
+    b = b.concat(line());
+
+    b = b.concat(toBytes('No. Plat    : '+plat+'\n'));
+    b = b.concat(toBytes('Odo Meter   : '+odo+'\n'));
+    b = b.concat(line());
+
+    // Footer center
+    b = b.concat(esc.center());
+    pesan.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
+
+    b = b.concat(esc.feed(4));
+    b = b.concat(esc.cut());
+
+    return new Uint8Array(b);
 }
 
-function delOp(i){
- operators.splice(i,1);
- localStorage.setItem('ops', JSON.stringify(operators));
- loadOps();
+// ─────────────────────────────────────────
+//  WEB BLUETOOTH
+// ─────────────────────────────────────────
+const BT_UUIDS = [
+    '000018f0-0000-1000-8000-00805f9b34fb',
+    '00001101-0000-1000-8000-00805f9b34fb',
+    'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
+    '49535343-fe7d-4ae5-8fa9-9fafd205e455',
+    '0000ff00-0000-1000-8000-00805f9b34fb',
+    '0000ffe0-0000-1000-8000-00805f9b34fb',
+];
+
+function showConnected(name) {
+    const el = document.getElementById('btConnected');
+    document.getElementById('btDeviceName').textContent = '🔵 ' + name;
+    el.classList.add('show');
+    document.getElementById('btBtnLabel').textContent = 'CETAK SEKARANG';
 }
 
-// TRANSAKSI
-function generateTrans(){
- trans.value = Math.floor(100000+Math.random()*900000);
+function disconnectBT() {
+    if (btDevice && btDevice.gatt.connected) btDevice.gatt.disconnect();
+    btChar  = null;
+    btDevice= null;
+    document.getElementById('btConnected').classList.remove('show');
+    document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
+    clearStatus();
 }
 
-// RENDER
-function render(){
- let h = parseFloat(harga.value)||0;
- let l = parseFloat(liter.value)||0;
- let t = h*l;
+async function getChar() {
+    // Cek koneksi lama masih aktif
+    if (btChar && btDevice && btDevice.gatt.connected) return btChar;
 
- struk.style.fontSize = fontSize.value+'px';
+    if (!navigator.bluetooth) throw new Error('Browser tidak support Web Bluetooth');
 
- if(logoData){
-  logo.src = logoData;
-  logo.style.width = logoWidth.value+'mm';
- } else logo.style.display='none';
+    setStatus('📡 Pilih printer Bluetooth...', 'info');
+    btDevice = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: BT_UUIDS
+    });
 
- alamat.innerText = inAlamat.value;
- data.innerHTML = `
- No: ${trans.value}<br>
- Harga: ${h}<br>
- Liter: ${l}<br>
- Total: ${t}<br>
- Operator: ${opSelect.value}
- `;
+    btDevice.addEventListener('gattserverdisconnected', () => {
+        btChar = null;
+        document.getElementById('btConnected').classList.remove('show');
+        document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
+        setStatus('⚠️ Printer terputus', 'warning');
+    });
+
+    setStatus('🔗 Menghubungkan ke ' + btDevice.name + '...', 'info');
+    const server   = await btDevice.gatt.connect();
+    const services = await server.getPrimaryServices();
+
+    for (const svc of services) {
+        try {
+            const chars = await svc.getCharacteristics();
+            for (const ch of chars) {
+                if (ch.properties.write || ch.properties.writeWithoutResponse) {
+                    btChar = ch;
+                    showConnected(btDevice.name || 'Printer');
+                    return ch;
+                }
+            }
+        } catch(e) {}
+    }
+    throw new Error('Characteristic write tidak ditemukan. Printer mungkin bukan BLE.');
 }
 
-loadOps();
-render();
+async function sendBytes(char, data) {
+    const CHUNK = 100;
+    for (let i=0; i<data.length; i+=CHUNK) {
+        const slice = data.slice(i, i+CHUNK);
+        if (char.properties.writeWithoutResponse) {
+            await char.writeValueWithoutResponse(slice);
+        } else {
+            await char.writeValue(slice);
+        }
+        await new Promise(r => setTimeout(r, 30));
+    }
+}
+
+async function printBluetooth() {
+    if (!navigator.bluetooth) {
+        setStatus('❌ Gunakan Chrome untuk Web Bluetooth. Coba tombol Thermer.', 'error');
+        return;
+    }
+    const btn = document.getElementById('btBtn');
+    btn.disabled = true;
+    try {
+        const ch = await getChar();
+        setStatus('🖨️ Mengirim data ke printer...', 'info');
+        await sendBytes(ch, buildEscPos());
+        setStatus('✅ Struk berhasil dicetak!', 'success');
+        setTimeout(clearStatus, 3000);
+    } catch(err) {
+        if (err.name === 'NotFoundError') {
+            clearStatus();
+        } else {
+            setStatus('❌ ' + err.message, 'error');
+            // Kalau gagal, sarankan Thermer
+            if (err.message.includes('BLE') || err.message.includes('Characteristic')) {
+                setTimeout(() => setStatus('💡 Printer mungkin Bluetooth Classic. Coba tombol Thermer.', 'warning'), 2000);
+            }
+            btChar = null; btDevice = null;
+            document.getElementById('btConnected').classList.remove('show');
+            document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
+        }
+    }
+    btn.disabled = false;
+}
+
+// ─────────────────────────────────────────
+//  THERMER INTENT
+// ─────────────────────────────────────────
+function buildThermerText() {
+    const f    = n => new Intl.NumberFormat('id-ID').format(n);
+    const hrg  = parseFloat(document.getElementById('inHarga').value)||0;
+    const ltr  = parseFloat(document.getElementById('inLiter').value)||0;
+    const total= hrg*ltr;
+    const get  = id => document.getElementById(id);
+
+    const line = '-'.repeat(32);
+    return [
+        get('inAlamat').value,
+        line,
+        `Shift: ${get('inShift').value}    Trans: ${get('inTrans').value}`,
+        `Waktu: ${get('outWaktu').innerText}`,
+        line,
+        `Pulau/Pompa : ${get('inPompa').value}`,
+        `Nama Produk : ${get('inBBM').value}`,
+        `Harga/Liter : Rp ${f(hrg)}`,
+        `Volume      : (L) ${ltr}`,
+        `Total Harga : Rp ${f(total)}`,
+        `Operator    : ${get('selOperator').value}`,
+        line,
+        `CASH             ${f(total)}`,
+        line,
+        `No. Plat    : ${get('inPlat').value.toUpperCase()}`,
+        `Odo Meter   : ${get('inOdo').value}`,
+        line,
+        get('inPesan').value,
+    ].join('\n');
+}
+
+function printThermer() {
+    const text = encodeURIComponent(buildThermerText());
+    // Coba buka Thermer via intent
+    const intentUrl = `intent://print?text=${text}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
+    // Fallback: share text
+    const webUrl = `https://www.thermerapp.com/?text=${text}`;
+
+    // Android: coba intent dulu
+    const ua = navigator.userAgent;
+    if (/android/i.test(ua)) {
+        window.location.href = intentUrl;
+        // Kalau Thermer tidak ada, arahkan ke Play Store setelah 2 detik
+        setTimeout(() => {
+            setStatus('💡 Install Thermer dari Play Store untuk print via Bluetooth Classic', 'warning');
+        }, 2000);
+    } else {
+        // Desktop: print dialog biasa
+        window.print();
+    }
+}
+
+// ─────────────────────────────────────────
+//  FONT SIZE
+// ─────────────────────────────────────────
+function updateFontSize() {
+    const val = parseInt(document.getElementById('inFontSize').value);
+    // Update label
+    document.getElementById('fontSizeLabel').textContent = val + 'px';
+    // Update mini preview
+    const prev = document.getElementById('fontPreviewText');
+    prev.style.fontSize = val + 'px';
+    // Update CSS variable di receipt
+    document.getElementById('struk').style.setProperty('--receipt-font', val + 'px');
+    // Simpan ke localStorage
+    db.set('spbu_fontsize', val);
+    render();
+}
+
+function getFontSize() {
+    return parseInt(document.getElementById('inFontSize').value) || 9;
+}
+
+// Map px ke ESC/POS font size multiplier
+// ESC/POS font size: GS ! n  (n = bits: 0=1x, 16=2x height, 1=2x width, 17=2x both)
+function escFontSize(px) {
+    // px 5-7  = normal (1x)
+    // px 8-11 = normal (1x) — default printer font sudah cukup
+    // px 12-15 = double (2x)
+    if (px <= 11) return [0x1D, 0x21, 0x00]; // normal
+    else           return [0x1D, 0x21, 0x11]; // 2x width & height
+}
+
+// ─────────────────────────────────────────
+//  FORM HELPERS
+// ─────────────────────────────────────────
+function adjOdo(val) {
+    const el = document.getElementById('inOdo');
+    el.value = parseInt(el.value||0)+val;
+    render();
+}
+
+function generateAllRandom() {
+    document.getElementById('inTrans').value = Math.floor(100000+Math.random()*900000);
+    randomSec = Math.floor(Math.random()*60).toString().padStart(2,'0');
+    render();
+}
+
+function handleNewLogo(e) {
+    const reader = new FileReader();
+    reader.onload = function() {
+        savedLogos.push({ name: e.target.files[0].name.substring(0,8), data: reader.result });
+        db.set('spbu_logos', savedLogos);
+        updateLogoList();
+        document.getElementById('selLogo').value = reader.result;
+        applySavedLogo();
+    };
+    reader.readAsDataURL(e.target.files[0]);
+}
+
+function updateLogoList() {
+    document.getElementById('selLogo').innerHTML =
+        savedLogos.map(l=>`<option value="${l.data}">${l.name}</option>`).join('') +
+        `<option value="">— Tanpa Logo —</option>`;
+}
+
+function applySavedLogo() {
+    const data = document.getElementById('selLogo').value;
+    document.getElementById('outLogo').src = data || '';
+    render();
+}
+
+function toggleOpManager() {
+    const mgr = document.getElementById('opManager');
+    const btn = document.getElementById('btnOpMgr');
+    const isOpen = mgr.style.display !== 'none';
+    mgr.style.display = isOpen ? 'none' : 'block';
+    btn.textContent = isOpen ? '⚙️ Kelola' : '✕ Tutup';
+    if (!isOpen) renderOpList();
+}
+
+function renderOpList() {
+    const list = document.getElementById('opList');
+    if (operators.length === 0) {
+        list.innerHTML = '<div style="padding:8px; color:var(--text2); font-size:12px; text-align:center;">Belum ada operator</div>';
+        return;
+    }
+    list.innerHTML = operators.map((op, i) => `
+        <div style="display:flex; align-items:center; gap:6px; padding:6px 8px; background:var(--surface); border-radius:7px; border:1px solid var(--border);">
+            <span style="font-size:12px; color:var(--text); flex:1; font-weight:500;">${op}</span>
+            <button onclick="selectOperator('${op}')" style="
+                background:var(--surface2); border:1px solid var(--border); color:var(--accent);
+                padding:4px 10px; border-radius:5px; font-size:11px; cursor:pointer;">
+                Pilih
+            </button>
+            <button onclick="deleteOperator(${i})" style="
+                background:transparent; border:none; color:#f87171;
+                padding:4px 8px; font-size:14px; cursor:pointer;">
+                ✕
+            </button>
+        </div>
+    `).join('');
+}
+
+function selectOperator(name) {
+    document.getElementById('selOperator').value = name;
+    render();
+    toggleOpManager();
+}
+
+function addOperator() {
+    const inp = document.getElementById('inNewOp');
+    const val = inp ? inp.value.trim().toUpperCase() : null;
+    if (!val) return;
+    if (operators.includes(val)) {
+        inp.style.borderColor = 'var(--red)';
+        setTimeout(() => inp.style.borderColor = '', 1500);
+        return;
+    }
+    operators.push(val);
+    db.set('spbu_ops', operators);
+    inp.value = '';
+    inp.style.borderColor = 'var(--green)';
+    setTimeout(() => inp.style.borderColor = '', 1000);
+    updateOpList();
+    renderOpList();
+    // Auto-select operator yang baru ditambahkan
+    document.getElementById('selOperator').value = val;
+    render();
+}
+
+function deleteOperator(idx) {
+    const name = operators[idx];
+    if (!confirm('Hapus operator "' + name + '"?')) return;
+    operators.splice(idx, 1);
+    db.set('spbu_ops', operators);
+    updateOpList();
+    renderOpList();
+    render();
+}
+
+function updateOpList() {
+    const sel = document.getElementById('selOperator');
+    const current = sel.value;
+    sel.innerHTML = operators.map(o=>`<option value="${o}">${o}</option>`).join('');
+    // Pertahankan pilihan jika masih ada
+    if (operators.includes(current)) sel.value = current;
+}
+
+// ─────────────────────────────────────────
+//  RENDER PREVIEW
+// ─────────────────────────────────────────
+function render() {
+    const get = id => document.getElementById(id);
+
+    get('outLogo').style.width        = get('inLogoWidth').value + 'mm';
+    get('outLogo').style.marginBottom = get('inLogoMargin').value + 'mm';
+    get('outAlamat').innerText        = get('inAlamat').value;
+    get('outPesan').innerText         = get('inPesan').value;
+    get('outShift').innerText         = get('inShift').value;
+    get('outTrans').innerText         = get('inTrans').value;
+
+    const wt = get('inWaktu').value;
+    if (wt) {
+        const d = new Date(wt);
+        get('outWaktu').innerText =
+            d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear()+
+            ' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')+':'+randomSec;
+    }
+
+    get('outPompa').innerText    = get('inPompa').value;
+    get('outBBM').innerText      = get('inBBM').value;
+    get('outOperator').innerText = get('selOperator').value;
+    get('outPlat').innerText     = get('inPlat').value.toUpperCase();
+    get('outOdo').innerText      = get('inOdo').value;
+
+    const hrg   = parseFloat(get('inHarga').value)||0;
+    const ltr   = parseFloat(get('inLiter').value)||0;
+    const total = hrg*ltr;
+    const f     = n => new Intl.NumberFormat('id-ID').format(n);
+
+    get('outHarga').innerText = 'Rp '+f(hrg);
+    get('outLiter').innerText = '(L) '+ltr;
+    get('outTotal').innerText = 'Rp '+f(total);
+    get('outCash').innerText  = f(total);
+}
+
+// ─────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────
+window.onload = function() {
+    updateLogoList();
+    if (savedLogos.length > 0) applySavedLogo();
+    updateOpList();
+    generateAllRandom();
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
+
+    // Restore font size
+    const savedFont = db.get('spbu_fontsize', 9);
+    const slider = document.getElementById('inFontSize');
+    slider.value = savedFont;
+    updateFontSize();
+
+    render();
+
+    // Deteksi browser
+    if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent)) {
+        if (/samsungbrowser/i.test(navigator.userAgent)) {
+            setStatus('⚠️ Samsung Browser: Web Bluetooth tidak support. Gunakan tombol Thermer.', 'warning');
+        }
+    }
+};
 </script>
 
 </body>
