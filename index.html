@@ -1,331 +1,325 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPBU Pro - Cetak Struk</title>
     <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #22263a;
+            --border: #2e3352;
+            --accent: #4f8ef7;
+            --accent2: #7c3aed;
+            --green: #10b981;
+            --yellow: #f59e0b;
+            --red: #ef4444;
+            --text: #e2e8f0;
+            --text2: #8892a4;
+            --mono: 'Courier New', 'Lucida Console', monospace;
+            --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
 
-```
-    :root {
-        --bg: #0f1117;
-        --surface: #1a1d27;
-        --surface2: #22263a;
-        --border: #2e3352;
-        --accent: #4f8ef7;
-        --accent2: #7c3aed;
-        --green: #10b981;
-        --yellow: #f59e0b;
-        --red: #ef4444;
-        --text: #e2e8f0;
-        --text2: #8892a4;
-        --mono: 'Courier New', 'Lucida Console', monospace;
-        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    body {
-        font-family: var(--sans);
-        background: var(--bg);
-        color: var(--text);
-        min-height: 100vh;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+        /* ── Header ── */
+        .app-header {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 14px 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+        .app-header .icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        .app-header h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
+        .app-header p { font-size: 11px; color: var(--text2); margin-top: 1px; }
 
-    /* ── Header ── */
-    .app-header {
-        width: 100%;
-        max-width: 500px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 16px;
-        padding: 14px 18px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-    }
-    .app-header .icon {
-        width: 36px; height: 36px;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 18px;
-    }
-    .app-header h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
-    .app-header p { font-size: 11px; color: var(--text2); margin-top: 1px; }
+        /* ── BT Status Bar ── */
+        .bt-bar {
+            width: 100%; max-width: 500px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-family: var(--mono);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+            display: none;
+        }
+        .bt-bar.info    { display:flex; background:#1e2d4a; border-color:#2d4a7a; color:#7ab3f5; }
+        .bt-bar.success { display:flex; background:#0d2b20; border-color:#1a5c3a; color:#34d399; }
+        .bt-bar.error   { display:flex; background:#2b1010; border-color:#5c1a1a; color:#f87171; }
+        .bt-bar.warning { display:flex; background:#2b2010; border-color:#5c3a1a; color:#fbbf24; }
+        .bt-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+        .bt-bar.info .bt-dot    { background:#4f8ef7; animation: pulse 1.5s infinite; }
+        .bt-bar.success .bt-dot { background:#10b981; }
+        .bt-bar.error .bt-dot   { background:#ef4444; }
+        .bt-bar.warning .bt-dot { background:#f59e0b; }
 
-    /* ── BT Status Bar ── */
-    .bt-bar {
-        width: 100%; max-width: 500px;
-        padding: 10px 14px;
-        border-radius: 10px;
-        font-size: 12px;
-        font-family: var(--mono);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 10px;
-        border: 1px solid transparent;
-        transition: all 0.3s;
-        display: none;
-    }
-    .bt-bar.info    { display:flex; background:#1e2d4a; border-color:#2d4a7a; color:#7ab3f5; }
-    .bt-bar.success { display:flex; background:#0d2b20; border-color:#1a5c3a; color:#34d399; }
-    .bt-bar.error   { display:flex; background:#2b1010; border-color:#5c1a1a; color:#f87171; }
-    .bt-bar.warning { display:flex; background:#2b2010; border-color:#5c3a1a; color:#fbbf24; }
-    .bt-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-    .bt-bar.info .bt-dot    { background:#4f8ef7; animation: pulse 1.5s infinite; }
-    .bt-bar.success .bt-dot { background:#10b981; }
-    .bt-bar.error .bt-dot   { background:#ef4444; }
-    .bt-bar.warning .bt-dot { background:#f59e0b; }
+        @keyframes pulse {
+            0%,100% { opacity:1; } 50% { opacity:0.3; }
+        }
 
-    @keyframes pulse {
-        0%,100% { opacity:1; } 50% { opacity:0.3; }
-    }
+        /* ── Container ── */
+        .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
 
-    /* ── Container ── */
-    .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
+        /* ── Panel ── */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 12px 16px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
 
-    /* ── Panel ── */
-    .panel {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        overflow: hidden;
-    }
-    .panel-header {
-        padding: 12px 16px;
-        background: var(--surface2);
-        border-bottom: 1px solid var(--border);
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        color: var(--text2);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+        /* ── Form Elements ── */
+        label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: block;
+            margin-bottom: 5px;
+        }
 
-    /* ── Form Elements ── */
-    label {
-        font-size: 10px;
-        font-weight: 600;
-        color: var(--text2);
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        display: block;
-        margin-bottom: 5px;
-    }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: var(--sans);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent);
+        }
+        select option { background: var(--surface); }
+        textarea { resize: vertical; line-height: 1.5; }
 
-    input, select, textarea {
-        width: 100%;
-        padding: 10px 12px;
-        background: var(--bg);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        color: var(--text);
-        font-size: 13px;
-        font-family: var(--sans);
-        outline: none;
-        transition: border-color 0.2s;
-    }
-    input:focus, select:focus, textarea:focus {
-        border-color: var(--accent);
-    }
-    select option { background: var(--surface); }
-    textarea { resize: vertical; line-height: 1.5; }
+        .row { display: flex; gap: 8px; }
+        .row > * { flex: 1; }
 
-    .row { display: flex; gap: 8px; }
-    .row > * { flex: 1; }
+        /* ── ODO Shortcuts ── */
+        .odo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+        }
+        .btn-odo {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            padding: 8px 2px;
+            border-radius: 7px;
+            font-size: 10px;
+            font-weight: 600;
+            font-family: var(--mono);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-odo:active { background: var(--accent); color: white; transform: scale(0.95); }
 
-    /* ── ODO Shortcuts ── */
-    .odo-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 5px;
-    }
-    .btn-odo {
-        background: var(--surface2);
-        border: 1px solid var(--border);
-        color: var(--accent);
-        padding: 8px 2px;
-        border-radius: 7px;
-        font-size: 10px;
-        font-weight: 600;
-        font-family: var(--mono);
-        cursor: pointer;
-        transition: all 0.15s;
-    }
-    .btn-odo:active { background: var(--accent); color: white; transform: scale(0.95); }
+        /* ── Buttons ── */
+        .btn {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.15s;
+            font-family: var(--sans);
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; }
+        .btn-green { background: var(--surface2); border: 1px solid #1a5c3a; color: var(--green); }
+        .btn-blue  { background: var(--surface2); border: 1px solid #1e2d4a; color: var(--accent); }
 
-    /* ── Buttons ── */
-    .btn {
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        transition: all 0.15s;
-        font-family: var(--sans);
-    }
-    .btn:active { transform: scale(0.97); }
-    .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; }
-    .btn-green { background: var(--surface2); border: 1px solid #1a5c3a; color: var(--green); }
-    .btn-blue  { background: var(--surface2); border: 1px solid #1e2d4a; color: var(--accent); }
+        /* ── Print Buttons ── */
+        .print-section { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
 
-    /* ── Print Buttons ── */
-    .print-section { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+        .btn-print-bt {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #1e3a8a, #2d1b69);
+            border: 1px solid #3b5bdb;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: var(--sans);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .btn-print-bt:hover { background: linear-gradient(135deg, #2545a8, #3b2180); }
+        .btn-print-bt:active { transform: scale(0.98); }
+        .btn-print-bt:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    .btn-print-bt {
-        width: 100%;
-        padding: 15px;
-        background: linear-gradient(135deg, #1e3a8a, #2d1b69);
-        border: 1px solid #3b5bdb;
-        border-radius: 12px;
-        color: white;
-        font-size: 15px;
-        font-weight: 700;
-        font-family: var(--sans);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        transition: all 0.2s;
-        letter-spacing: 0.3px;
-    }
-    .btn-print-bt:hover { background: linear-gradient(135deg, #2545a8, #3b2180); }
-    .btn-print-bt:active { transform: scale(0.98); }
-    .btn-print-bt:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-print-thermer {
+            width: 100%;
+            padding: 13px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text2);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--sans);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-print-thermer:hover { border-color: var(--yellow); color: var(--yellow); }
+        .btn-print-thermer:active { transform: scale(0.98); }
 
-    .btn-print-thermer {
-        width: 100%;
-        padding: 13px;
-        background: var(--surface2);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        color: var(--text2);
-        font-size: 13px;
-        font-weight: 600;
-        font-family: var(--sans);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.2s;
-    }
-    .btn-print-thermer:hover { border-color: var(--yellow); color: var(--yellow); }
-    .btn-print-thermer:active { transform: scale(0.98); }
+        .btn-print-dialog {
+            width: 100%;
+            padding: 11px;
+            background: transparent;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            color: var(--text2);
+            font-size: 12px;
+            font-family: var(--sans);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-print-dialog:hover { border-color: var(--text2); color: var(--text); }
 
-    .btn-print-dialog {
-        width: 100%;
-        padding: 11px;
-        background: transparent;
-        border: 1px dashed var(--border);
-        border-radius: 10px;
-        color: var(--text2);
-        font-size: 12px;
-        font-family: var(--sans);
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .btn-print-dialog:hover { border-color: var(--text2); color: var(--text); }
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text2);
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+        .divider::before, .divider::after {
+            content:'';
+            flex:1;
+            height:1px;
+            background: var(--border);
+        }
 
-    .divider {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--text2);
-        font-size: 10px;
-        letter-spacing: 1px;
-    }
-    .divider::before, .divider::after {
-        content:'';
-        flex:1;
-        height:1px;
-        background: var(--border);
-    }
+        /* ── BT Connected Badge ── */
+        .bt-connected {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--green);
+            font-family: var(--mono);
+            padding: 6px 10px;
+            background: #0d2b20;
+            border: 1px solid #1a5c3a;
+            border-radius: 20px;
+            margin-bottom: 4px;
+        }
+        .bt-connected.show { display: flex; }
+        .bt-connected-dot { width:6px; height:6px; border-radius:50%; background:var(--green); }
 
-    /* ── BT Connected Badge ── */
-    .bt-connected {
-        display: none;
-        align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        color: var(--green);
-        font-family: var(--mono);
-        padding: 6px 10px;
-        background: #0d2b20;
-        border: 1px solid #1a5c3a;
-        border-radius: 20px;
-        margin-bottom: 4px;
-    }
-    .bt-connected.show { display: flex; }
-    .bt-connected-dot { width:6px; height:6px; border-radius:50%; background:var(--green); }
+        /* ── Receipt Preview ── */
+        .receipt-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 16px;
+            background: #13151f;
+            border-top: 1px solid var(--border);
+            overflow: hidden;
+        }
 
-    /* ── Receipt Preview ── */
-    .receipt-wrap {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        padding: 20px 16px;
-        background: #13151f;
-        border-top: 1px solid var(--border);
-        overflow: hidden;
-    }
+        .receipt {
+            background: #fff;
+            width: 58mm;
+            min-width: 58mm;
+            max-width: 58mm;
+            padding: 6mm 3mm;
+            text-align: center;
+            font-size: var(--receipt-font, 9px);
+            color: #000;
+            line-height: 1.4;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            overflow: hidden;
+            zoom: 1;
+        }
+        .receipt .logo-img { display: block; margin: 0 auto; }
+        .receipt .r-line { border-top: 1px dashed #000; margin: 4px 0; }
+        .receipt .r-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .receipt .r-table td { padding: 1px 0; vertical-align: top; text-align: left; font-size: var(--receipt-font, 9px); }
+        .receipt .lc { width: 22mm; }
+        .receipt .cc { width: 4mm; text-align: center; }
+        .receipt .footer-txt { margin-top: 8px; text-align: center; text-transform: uppercase; white-space: pre-wrap; }
 
-    .receipt {
-        background: #fff;
-        width: 58mm;
-        min-width: 58mm;
-        max-width: 58mm;
-        padding: 6mm 3mm;
-        text-align: center;
-        font-size: var(--receipt-font, 9px);
-        color: #000;
-        line-height: 1.4;
-        font-family: 'Courier New', Courier, monospace;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-        overflow: hidden;
-        zoom: 1;
-    }
-    .receipt .logo-img { display: block; margin: 0 auto; }
-    .receipt .r-line { border-top: 1px dashed #000; margin: 4px 0; }
-    .receipt .r-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .receipt .r-table td { padding: 1px 0; vertical-align: top; text-align: left; font-size: var(--receipt-font, 9px); }
-    .receipt .lc { width: 22mm; }
-    .receipt .cc { width: 4mm; text-align: center; }
-    .receipt .footer-txt { margin-top: 8px; text-align: center; text-transform: uppercase; white-space: pre-wrap; }
-
-    @media print {
-        body { background: white; padding: 0; }
-        .no-print { display: none !important; }
-        .receipt-wrap { padding: 0; background: white; border: none; }
-        .receipt { box-shadow: none; width: 58mm; }
-        @page { size: 58mm auto; margin: 0; }
-    }
-</style>
-```
-
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+            .receipt-wrap { padding: 0; background: white; border: none; }
+            .receipt { box-shadow: none; width: 58mm; }
+            @page { size: 58mm auto; margin: 0; }
+        }
+    </style>
 </head>
 <body>
 
 <!-- Header -->
-
 <div class="app-header no-print">
     <div class="icon">⛽</div>
     <div>
@@ -335,7 +329,6 @@
 </div>
 
 <!-- BT Status Bar -->
-
 <div id="btBar" class="bt-bar no-print">
     <div class="bt-dot"></div>
     <span id="btMsg">—</span>
@@ -343,238 +336,236 @@
 
 <div class="container">
 
-```
-<!-- Panel: Config SPBU -->
-<div class="panel no-print">
-    <div class="panel-header">⚙️ Konfigurasi SPBU</div>
-    <div class="panel-body">
-        <div>
-            <label>Header / Nama & Alamat</label>
-            <textarea id="inAlamat" rows="3" oninput="render()">SPBU POLONIA&#10;11.201.106&#10;JL. Imam Bonjol, Medan Polonia&#10;Tlp. 0614156892</textarea>
-        </div>
-        <div>
-            <label>Logo</label>
+    <!-- Panel: Config SPBU -->
+    <div class="panel no-print">
+        <div class="panel-header">⚙️ Konfigurasi SPBU</div>
+        <div class="panel-body">
+            <div>
+                <label>Header / Nama & Alamat</label>
+                <textarea id="inAlamat" rows="3" oninput="render()">SPBU POLONIA&#10;11.201.106&#10;JL. Imam Bonjol, Medan Polonia&#10;Tlp. 0614156892</textarea>
+            </div>
+            <div>
+                <label>Logo</label>
+                <div class="row">
+                    <select id="selLogo" onchange="applySavedLogo()" style="flex:2"></select>
+                    <button class="btn btn-icon" onclick="document.getElementById('fileLogo').click()">+ Logo</button>
+                    <input type="file" id="fileLogo" accept="image/*" style="display:none" onchange="handleNewLogo(event)">
+                </div>
+            </div>
             <div class="row">
-                <select id="selLogo" onchange="applySavedLogo()" style="flex:2"></select>
-                <button class="btn btn-icon" onclick="document.getElementById('fileLogo').click()">+ Logo</button>
-                <input type="file" id="fileLogo" accept="image/*" style="display:none" onchange="handleNewLogo(event)">
+                <div>
+                    <label>Lebar Logo</label>
+                    <select id="inLogoWidth" onchange="render()">
+                        <option value="10">10mm</option><option value="15">15mm</option>
+                        <option value="20">20mm</option><option value="25">25mm</option>
+                        <option value="30" selected>30mm</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Margin Logo</label>
+                    <select id="inLogoMargin" onchange="render()">
+                        <option value="-10">-10mm</option>
+                        <option value="-8">-8mm</option>
+                        <option value="-5">-5mm</option>
+                        <option value="-2">-2mm</option>
+                        <option value="0" selected>0mm (Normal)</option>
+                        <option value="2">+2mm</option>
+                        <option value="5">+5mm</option>
+                        <option value="8">+8mm</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="row">
+            <!-- Font Size Setting -->
             <div>
-                <label>Lebar Logo</label>
-                <select id="inLogoWidth" onchange="render()">
-                    <option value="10">10mm</option><option value="15">15mm</option>
-                    <option value="20">20mm</option><option value="25">25mm</option>
-                    <option value="30" selected>30mm</option>
-                </select>
+                <label>Ukuran Font Struk</label>
+                <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
+                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">5</span>
+                    <input 
+                        type="range" id="inFontSize" 
+                        min="5" max="15" value="9" step="1"
+                        oninput="updateFontSize()"
+                        style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;"
+                    >
+                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">15</span>
+                    <span id="fontSizeLabel" style="
+                        font-size:12px; font-weight:700; font-family:var(--mono);
+                        color:var(--accent); background:var(--bg);
+                        border:1px solid var(--accent); border-radius:6px;
+                        padding:3px 8px; min-width:36px; text-align:center;
+                    ">9px</span>
+                </div>
+                <!-- Mini preview font sizes -->
+                <div style="display:flex; justify-content:space-between; margin-top:6px; padding:8px 10px; background:var(--bg); border-radius:8px; border:1px solid var(--border);">
+                    <span style="font-size:11px; color:var(--text2);">Preview:</span>
+                    <span id="fontPreviewText" style="font-family:'Courier New',monospace; color:var(--text); font-size:9px;">
+                        SPBU POLONIA — Rp 50.000
+                    </span>
+                </div>
             </div>
-            <div>
-                <label>Margin Logo</label>
-                <select id="inLogoMargin" onchange="render()">
-                    <option value="-10">-10mm</option>
-                    <option value="-8">-8mm</option>
-                    <option value="-5">-5mm</option>
-                    <option value="-2">-2mm</option>
-                    <option value="0" selected>0mm (Normal)</option>
-                    <option value="2">+2mm</option>
-                    <option value="5">+5mm</option>
-                    <option value="8">+8mm</option>
-                </select>
-            </div>
-        </div>
-        <!-- Font Size Setting -->
-        <div>
-            <label>Ukuran Font Struk</label>
-            <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
-                <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">5</span>
-                <input 
-                    type="range" id="inFontSize" 
-                    min="5" max="15" value="9" step="1"
-                    oninput="updateFontSize()"
-                    style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;"
-                >
-                <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">15</span>
-                <span id="fontSizeLabel" style="
-                    font-size:12px; font-weight:700; font-family:var(--mono);
-                    color:var(--accent); background:var(--bg);
-                    border:1px solid var(--accent); border-radius:6px;
-                    padding:3px 8px; min-width:36px; text-align:center;
-                ">9px</span>
-            </div>
-            <!-- Mini preview font sizes -->
-            <div style="display:flex; justify-content:space-between; margin-top:6px; padding:8px 10px; background:var(--bg); border-radius:8px; border:1px solid var(--border);">
-                <span style="font-size:11px; color:var(--text2);">Preview:</span>
-                <span id="fontPreviewText" style="font-family:'Courier New',monospace; color:var(--text); font-size:9px;">
-                    SPBU POLONIA — Rp 50.000
-                </span>
-            </div>
-        </div>
 
-        <div>
-            <label>Pesan Footer</label>
-            <textarea id="inPesan" rows="4" oninput="render()">ANDA MENDAPAT SUBSIDI DARI&#10;PEMERINTAHAN SEBESAR RP.2.750&#10;(PERHITUNGAN SUBSIDI UNAUDITED&#10;ATAU ESTIMASI).GUNAKAN BBM&#10;SUBSIDI SECARA BIJAK.</textarea>
+            <div>
+                <label>Pesan Footer</label>
+                <textarea id="inPesan" rows="4" oninput="render()">ANDA MENDAPAT SUBSIDI DARI&#10;PEMERINTAHAN SEBESAR RP.2.750&#10;(PERHITUNGAN SUBSIDI UNAUDITED&#10;ATAU ESTIMASI).GUNAKAN BBM&#10;SUBSIDI SECARA BIJAK.</textarea>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Panel: Data Transaksi -->
-<div class="panel no-print">
-    <div class="panel-header">🧾 Data Transaksi</div>
-    <div class="panel-body">
-        <div class="row">
-            <div>
-                <label>Shift</label>
-                <select id="inShift" onchange="render()"><option>1</option><option>2</option></select>
-            </div>
-            <div>
-                <label>Pompa</label>
-                <select id="inPompa" onchange="render()">
-                    <script>for(let i=1;i<=12;i++) document.write(`<option>${i}</option>`)</script>
-                </select>
-            </div>
-        </div>
-        <div>
-            <label>No. Transaksi & Produk BBM</label>
+    <!-- Panel: Data Transaksi -->
+    <div class="panel no-print">
+        <div class="panel-header">🧾 Data Transaksi</div>
+        <div class="panel-body">
             <div class="row">
-                <input type="text" id="inTrans" maxlength="6" oninput="render()" placeholder="Auto">
-                <button class="btn btn-green" onclick="generateAllRandom()">🔄 Random</button>
-                <select id="inBBM" onchange="render()" style="flex:1.5">
-                    <option>PERTALITE</option><option>PERTAMAX</option>
-                    <option>PERTAMAX TURBO</option><option>DEXLITE</option>
-                </select>
-            </div>
-        </div>
-        <div>
-            <label>Waktu Transaksi</label>
-            <input type="datetime-local" id="inWaktu" onchange="render()">
-        </div>
-        <div class="row">
-            <div>
-                <label>Harga / Liter</label>
-                <input type="number" id="inHarga" value="10000" oninput="render()">
+                <div>
+                    <label>Shift</label>
+                    <select id="inShift" onchange="render()"><option>1</option><option>2</option></select>
+                </div>
+                <div>
+                    <label>Pompa</label>
+                    <select id="inPompa" onchange="render()">
+                        <script>for(let i=1;i<=12;i++) document.write(`<option>${i}</option>`)</script>
+                    </select>
+                </div>
             </div>
             <div>
-                <label>Volume (L)</label>
-                <input type="number" id="inLiter" value="5" oninput="render()">
+                <label>No. Transaksi & Produk BBM</label>
+                <div class="row">
+                    <input type="text" id="inTrans" maxlength="6" oninput="render()" placeholder="Auto">
+                    <button class="btn btn-green" onclick="generateAllRandom()">🔄 Random</button>
+                    <select id="inBBM" onchange="render()" style="flex:1.5">
+                        <option>PERTALITE</option><option>PERTAMAX</option>
+                        <option>PERTAMAX TURBO</option><option>DEXLITE</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div>
-            <label>Operator</label>
+            <div>
+                <label>Waktu Transaksi</label>
+                <input type="datetime-local" id="inWaktu" onchange="render()">
+            </div>
             <div class="row">
-                <select id="selOperator" onchange="render()" style="flex:1"></select>
-                <button class="btn btn-blue" onclick="toggleOpManager()" id="btnOpMgr">&#9881; Kelola</button>
+                <div>
+                    <label>Harga / Liter</label>
+                    <input type="number" id="inHarga" value="10000" oninput="render()">
+                </div>
+                <div>
+                    <label>Volume (L)</label>
+                    <input type="number" id="inLiter" value="5" oninput="render()">
+                </div>
             </div>
-            <div id="opManager" style="display:none; margin-top:8px; background:var(--bg); border:1px solid var(--border); border-radius:10px; overflow:hidden;">
-                <div style="padding:8px 12px; background:var(--surface2); font-size:10px; font-weight:700; color:var(--text2); letter-spacing:1px; text-transform:uppercase;">Database Operator</div>
-                <div id="opList" style="padding:8px; display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
-                <div style="padding:8px; border-top:1px solid var(--border); display:flex; gap:6px;">
-                    <input type="text" id="inNewOp" placeholder="Nama operator baru..."
-                        style="flex:1; padding:8px 10px; font-size:13px;"
-                        onkeydown="if(event.key==='Enter') addOperator()">
-                    <button class="btn btn-green" onclick="addOperator()" style="white-space:nowrap; padding:8px 12px;">+ Tambah</button>
+            <div>
+                <label>Operator</label>
+                <div class="row">
+                    <select id="selOperator" onchange="render()" style="flex:1"></select>
+                    <button class="btn btn-blue" onclick="toggleOpManager()" id="btnOpMgr">&#9881; Kelola</button>
+                </div>
+                <div id="opManager" style="display:none; margin-top:8px; background:var(--bg); border:1px solid var(--border); border-radius:10px; overflow:hidden;">
+                    <div style="padding:8px 12px; background:var(--surface2); font-size:10px; font-weight:700; color:var(--text2); letter-spacing:1px; text-transform:uppercase;">Database Operator</div>
+                    <div id="opList" style="padding:8px; display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
+                    <div style="padding:8px; border-top:1px solid var(--border); display:flex; gap:6px;">
+                        <input type="text" id="inNewOp" placeholder="Nama operator baru..."
+                            style="flex:1; padding:8px 10px; font-size:13px;"
+                            onkeydown="if(event.key==='Enter') addOperator()">
+                        <button class="btn btn-green" onclick="addOperator()" style="white-space:nowrap; padding:8px 12px;">+ Tambah</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label>No. Plat</label>
+                <input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()">
+            </div>
+            <div>
+                <label>Odo Meter (KM)</label>
+                <input type="number" id="inOdo" value="25430" oninput="render()">
+                <div class="odo-grid" style="margin-top:6px">
+                    <script>
+                        [5,10,15,20,25,30,40,50,100,150].forEach(v =>
+                            document.write(`<button class="btn-odo" onclick="adjOdo(${v})">+${v}</button>`)
+                        );
+                    </script>
                 </div>
             </div>
         </div>
-        <div>
-            <label>No. Plat</label>
-            <input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()">
-        </div>
-        <div>
-            <label>Odo Meter (KM)</label>
-            <input type="number" id="inOdo" value="25430" oninput="render()">
-            <div class="odo-grid" style="margin-top:6px">
-                <script>
-                    [5,10,15,20,25,30,40,50,100,150].forEach(v =>
-                        document.write(`<button class="btn-odo" onclick="adjOdo(${v})">+${v}</button>`)
-                    );
-                </script>
+    </div>
+
+    <!-- Panel: Cetak -->
+    <div class="panel no-print">
+        <div class="panel-header">🖨️ Cetak Struk</div>
+        <div class="panel-body">
+            <div class="print-section">
+
+                <!-- BT Connected badge -->
+                <div class="bt-connected" id="btConnected">
+                    <div class="bt-connected-dot"></div>
+                    <span id="btDeviceName">Printer terhubung</span>
+                    <span style="margin-left:auto; cursor:pointer; color:#f87171" onclick="disconnectBT()">✕</span>
+                </div>
+
+                <!-- Tombol utama: Web Bluetooth -->
+                <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()">
+                    <span>🔵</span>
+                    <span id="btBtnLabel">CETAK VIA BLUETOOTH</span>
+                </button>
+
+                <div class="divider">ATAU</div>
+
+                <!-- Tombol Thermer -->
+                <button class="btn-print-thermer" onclick="printThermer()">
+                    🟡 Cetak via Thermer App
+                </button>
+
+                <!-- Tombol Print Dialog -->
+                <button class="btn-print-dialog" onclick="window.print()">
+                    🖨️ Print Dialog (Ctrl+P)
+                </button>
+
+            </div>
+
+            <!-- Info -->
+            <div style="font-size:10px; color:var(--text2); line-height:1.6; padding:8px; background:var(--bg); border-radius:8px; font-family:var(--mono);">
+                🔵 Bluetooth → Chrome only, BLE printer<br>
+                🟡 Thermer → Semua tipe BT, perlu install app<br>
+                🖨️ Dialog → Semua printer, ada print dialog
             </div>
         </div>
     </div>
-</div>
 
-<!-- Panel: Cetak -->
-<div class="panel no-print">
-    <div class="panel-header">🖨️ Cetak Struk</div>
-    <div class="panel-body">
-        <div class="print-section">
-
-            <!-- BT Connected badge -->
-            <div class="bt-connected" id="btConnected">
-                <div class="bt-connected-dot"></div>
-                <span id="btDeviceName">Printer terhubung</span>
-                <span style="margin-left:auto; cursor:pointer; color:#f87171" onclick="disconnectBT()">✕</span>
-            </div>
-
-            <!-- Tombol utama: Web Bluetooth -->
-            <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()">
-                <span>🔵</span>
-                <span id="btBtnLabel">CETAK VIA BLUETOOTH</span>
-            </button>
-
-            <div class="divider">ATAU</div>
-
-            <!-- Tombol Thermer -->
-            <button class="btn-print-thermer" onclick="printThermer()">
-                🟡 Cetak via Thermer App
-            </button>
-
-            <!-- Tombol Print Dialog -->
-            <button class="btn-print-dialog" onclick="window.print()">
-                🖨️ Print Dialog (Ctrl+P)
-            </button>
-
+    <!-- Receipt Preview -->
+    <div class="panel">
+        <div class="panel-header no-print">
+            👁️ Preview Struk
+            <span style="margin-left:auto; font-size:10px; color:var(--accent); font-family:var(--mono); border:1px solid var(--accent); padding:2px 7px; border-radius:10px;">58mm</span>
         </div>
-
-        <!-- Info -->
-        <div style="font-size:10px; color:var(--text2); line-height:1.6; padding:8px; background:var(--bg); border-radius:8px; font-family:var(--mono);">
-            🔵 Bluetooth → Chrome only, BLE printer<br>
-            🟡 Thermer → Semua tipe BT, perlu install app<br>
-            🖨️ Dialog → Semua printer, ada print dialog
+        <div class="receipt-wrap">
+            <div class="receipt" id="struk">
+                <img id="outLogo" src="" class="logo-img">
+                <div id="outAlamat" style="font-weight:bold;text-transform:uppercase;font-size:9.5px;margin-bottom:4px;white-space:pre-wrap;"></div>
+                <div style="display:flex;justify-content:space-between;font-size:8.5px;">
+                    <span>Shift: <span id="outShift"></span></span>
+                    <span>No: <span id="outTrans"></span></span>
+                </div>
+                <div style="text-align:left;font-size:8.5px;margin-bottom:3px;">Waktu: <span id="outWaktu"></span></div>
+                <div class="r-line"></div>
+                <table class="r-table">
+                    <tr><td class="lc">Pulau/Pompa</td><td class="cc">:</td><td id="outPompa"></td></tr>
+                    <tr><td class="lc">Nama Produk</td><td class="cc">:</td><td id="outBBM"></td></tr>
+                    <tr><td class="lc">Harga/Liter</td><td class="cc">:</td><td id="outHarga"></td></tr>
+                    <tr><td class="lc">Volume</td><td class="cc">:</td><td id="outLiter"></td></tr>
+                    <tr><td class="lc">Total Harga</td><td class="cc">:</td><td id="outTotal"></td></tr>
+                    <tr><td class="lc">Operator</td><td class="cc">:</td><td id="outOperator"></td></tr>
+                </table>
+                <div class="r-line"></div>
+                <div style="display:flex;justify-content:space-between;font-weight:bold;">
+                    <span>CASH</span><span id="outCash"></span>
+                </div>
+                <div class="r-line"></div>
+                <table class="r-table">
+                    <tr><td class="lc">No. Plat</td><td class="cc">:</td><td id="outPlat"></td></tr>
+                    <tr><td class="lc">Odo Meter</td><td class="cc">:</td><td id="outOdo"></td></tr>
+                </table>
+                <div class="r-line"></div>
+                <div id="outPesan" class="footer-txt"></div>
+            </div>
         </div>
     </div>
-</div>
-
-<!-- Receipt Preview -->
-<div class="panel">
-    <div class="panel-header no-print">
-        👁️ Preview Struk
-        <span style="margin-left:auto; font-size:10px; color:var(--accent); font-family:var(--mono); border:1px solid var(--accent); padding:2px 7px; border-radius:10px;">58mm</span>
-    </div>
-    <div class="receipt-wrap">
-        <div class="receipt" id="struk">
-            <img id="outLogo" src="" class="logo-img">
-            <div id="outAlamat" style="font-weight:bold;text-transform:uppercase;font-size:9.5px;margin-bottom:4px;white-space:pre-wrap;"></div>
-            <div style="display:flex;justify-content:space-between;font-size:8.5px;">
-                <span>Shift: <span id="outShift"></span></span>
-                <span>No: <span id="outTrans"></span></span>
-            </div>
-            <div style="text-align:left;font-size:8.5px;margin-bottom:3px;">Waktu: <span id="outWaktu"></span></div>
-            <div class="r-line"></div>
-            <table class="r-table">
-                <tr><td class="lc">Pulau/Pompa</td><td class="cc">:</td><td id="outPompa"></td></tr>
-                <tr><td class="lc">Nama Produk</td><td class="cc">:</td><td id="outBBM"></td></tr>
-                <tr><td class="lc">Harga/Liter</td><td class="cc">:</td><td id="outHarga"></td></tr>
-                <tr><td class="lc">Volume</td><td class="cc">:</td><td id="outLiter"></td></tr>
-                <tr><td class="lc">Total Harga</td><td class="cc">:</td><td id="outTotal"></td></tr>
-                <tr><td class="lc">Operator</td><td class="cc">:</td><td id="outOperator"></td></tr>
-            </table>
-            <div class="r-line"></div>
-            <div style="display:flex;justify-content:space-between;font-weight:bold;">
-                <span>CASH</span><span id="outCash"></span>
-            </div>
-            <div class="r-line"></div>
-            <table class="r-table">
-                <tr><td class="lc">No. Plat</td><td class="cc">:</td><td id="outPlat"></td></tr>
-                <tr><td class="lc">Odo Meter</td><td class="cc">:</td><td id="outOdo"></td></tr>
-            </table>
-            <div class="r-line"></div>
-            <div id="outPesan" class="footer-txt"></div>
-        </div>
-    </div>
-</div>
-```
 
 </div><!-- /container -->
 
@@ -630,9 +621,69 @@ function row2(left, right, w=32) {
 }
 
 // ─────────────────────────────────────────
-//  BUILD ESC/POS
+//  KONVERSI GAMBAR KE ESC/POS RASTER (GS v 0)
 // ─────────────────────────────────────────
-function buildEscPos() {
+async function imageToEscPosRaster(imgElement, maxWidth = 384) {
+    // Pastikan gambar sudah dimuat
+    if (!imgElement.complete || imgElement.naturalWidth === 0) {
+        console.warn('Gambar belum dimuat, logo tidak dicetak.');
+        return new Uint8Array([]);
+    }
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Hitung ukuran sesuai lebar kertas (58mm ≈ 384px)
+    const scale = maxWidth / imgElement.naturalWidth;
+    canvas.width = maxWidth;
+    canvas.height = Math.floor(imgElement.naturalHeight * scale);
+    
+    // Gambar dengan latar putih
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
+    
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+    
+    // Konversi ke monokrom (threshold 128)
+    const bwPixels = [];
+    for (let i = 0; i < pixels.length; i += 4) {
+        // luminance
+        const gray = 0.299 * pixels[i] + 0.587 * pixels[i+1] + 0.114 * pixels[i+2];
+        bwPixels.push(gray < 128 ? 1 : 0);
+    }
+    
+    // Perintah GS v 0
+    const widthBytes = Math.ceil(canvas.width / 8);
+    const height = canvas.height;
+    const header = [
+        0x1D, 0x76, 0x30, 0x00,               // GS v 0 mode normal
+        widthBytes & 0xFF, (widthBytes >> 8) & 0xFF,
+        height & 0xFF, (height >> 8) & 0xFF
+    ];
+    
+    const raster = [...header];
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < widthBytes; x++) {
+            let byte = 0;
+            for (let bit = 0; bit < 8; bit++) {
+                const px = x * 8 + bit;
+                if (px < canvas.width) {
+                    const idx = y * canvas.width + px;
+                    if (bwPixels[idx]) byte |= (1 << (7 - bit));
+                }
+            }
+            raster.push(byte);
+        }
+    }
+    return new Uint8Array(raster);
+}
+
+// ─────────────────────────────────────────
+//  BUILD ESC/POS (async + sisipkan logo)
+// ─────────────────────────────────────────
+async function buildEscPos() {
     const f    = n => new Intl.NumberFormat('id-ID').format(n);
     const hrg  = parseFloat(document.getElementById('inHarga').value)||0;
     const ltr  = parseFloat(document.getElementById('inLiter').value)||0;
@@ -652,6 +703,15 @@ function buildEscPos() {
 
     let b = [];
     b = b.concat(esc.init());
+
+    // ** Sisipkan logo jika ada **
+    const logoImg = document.getElementById('outLogo');
+    if (logoImg.src && logoImg.src !== '' && logoImg.complete && logoImg.naturalWidth > 0) {
+        b = b.concat(esc.center());
+        const logoRaster = await imageToEscPosRaster(logoImg);
+        b = b.concat(Array.from(logoRaster));
+        b = b.concat(esc.feed(2)); // sedikit spasi setelah logo
+    }
 
     // Terapkan font size dari setting
     b = b.concat(escFontSize(getFontSize()));
@@ -786,7 +846,8 @@ async function printBluetooth() {
     try {
         const ch = await getChar();
         setStatus('🖨️ Mengirim data ke printer...', 'info');
-        await sendBytes(ch, buildEscPos());
+        // **Gunakan await karena buildEscPos sekarang async**
+        await sendBytes(ch, await buildEscPos());
         setStatus('✅ Struk berhasil dicetak!', 'success');
         setTimeout(clearStatus, 3000);
     } catch(err) {
@@ -882,11 +943,7 @@ function getFontSize() {
 }
 
 // Map px ke ESC/POS font size multiplier
-// ESC/POS font size: GS ! n  (n = bits: 0=1x, 16=2x height, 1=2x width, 17=2x both)
 function escFontSize(px) {
-    // px 5-7  = normal (1x)
-    // px 8-11 = normal (1x) — default printer font sudah cukup
-    // px 12-15 = double (2x)
     if (px <= 11) return [0x1D, 0x21, 0x00]; // normal
     else           return [0x1D, 0x21, 0x11]; // 2x width & height
 }
