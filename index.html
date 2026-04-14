@@ -3,960 +3,406 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPBU Pro - Cetak Struk</title>
+    <title>BRI Table to PNG - Fix Blank</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* === CSS TIDAK BERUBAH (sama seperti sebelumnya) === */
-        :root {
-            --bg: #0f1117;
-            --surface: #1a1d27;
-            --surface2: #22263a;
-            --border: #2e3352;
-            --accent: #4f8ef7;
-            --accent2: #7c3aed;
-            --green: #10b981;
-            --yellow: #f59e0b;
-            --red: #ef4444;
-            --text: #e2e8f0;
-            --text2: #8892a4;
-            --mono: 'Courier New', 'Lucida Console', monospace;
-            --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-        }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        * { box-sizing: border-box; }
         body {
-            font-family: var(--sans);
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            font-family: 'Segoe UI', 'Calibri', Arial, sans-serif;
+            margin: 20px;
+            background: #f5f7fa;
         }
-        .app-header {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding: 14px 18px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
+        .card {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
         }
-        .app-header .icon {
-            width: 36px; height: 36px;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
-        }
-        .app-header h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
-        .app-header p { font-size: 11px; color: var(--text2); margin-top: 1px; }
-        .bt-bar {
-            width: 100%; max-width: 500px;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-family: var(--mono);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            border: 1px solid transparent;
-            transition: all 0.3s;
-            display: none;
-        }
-        .bt-bar.info    { display:flex; background:#1e2d4a; border-color:#2d4a7a; color:#7ab3f5; }
-        .bt-bar.success { display:flex; background:#0d2b20; border-color:#1a5c3a; color:#34d399; }
-        .bt-bar.error   { display:flex; background:#2b1010; border-color:#5c1a1a; color:#f87171; }
-        .bt-bar.warning { display:flex; background:#2b2010; border-color:#5c3a1a; color:#fbbf24; }
-        .bt-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-        .bt-bar.info .bt-dot    { background:#4f8ef7; animation: pulse 1.5s infinite; }
-        .bt-bar.success .bt-dot { background:#10b981; }
-        .bt-bar.error .bt-dot   { background:#ef4444; }
-        .bt-bar.warning .bt-dot { background:#f59e0b; }
-        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-        .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
-        .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            overflow: hidden;
-        }
-        .panel-header {
-            padding: 12px 16px;
-            background: var(--surface2);
-            border-bottom: 1px solid var(--border);
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--text2);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
-        label {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text2);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            display: block;
-            margin-bottom: 5px;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px 12px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 13px;
-            font-family: var(--sans);
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-        select option { background: var(--surface); }
-        textarea { resize: vertical; line-height: 1.5; }
-        .row { display: flex; gap: 8px; }
-        .row > * { flex: 1; }
-        .odo-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
-        }
-        .btn-odo {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            color: var(--accent);
-            padding: 8px 2px;
-            border-radius: 7px;
-            font-size: 10px;
-            font-weight: 600;
-            font-family: var(--mono);
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-        .btn-odo:active { background: var(--accent); color: white; transform: scale(0.95); }
-        .btn {
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.15s;
-            font-family: var(--sans);
-        }
-        .btn:active { transform: scale(0.97); }
-        .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; }
-        .btn-green { background: var(--surface2); border: 1px solid #1a5c3a; color: var(--green); }
-        .btn-blue  { background: var(--surface2); border: 1px solid #1e2d4a; color: var(--accent); }
-        .btn-save { background: var(--accent); color: white; border: none; }
-        .btn-excel { background: #1e6f3f; color: white; border: none; }
-        .print-section { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
-        .btn-print-bt {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #1e3a8a, #2d1b69);
-            border: 1px solid #3b5bdb;
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            font-weight: 700;
-            font-family: var(--sans);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s;
-            letter-spacing: 0.3px;
-        }
-        .btn-print-bt:hover { background: linear-gradient(135deg, #2545a8, #3b2180); }
-        .btn-print-bt:active { transform: scale(0.98); }
-        .btn-print-bt:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn-print-thermer {
-            width: 100%;
-            padding: 13px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text2);
-            font-size: 13px;
-            font-weight: 600;
-            font-family: var(--sans);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-        .btn-print-thermer:hover { border-color: var(--yellow); color: var(--yellow); }
-        .btn-print-thermer:active { transform: scale(0.98); }
-        .btn-print-dialog {
-            width: 100%;
-            padding: 11px;
-            background: transparent;
-            border: 1px dashed var(--border);
-            border-radius: 10px;
-            color: var(--text2);
-            font-size: 12px;
-            font-family: var(--sans);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-print-dialog:hover { border-color: var(--text2); color: var(--text); }
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text2);
-            font-size: 10px;
-            letter-spacing: 1px;
-        }
-        .divider::before, .divider::after { content:''; flex:1; height:1px; background: var(--border); }
-        .bt-connected {
-            display: none;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            color: var(--green);
-            font-family: var(--mono);
-            padding: 6px 10px;
-            background: #0d2b20;
-            border: 1px solid #1a5c3a;
-            border-radius: 20px;
-            margin-bottom: 4px;
-        }
-        .bt-connected.show { display: flex; }
-        .bt-connected-dot { width:6px; height:6px; border-radius:50%; background:var(--green); }
-        .receipt-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px 16px;
-            background: #13151f;
-            border-top: 1px solid var(--border);
-            overflow: hidden;
-        }
-        .receipt {
-            background: #fff;
-            width: 58mm;
-            min-width: 58mm;
-            max-width: 58mm;
-            padding: 6mm 3mm;
+        h1 { color: #003d66; margin-bottom: 8px; }
+        .upload-area {
+            border: 2px dashed #00529B;
+            border-radius: 16px;
+            padding: 20px;
             text-align: center;
-            font-size: var(--receipt-font, 9px);
-            color: #000;
-            line-height: 1.4;
-            font-family: 'Courier New', Courier, monospace;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            overflow: hidden;
-            zoom: 1;
+            background: #f0f7ff;
+            margin: 16px 0;
         }
-        .receipt .logo-img { display: block; margin: 0 auto; }
-        .receipt .r-line { border-top: 1px dashed #000; margin: 4px 0; }
-        .receipt .r-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .receipt .r-table td { padding: 1px 0; vertical-align: top; text-align: left; font-size: var(--receipt-font, 9px); }
-        .receipt .lc { width: 22mm; }
-        .receipt .cc { width: 4mm; text-align: center; }
-        .receipt .footer-txt { margin-top: 8px; text-align: center; text-transform: uppercase; white-space: pre-wrap; }
-        @media print {
-            body { background: white; padding: 0; }
-            .no-print { display: none !important; }
-            .receipt-wrap { padding: 0; background: white; border: none; }
-            .receipt { box-shadow: none; width: 58mm; }
-            @page { size: 58mm auto; margin: 0; }
+        input[type="file"] { font-size: 16px; }
+        .control-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin: 20px 0;
         }
+        select, button {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 15px;
+        }
+        button {
+            background: #00529B;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #004080;
+        }
+        button.outline {
+            background: white;
+            color: #00529B;
+        }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        #status { margin: 15px 0; font-weight: 500; color: #1e7e34; }
+        .tables-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            break-inside: avoid;
+        }
+        .table-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: #00529B;
+            margin-bottom: 12px;
+            padding-left: 8px;
+            border-left: 6px solid #00529B;
+        }
+        table {
+            border-collapse: collapse;
+            font-size: 13px;
+            width: 100%;
+            background: white;
+            border: 1px solid #b0c4de;
+        }
+        th {
+            background-color: #00529B;
+            color: white;
+            padding: 8px 6px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #003f7a;
+        }
+        td {
+            padding: 6px;
+            text-align: center;
+            border: 1px solid #b0c4de;
+        }
+        tr:nth-child(even) { background-color: #f2f7ff; }
+        .total-row { font-weight: bold; background-color: #e6f0ff !important; }
+        .footer-note { margin-top: 24px; color: #555; font-size: 14px; border-top: 1px solid #ddd; padding-top: 16px; }
     </style>
 </head>
 <body>
-
-<div class="app-header no-print">
-    <div class="icon">⛽</div>
-    <div><h1>SPBU PRO</h1><p>Sistem Cetak Struk Digital</p></div>
-</div>
-<div id="btBar" class="bt-bar no-print"><div class="bt-dot"></div><span id="btMsg">—</span></div>
-
-<div class="container">
-    <!-- Panel Konfigurasi SPBU -->
-    <div class="panel no-print">
-        <div class="panel-header">⚙️ Konfigurasi SPBU</div>
-        <div class="panel-body">
-            <div>
-                <label>Header / Nama & Alamat</label>
-                <textarea id="inAlamat" rows="3" oninput="render()">SPBU POLONIA&#10;11.201.106&#10;JL. Imam Bonjol, Medan Polonia&#10;Tlp. 0614156892</textarea>
-            </div>
-            <div>
-                <label>Logo</label>
-                <div class="row">
-                    <select id="selLogo" onchange="applySavedLogo()" style="flex:2"></select>
-                    <button class="btn btn-icon" onclick="document.getElementById('fileLogo').click()">+ Logo</button>
-                    <input type="file" id="fileLogo" accept="image/*" style="display:none" onchange="handleNewLogo(event)">
-                </div>
-            </div>
-            <div class="row">
-                <div>
-                    <label>Lebar Logo</label>
-                    <select id="inLogoWidth" onchange="render()">
-                        <option value="10">10mm</option><option value="15">15mm</option><option value="20">20mm</option><option value="25">25mm</option><option value="30" selected>30mm</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Margin Logo</label>
-                    <select id="inLogoMargin" onchange="render()">
-                        <option value="-10">-10mm</option><option value="-8">-8mm</option><option value="-5">-5mm</option><option value="-2">-2mm</option><option value="0" selected>0mm (Normal)</option><option value="2">+2mm</option><option value="5">+5mm</option><option value="8">+8mm</option>
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label>Ukuran Font Struk</label>
-                <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
-                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">5</span>
-                    <input type="range" id="inFontSize" min="5" max="15" value="9" step="1" oninput="updateFontSize()" style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;">
-                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">15</span>
-                    <span id="fontSizeLabel" style="font-size:12px; font-weight:700; font-family:var(--mono); color:var(--accent); background:var(--bg); border:1px solid var(--accent); border-radius:6px; padding:3px 8px; min-width:36px; text-align:center;">9px</span>
-                </div>
-            </div>
-            <div>
-                <label>Ketebalan Teks</label>
-                <select id="inBold" onchange="render()">
-                    <option value="normal" selected>Normal</option>
-                    <option value="bold">Tebal (Bold)</option>
-                </select>
-            </div>
-            <div>
-                <label>Pesan Footer</label>
-                <textarea id="inPesan" rows="4" oninput="render()">ANDA MENDAPAT SUBSIDI DARI&#10;PEMERINTAHAN SEBESAR RP.2.750&#10;(PERHITUNGAN SUBSIDI UNAUDITED&#10;ATAU ESTIMASI).GUNAKAN BBM&#10;SUBSIDI SECARA BIJAK.</textarea>
-            </div>
-            <button class="btn btn-save" onclick="saveSettings()">💾 Simpan Konfigurasi</button>
-        </div>
+<div class="card">
+    <h1>📊 BRI Table Extractor (Fix Blank)</h1>
+    <p>Upload Excel dengan banyak tabel dalam satu sheet. Aplikasi akan mendeteksi header "NO" dan memisahkan setiap tabel. <br>
+    <strong>Pastikan setiap tabel diawali dengan baris yang mengandung "NO" di kolom pertama.</strong></p>
+    
+    <div class="upload-area">
+        <input type="file" id="excelUpload" accept=".xlsx, .xls">
+        <p style="margin-top: 8px;">⬆ Pilih file Excel</p>
     </div>
 
-    <!-- Panel Data Transaksi -->
-    <div class="panel no-print">
-        <div class="panel-header">🧾 Data Transaksi</div>
-        <div class="panel-body">
-            <div class="row">
-                <div><label>Shift</label><select id="inShift" onchange="render()"><option>1</option><option>2</option></select></div>
-                <div><label>Pompa</label><select id="inPompa" onchange="render()"><script>for(let i=1;i<=12;i++) document.write(`<option>${i}</option>`)</script></select></div>
-            </div>
-            <div>
-                <label>No. Transaksi & Produk BBM</label>
-                <div class="row">
-                    <input type="text" id="inTrans" maxlength="6" oninput="render()" placeholder="Auto">
-                    <button class="btn btn-green" onclick="generateAllRandom()">🔄 Random</button>
-                    <select id="inBBM" onchange="render()" style="flex:1.5">
-                        <option>PERTALITE</option><option>PERTAMAX</option><option>PERTAMAX TURBO</option><option>DEXLITE</option>
-                    </select>
-                </div>
-            </div>
-            <div><label>Waktu Transaksi</label><input type="datetime-local" id="inWaktu" onchange="render()"></div>
-            <div class="row">
-                <div><label>Harga / Liter</label><input type="number" id="inHarga" value="10000" oninput="render()"></div>
-                <div><label>Volume (L)</label><input type="number" id="inLiter" value="5" oninput="render()"></div>
-            </div>
-            <div>
-                <label>Operator</label>
-                <div class="row">
-                    <select id="selOperator" onchange="render()" style="flex:1"></select>
-                    <button class="btn btn-blue" onclick="toggleOpManager()" id="btnOpMgr">&#9881; Kelola</button>
-                </div>
-                <div id="opManager" style="display:none; margin-top:8px; background:var(--bg); border:1px solid var(--border); border-radius:10px; overflow:hidden;">
-                    <div style="padding:8px 12px; background:var(--surface2); font-size:10px; font-weight:700; color:var(--text2); letter-spacing:1px; text-transform:uppercase;">Database Operator</div>
-                    <div id="opList" style="padding:8px; display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
-                    <div style="padding:8px; border-top:1px solid var(--border); display:flex; gap:6px;">
-                        <input type="text" id="inNewOp" placeholder="Nama operator baru..." style="flex:1; padding:8px 10px; font-size:13px;" onkeydown="if(event.key==='Enter') addOperator()">
-                        <button class="btn btn-green" onclick="addOperator()" style="white-space:nowrap; padding:8px 12px;">+ Tambah</button>
-                    </div>
-                </div>
-            </div>
-            <div><label>No. Plat</label><input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()"></div>
-            <div>
-                <label>Odo Meter (KM)</label>
-                <input type="number" id="inOdo" value="25430" oninput="render()">
-                <div class="odo-grid" style="margin-top:6px">
-                    <script>[5,10,15,20,25,30,40,50,100,150].forEach(v => document.write(`<button class="btn-odo" onclick="adjOdo(${v})">+${v}</button>`));</script>
-                </div>
-            </div>
-        </div>
+    <div class="control-bar">
+        <label style="font-weight:600;">Sheet:</label>
+        <select id="sheetSelect" disabled><option>-- Upload dulu --</option></select>
+        <button id="btnDetect" onclick="detectAndRender()" disabled>🔍 Deteksi Tabel</button>
+        <button id="btnDownloadAll" onclick="downloadAllTables()" disabled>📸 Download Semua Tabel</button>
+        <span id="tableCount"></span>
     </div>
 
-    <!-- Panel Cetak -->
-    <div class="panel no-print">
-        <div class="panel-header">🖨️ Cetak Struk</div>
-        <div class="panel-body">
-            <div class="print-section">
-                <div class="bt-connected" id="btConnected"><div class="bt-connected-dot"></div><span id="btDeviceName">Printer terhubung</span><span style="margin-left:auto; cursor:pointer; color:#f87171" onclick="disconnectBT()">✕</span></div>
-                <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()"><span>🔵</span><span id="btBtnLabel">CETAK VIA BLUETOOTH</span></button>
-                <div class="divider">ATAU</div>
-                <button class="btn-print-thermer" onclick="printThermer()">🟡 Cetak via Thermer App</button>
-                <button class="btn-print-dialog" onclick="window.print()">🖨️ Print Dialog (Ctrl+P)</button>
-            </div>
-        </div>
-    </div>
+    <div id="status">⏳ Menunggu file...</div>
 
-    <!-- Panel Riwayat & Ekspor -->
-    <div class="panel no-print">
-        <div class="panel-header">📋 Riwayat Transaksi</div>
-        <div class="panel-body">
-            <button class="btn btn-excel" onclick="exportToExcel()">📊 Ekspor ke Excel (CSV)</button>
-            <p style="font-size:11px; color:var(--text2);">Data otomatis tersimpan saat cetak atau random.</p>
-        </div>
-    </div>
+    <div id="tablesContainer" class="tables-grid"></div>
 
-    <!-- Preview Struk -->
-    <div class="panel">
-        <div class="panel-header no-print">👁️ Preview Struk <span style="margin-left:auto; font-size:10px; color:var(--accent); font-family:var(--mono); border:1px solid var(--accent); padding:2px 7px; border-radius:10px;">58mm</span></div>
-        <div class="receipt-wrap">
-            <div class="receipt" id="struk">
-                <img id="outLogo" src="" class="logo-img">
-                <div id="outAlamat" style="font-weight:bold;text-transform:uppercase;font-size:9.5px;margin-bottom:4px;white-space:pre-wrap;"></div>
-                <div style="display:flex;justify-content:space-between;font-size:8.5px;">
-                    <span>Shift: <span id="outShift"></span></span>
-                    <span>No. Trans: <span id="outTrans"></span></span>
-                </div>
-                <div style="text-align:left;font-size:8.5px;margin-bottom:3px;">Waktu: <span id="outWaktu"></span></div>
-                <div class="r-line"></div>
-                <table class="r-table">
-                    <tr><td class="lc">Pulau/Pompa</td><td class="cc">:</td><td id="outPompa"></td></tr>
-                    <tr><td class="lc">Nama Produk</td><td class="cc">:</td><td id="outBBM"></td></tr>
-                    <tr><td class="lc">Harga/Liter</td><td class="cc">:</td><td id="outHarga"></td></tr>
-                    <tr><td class="lc">Volume</td><td class="cc">:</td><td id="outLiter"></td></tr>
-                    <tr><td class="lc">Total Harga</td><td class="cc">:</td><td id="outTotal"></td></tr>
-                    <tr><td class="lc">Operator</td><td class="cc">:</td><td id="outOperator"></td></tr>
-                </table>
-                <div class="r-line"></div>
-                <div style="display:flex;justify-content:space-between;font-weight:bold;"><span>CASH</span><span id="outCash"></span></div>
-                <div class="r-line"></div>
-                <table class="r-table">
-                    <tr><td class="lc">No. Plat</td><td class="cc">:</td><td id="outPlat"></td></tr>
-                    <tr><td class="lc">Odo Meter</td><td class="cc">:</td><td id="outOdo"></td></tr>
-                </table>
-                <div class="r-line"></div>
-                <div id="outPesan" class="footer-txt"></div>
-            </div>
-        </div>
+    <div class="footer-note">
+        ✅ <strong>Perbaikan:</strong> Mendukung header bertingkat (misal baris "Komitmen | Hasil | Gap" di bawah header utama).<br>
+        💡 Jika masih blank, pastikan file Excel memiliki struktur seperti contoh.
     </div>
 </div>
 
 <script>
-// ─────────────────────────────────────────────────────────────────
-//  STATE & DB
-// ─────────────────────────────────────────────────────────────────
-let randomSec = "00";
-const db = {
-    get: (k,d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e){ return d; } },
-    set: (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
-};
-let operators  = db.get('spbu_ops',   ["DINDA HALIMAH"]);
-let savedLogos = db.get('spbu_logos', []);
-let btChar = null, btDevice = null;
+    let globalWorkbook = null;
+    let detectedTables = [];
+    const statusEl = document.getElementById('status');
+    const sheetSelect = document.getElementById('sheetSelect');
+    const btnDetect = document.getElementById('btnDetect');
+    const btnDownloadAll = document.getElementById('btnDownloadAll');
+    const container = document.getElementById('tablesContainer');
+    const tableCountSpan = document.getElementById('tableCount');
 
-// Riwayat transaksi
-let transactionHistory = db.get('spbu_history', []);
+    // Upload handler
+    document.getElementById('excelUpload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        statusEl.innerText = '📖 Membaca file...';
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            try {
+                const data = new Uint8Array(ev.target.result);
+                globalWorkbook = XLSX.read(data, { type: 'array' });
+                const sheets = globalWorkbook.SheetNames;
+                sheetSelect.innerHTML = '';
+                sheets.forEach((name, i) => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    if (i === 0) opt.selected = true;
+                    sheetSelect.appendChild(opt);
+                });
+                sheetSelect.disabled = false;
+                btnDetect.disabled = false;
+                statusEl.innerText = `✅ File terbaca. ${sheets.length} sheet. Pilih sheet lalu klik "Deteksi Tabel".`;
+            } catch (err) {
+                statusEl.innerText = '❌ Gagal membaca file.';
+                console.error(err);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
 
-// ─────────────────────────────────────────────────────────────────
-//  STATUS BAR
-// ─────────────────────────────────────────────────────────────────
-function setStatus(msg, type='info') {
-    const bar = document.getElementById('btBar');
-    const txt = document.getElementById('btMsg');
-    bar.className = 'bt-bar no-print ' + type;
-    txt.textContent = msg;
-}
-function clearStatus() {
-    document.getElementById('btBar').className = 'bt-bar no-print';
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  ESC/POS UTILITIES
-// ─────────────────────────────────────────────────────────────────
-const ESC=0x1B, GS=0x1D;
-const esc = {
-    init:   ()    => [ESC,0x40],
-    center: ()    => [ESC,0x61,0x01],
-    left:   ()    => [ESC,0x61,0x00],
-    bold:   (on)  => [ESC,0x45, on?1:0],
-    feed:   (n)   => [ESC,0x64,n],
-    cut:    ()    => [GS,0x56,0x00],
-    feedMM: (mm)  => [ESC, 0x4A, Math.round(mm * 8.5)],
-    lineSpacing: (n) => [ESC, 0x33, n]
-};
-function toBytes(str) { return Array.from(new TextEncoder().encode(str)); }
-function line(n=32) { return toBytes('-'.repeat(n)+'\n'); }
-function row2(left, right, w=32) {
-    const pad = Math.max(1, w - left.length - right.length);
-    return toBytes(left + ' '.repeat(pad) + right + '\n');
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  KONVERSI GAMBAR KE ESC/POS RASTER
-// ─────────────────────────────────────────────────────────────────
-async function imageToEscPosRaster(imgElement, widthMM = 30) {
-    if (!imgElement.complete || imgElement.naturalWidth === 0) return new Uint8Array([]);
-    const maxWidth = Math.floor(widthMM * 8);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const scale = maxWidth / imgElement.naturalWidth;
-    canvas.width = maxWidth;
-    canvas.height = Math.floor(imgElement.naturalHeight * scale);
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const pixels = imageData.data;
-    const bwPixels = [];
-    for (let i = 0; i < pixels.length; i += 4) {
-        const gray = 0.299 * pixels[i] + 0.587 * pixels[i+1] + 0.114 * pixels[i+2];
-        bwPixels.push(gray < 128 ? 1 : 0);
-    }
-    const widthBytes = Math.ceil(canvas.width / 8);
-    const height = canvas.height;
-    const header = [0x1D, 0x76, 0x30, 0x00, widthBytes & 0xFF, (widthBytes >> 8) & 0xFF, height & 0xFF, (height >> 8) & 0xFF];
-    const raster = [...header];
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < widthBytes; x++) {
-            let byte = 0;
-            for (let bit = 0; bit < 8; bit++) {
-                const px = x * 8 + bit;
-                if (px < canvas.width) {
-                    const idx = y * canvas.width + px;
-                    if (bwPixels[idx]) byte |= (1 << (7 - bit));
+    // Deteksi tabel dari sheet yang dipilih
+    function detectAndRender() {
+        if (!globalWorkbook) return;
+        const sheetName = sheetSelect.value;
+        if (!sheetName) return;
+        
+        statusEl.innerText = `🔍 Mendeteksi tabel di "${sheetName}"...`;
+        container.innerHTML = '';
+        detectedTables = [];
+        
+        try {
+            const worksheet = globalWorkbook.Sheets[sheetName];
+            // Dapatkan data mentah (array 2D)
+            const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            
+            // Temukan semua blok yang diawali dengan sel pertama "NO" (case insensitive)
+            const blocks = [];
+            let currentBlock = [];
+            let headerRowIndices = []; // simpan indeks baris header
+            
+            for (let i = 0; i < rawData.length; i++) {
+                const row = rawData[i];
+                if (!row || row.length === 0) {
+                    if (currentBlock.length > 0) {
+                        blocks.push(currentBlock);
+                        currentBlock = [];
+                    }
+                    continue;
+                }
+                
+                const firstCell = String(row[0] || '').trim().toUpperCase();
+                // Jika sel pertama adalah "NO" atau "NO." -> awal tabel baru
+                if (firstCell === 'NO' || firstCell === 'NO.') {
+                    if (currentBlock.length > 0) {
+                        blocks.push(currentBlock);
+                        currentBlock = [];
+                    }
+                    currentBlock.push(row);
+                    headerRowIndices.push(i);
+                } else if (currentBlock.length > 0) {
+                    // Lanjutkan blok
+                    currentBlock.push(row);
                 }
             }
-            raster.push(byte);
+            if (currentBlock.length > 0) blocks.push(currentBlock);
+            
+            // Filter blok yang memiliki setidaknya 2 baris (header + data)
+            const validBlocks = blocks.filter(b => b.length >= 2);
+            
+            if (validBlocks.length === 0) {
+                statusEl.innerText = '⚠️ Tidak ditemukan tabel. Pastikan ada baris dengan "NO" di kolom pertama.';
+                return;
+            }
+            
+            // Render setiap blok
+            validBlocks.forEach((block, idx) => {
+                // Tentukan judul: coba ambil dari sel header tertentu
+                let title = `Tabel_${idx+1}`;
+                const headerRow = block[0];
+                // Biasanya judul ada di kolom ke-5 (index 4) seperti "Realisasi", "Recovery DH", dll.
+                if (headerRow.length >= 5) {
+                    const possible = String(headerRow[4] || '').trim();
+                    if (possible && !possible.match(/sukses|rate/i) && possible.length > 1) {
+                        title = possible;
+                    }
+                }
+                // Fallback: cek di baris berikutnya jika ada sub-header
+                if (block.length > 1 && title.startsWith('Tabel_')) {
+                    const secondRow = block[1];
+                    if (secondRow && secondRow.length >= 5) {
+                        const possible = String(secondRow[4] || '').trim();
+                        if (possible && possible.length > 1) title = possible;
+                    }
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'table-card';
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'table-title';
+                titleDiv.innerText = title;
+                card.appendChild(titleDiv);
+                
+                const table = document.createElement('table');
+                
+                // Deteksi jika ada sub-header (baris dengan sel pertama kosong atau berisi spasi)
+                // Kita akan menggabungkan header utama dan sub-header jika ada
+                let headerRows = [];
+                let dataStartIndex = 1;
+                
+                // Cek apakah baris kedua adalah sub-header (kolom pertama kosong atau tidak diawali angka)
+                if (block.length > 1) {
+                    const secondRowFirstCell = String(block[1][0] || '').trim();
+                    if (secondRowFirstCell === '' || !secondRowFirstCell.match(/^\d/)) {
+                        // Ini sub-header
+                        headerRows = [block[0], block[1]];
+                        dataStartIndex = 2;
+                    } else {
+                        headerRows = [block[0]];
+                        dataStartIndex = 1;
+                    }
+                } else {
+                    headerRows = [block[0]];
+                }
+                
+                // Buat thead dengan headerRows
+                const thead = document.createElement('thead');
+                headerRows.forEach(row => {
+                    const tr = document.createElement('tr');
+                    // Pastikan jumlah kolom konsisten (gunakan panjang maks dari header)
+                    const maxCols = Math.max(...block.map(r => r.length));
+                    for (let c = 0; c < maxCols; c++) {
+                        const th = document.createElement('th');
+                        th.innerText = (c < row.length && row[c] != null) ? String(row[c]) : '';
+                        tr.appendChild(th);
+                    }
+                    thead.appendChild(tr);
+                });
+                table.appendChild(thead);
+                
+                // Body
+                const tbody = document.createElement('tbody');
+                for (let i = dataStartIndex; i < block.length; i++) {
+                    const row = block[i];
+                    // Abaikan baris yang semua selnya kosong
+                    if (row.every(cell => cell == null || String(cell).trim() === '')) continue;
+                    
+                    const tr = document.createElement('tr');
+                    const firstCell = String(row[0] || '').toUpperCase();
+                    if (firstCell.includes('TOTAL')) {
+                        tr.classList.add('total-row');
+                    }
+                    
+                    const maxCols = Math.max(...block.map(r => r.length));
+                    for (let c = 0; c < maxCols; c++) {
+                        const td = document.createElement('td');
+                        let val = (c < row.length && row[c] != null) ? String(row[c]) : '';
+                        // Hapus formatting markdown seperti **
+                        val = val.replace(/\*\*/g, '');
+                        td.innerText = val;
+                        tr.appendChild(td);
+                    }
+                    tbody.appendChild(tr);
+                }
+                table.appendChild(tbody);
+                
+                card.appendChild(table);
+                container.appendChild(card);
+                
+                detectedTables.push({
+                    title: title,
+                    element: card
+                });
+            });
+            
+            tableCountSpan.innerText = `✅ ${detectedTables.length} tabel terdeteksi`;
+            statusEl.innerText = `✅ ${detectedTables.length} tabel berhasil dirender.`;
+            btnDownloadAll.disabled = detectedTables.length === 0;
+            
+        } catch (e) {
+            statusEl.innerText = '❌ Error: ' + e.message;
+            console.error(e);
         }
     }
-    return new Uint8Array(raster);
-}
 
-// ─────────────────────────────────────────────────────────────────
-//  BUILD ESC/POS
-// ─────────────────────────────────────────────────────────────────
-async function buildEscPos() {
-    const f = n => new Intl.NumberFormat('id-ID').format(n);
-    const hrg = parseFloat(document.getElementById('inHarga').value)||0;
-    const ltr = parseFloat(document.getElementById('inLiter').value)||0;
-    const total = hrg*ltr;
-    const get = id => document.getElementById(id);
-    const alamat = get('inAlamat').value;
-    const shift = get('inShift').value;
-    const trans = get('inTrans').value;
-    const waktu = get('outWaktu').innerText;
-    const pompa = get('inPompa').value;
-    const bbm = get('inBBM').value;
-    const operator = get('selOperator').value;
-    const plat = get('inPlat').value.toUpperCase();
-    const odo = get('inOdo').value;
-    const pesan = get('inPesan').value;
-    const isBold = get('inBold').value === 'bold';
-
-    let b = [];
-    b = b.concat(esc.init());
-    if (isBold) b = b.concat(esc.bold(true));
-
-    const logoImg = document.getElementById('outLogo');
-    if (logoImg.src && logoImg.src !== '' && logoImg.complete && logoImg.naturalWidth > 0) {
-        b = b.concat(esc.center());
-        const widthMM = parseFloat(get('inLogoWidth').value) || 30;
-        const logoRaster = await imageToEscPosRaster(logoImg, widthMM);
-        b = b.concat(Array.from(logoRaster));
-        b = b.concat(esc.lineSpacing(1));
-        const marginMM = parseFloat(get('inLogoMargin').value) || 0;
-        if (marginMM !== 0) b = b.concat(esc.feedMM(marginMM));
-    }
-
-    b = b.concat(escFontSize(getFontSize()));
-    b = b.concat(esc.center());
-    if (!isBold) b = b.concat(esc.bold(true));
-    alamat.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
-    if (!isBold) b = b.concat(esc.bold(false));
-    b = b.concat(esc.lineSpacing(31));
-    b = b.concat(line());
-    b = b.concat(esc.left());
-    b = b.concat(row2('Shift: '+shift, 'No. Trans: '+trans));
-    b = b.concat(toBytes('Waktu : '+waktu+'\n'));
-    b = b.concat(line());
-
-    b = b.concat(toBytes('Pulau/Pompa : '+pompa+'\n'));
-    b = b.concat(toBytes('Nama Produk : '+bbm+'\n'));
-    b = b.concat(toBytes('Harga/Liter : Rp '+f(hrg)+'\n'));
-    b = b.concat(toBytes('Volume      : (L) '+ltr+'\n'));
-    b = b.concat(toBytes('Total Harga : Rp '+f(total)+'\n'));
-    b = b.concat(toBytes('Operator    : '+operator+'\n'));
-    b = b.concat(line());
-
-    if (!isBold) b = b.concat(esc.bold(true));
-    b = b.concat(row2('CASH', f(total)));
-    if (!isBold) b = b.concat(esc.bold(false));
-    b = b.concat(line());
-
-    b = b.concat(toBytes('No. Plat    : '+plat+'\n'));
-    b = b.concat(toBytes('Odo Meter   : '+odo+'\n'));
-    b = b.concat(line());
-
-    b = b.concat(esc.center());
-    pesan.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
-
-    if (isBold) b = b.concat(esc.bold(false));
-
-    b = b.concat(esc.feed(4));
-    b = b.concat(esc.cut());
-    return new Uint8Array(b);
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  WEB BLUETOOTH
-// ─────────────────────────────────────────────────────────────────
-const BT_UUIDS = [
-    '000018f0-0000-1000-8000-00805f9b34fb', '00001101-0000-1000-8000-00805f9b34fb',
-    'e7810a71-73ae-499d-8c15-faa9aef0c3f2', '49535343-fe7d-4ae5-8fa9-9fafd205e455',
-    '0000ff00-0000-1000-8000-00805f9b34fb', '0000ffe0-0000-1000-8000-00805f9b34fb'
-];
-function showConnected(name) {
-    document.getElementById('btConnected').classList.add('show');
-    document.getElementById('btDeviceName').textContent = '🔵 ' + name;
-    document.getElementById('btBtnLabel').textContent = 'CETAK SEKARANG';
-}
-function disconnectBT() {
-    if (btDevice && btDevice.gatt.connected) btDevice.gatt.disconnect();
-    btChar = null; btDevice = null;
-    document.getElementById('btConnected').classList.remove('show');
-    document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
-    clearStatus();
-}
-async function getChar() {
-    if (btChar && btDevice && btDevice.gatt.connected) return btChar;
-    if (!navigator.bluetooth) throw new Error('Browser tidak support Web Bluetooth');
-    setStatus('📡 Pilih printer Bluetooth...', 'info');
-    btDevice = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: BT_UUIDS });
-    btDevice.addEventListener('gattserverdisconnected', () => {
-        btChar = null;
-        document.getElementById('btConnected').classList.remove('show');
-        document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
-        setStatus('⚠️ Printer terputus', 'warning');
-    });
-    setStatus('🔗 Menghubungkan ke ' + btDevice.name + '...', 'info');
-    const server = await btDevice.gatt.connect();
-    const services = await server.getPrimaryServices();
-    for (const svc of services) {
+    // Download semua tabel sebagai PNG
+    async function downloadAllTables() {
+        if (detectedTables.length === 0) {
+            alert('Tidak ada tabel.');
+            return;
+        }
+        
+        statusEl.innerText = '📸 Menyiapkan screenshot...';
+        btnDownloadAll.disabled = true;
+        
+        // Buat container tersembunyi
+        const hidden = document.createElement('div');
+        hidden.style.position = 'absolute';
+        hidden.style.left = '-9999px';
+        hidden.style.top = '0';
+        hidden.style.visibility = 'hidden';
+        document.body.appendChild(hidden);
+        
         try {
-            const chars = await svc.getCharacteristics();
-            for (const ch of chars) {
-                if (ch.properties.write || ch.properties.writeWithoutResponse) {
-                    btChar = ch;
-                    showConnected(btDevice.name || 'Printer');
-                    return ch;
-                }
+            for (let i = 0; i < detectedTables.length; i++) {
+                const item = detectedTables[i];
+                statusEl.innerText = `📸 ${i+1}/${detectedTables.length}: ${item.title}`;
+                
+                // Clone elemen
+                const clone = item.element.cloneNode(true);
+                // Pastikan style inline untuk konsistensi
+                clone.style.width = item.element.offsetWidth + 'px';
+                clone.style.backgroundColor = 'white';
+                clone.style.padding = '16px';
+                hidden.appendChild(clone);
+                
+                // Tunggu render
+                await new Promise(r => setTimeout(r, 200));
+                
+                // Screenshot
+                const canvas = await html2canvas(clone, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    allowTaint: false,
+                    useCORS: true,
+                    logging: false,
+                    windowWidth: clone.scrollWidth,
+                    windowHeight: clone.scrollHeight
+                });
+                
+                // Download
+                const link = document.createElement('a');
+                const filename = item.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.png';
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                hidden.removeChild(clone);
             }
-        } catch(e) {}
+            statusEl.innerText = `🎉 Selesai! ${detectedTables.length} gambar diunduh.`;
+        } catch (err) {
+            statusEl.innerText = '❌ Gagal screenshot: ' + err.message;
+            console.error(err);
+        } finally {
+            document.body.removeChild(hidden);
+            btnDownloadAll.disabled = false;
+        }
     }
-    throw new Error('Characteristic write tidak ditemukan.');
-}
-async function sendBytes(char, data) {
-    const CHUNK = 100;
-    for (let i=0; i<data.length; i+=CHUNK) {
-        const slice = data.slice(i, i+CHUNK);
-        if (char.properties.writeWithoutResponse) await char.writeValueWithoutResponse(slice);
-        else await char.writeValue(slice);
-        await new Promise(r => setTimeout(r, 30));
-    }
-}
-async function printBluetooth() {
-    if (!navigator.bluetooth) { setStatus('❌ Gunakan Chrome untuk Web Bluetooth.', 'error'); return; }
-    const btn = document.getElementById('btBtn');
-    btn.disabled = true;
-    try {
-        const ch = await getChar();
-        setStatus('🖨️ Mengirim data ke printer...', 'info');
-        await sendBytes(ch, await buildEscPos());
-        setStatus('✅ Struk berhasil dicetak!', 'success');
-        saveCurrentTransaction(); // simpan ke riwayat
-        setTimeout(clearStatus, 3000);
-    } catch(err) {
-        setStatus('❌ ' + err.message, 'error');
-        btChar = null; btDevice = null;
-        document.getElementById('btConnected').classList.remove('show');
-        document.getElementById('btBtnLabel').textContent = 'CETAK VIA BLUETOOTH';
-    }
-    btn.disabled = false;
-}
 
-// ─────────────────────────────────────────────────────────────────
-//  THERMER
-// ─────────────────────────────────────────────────────────────────
-function buildThermerText() {
-    const f = n => new Intl.NumberFormat('id-ID').format(n);
-    const hrg = parseFloat(document.getElementById('inHarga').value)||0;
-    const ltr = parseFloat(document.getElementById('inLiter').value)||0;
-    const total = hrg*ltr;
-    const get = id => document.getElementById(id);
-    const line = '-'.repeat(32);
-    return [
-        get('inAlamat').value, line,
-        `Shift: ${get('inShift').value}    No. Trans: ${get('inTrans').value}`,
-        `Waktu: ${get('outWaktu').innerText}`, line,
-        `Pulau/Pompa : ${get('inPompa').value}`,
-        `Nama Produk : ${get('inBBM').value}`,
-        `Harga/Liter : Rp ${f(hrg)}`,
-        `Volume      : (L) ${ltr}`,
-        `Total Harga : Rp ${f(total)}`,
-        `Operator    : ${get('selOperator').value}`, line,
-        `CASH             ${f(total)}`, line,
-        `No. Plat    : ${get('inPlat').value.toUpperCase()}`,
-        `Odo Meter   : ${get('inOdo').value}`, line,
-        get('inPesan').value,
-    ].join('\n');
-}
-function printThermer() {
-    saveCurrentTransaction(); // simpan ke riwayat
-    const text = encodeURIComponent(buildThermerText());
-    const intentUrl = `intent://print?text=${text}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
-    if (/android/i.test(navigator.userAgent)) {
-        window.location.href = intentUrl;
-        setTimeout(() => setStatus('💡 Install Thermer dari Play Store', 'warning'), 2000);
-    } else window.print();
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  FONT SIZE
-// ─────────────────────────────────────────────────────────────────
-function updateFontSize() {
-    const val = parseInt(document.getElementById('inFontSize').value);
-    document.getElementById('fontSizeLabel').textContent = val + 'px';
-    document.getElementById('struk').style.setProperty('--receipt-font', val + 'px');
-    render();
-}
-function getFontSize() { return parseInt(document.getElementById('inFontSize').value) || 9; }
-function escFontSize(px) { return (px <= 11) ? [0x1D, 0x21, 0x00] : [0x1D, 0x21, 0x11]; }
-
-// ─────────────────────────────────────────────────────────────────
-//  FORM HELPERS
-// ─────────────────────────────────────────────────────────────────
-function adjOdo(v) { const el=document.getElementById('inOdo'); el.value = parseInt(el.value||0)+v; render(); }
-function generateAllRandom() {
-    document.getElementById('inTrans').value = Math.floor(100000+Math.random()*900000);
-    randomSec = Math.floor(Math.random()*60).toString().padStart(2,'0');
-    render();
-    saveCurrentTransaction(); // simpan juga saat random
-}
-function handleNewLogo(e) {
-    const reader = new FileReader();
-    reader.onload = function() {
-        savedLogos.push({ name: e.target.files[0].name.substring(0,8), data: reader.result });
-        db.set('spbu_logos', savedLogos);
-        updateLogoList();
-        document.getElementById('selLogo').value = reader.result;
-        applySavedLogo();
-    };
-    reader.readAsDataURL(e.target.files[0]);
-}
-function updateLogoList() {
-    document.getElementById('selLogo').innerHTML = savedLogos.map(l=>`<option value="${l.data}">${l.name}</option>`).join('') + `<option value="">— Tanpa Logo —</option>`;
-}
-function applySavedLogo() {
-    const data = document.getElementById('selLogo').value;
-    document.getElementById('outLogo').src = data || '';
-    render();
-}
-function toggleOpManager() {
-    const mgr = document.getElementById('opManager');
-    const btn = document.getElementById('btnOpMgr');
-    const isOpen = mgr.style.display !== 'none';
-    mgr.style.display = isOpen ? 'none' : 'block';
-    btn.textContent = isOpen ? '⚙️ Kelola' : '✕ Tutup';
-    if (!isOpen) renderOpList();
-}
-function renderOpList() {
-    const list = document.getElementById('opList');
-    if (operators.length === 0) {
-        list.innerHTML = '<div style="padding:8px; color:var(--text2); text-align:center;">Belum ada operator</div>';
-        return;
-    }
-    list.innerHTML = operators.map((op,i)=>`
-        <div style="display:flex; align-items:center; gap:6px; padding:6px 8px; background:var(--surface); border-radius:7px; border:1px solid var(--border);">
-            <span style="font-size:12px; color:var(--text); flex:1;">${op}</span>
-            <button onclick="selectOperator('${op}')" style="background:var(--surface2); border:1px solid var(--border); color:var(--accent); padding:4px 10px; border-radius:5px; font-size:11px;">Pilih</button>
-            <button onclick="deleteOperator(${i})" style="background:transparent; border:none; color:#f87171; font-size:14px;">✕</button>
-        </div>
-    `).join('');
-}
-function selectOperator(name) { document.getElementById('selOperator').value = name; render(); toggleOpManager(); }
-function addOperator() {
-    const inp = document.getElementById('inNewOp');
-    const val = inp.value.trim().toUpperCase();
-    if (!val) return;
-    if (operators.includes(val)) { alert('Operator sudah ada'); return; }
-    operators.push(val);
-    db.set('spbu_ops', operators);
-    inp.value = '';
-    updateOpList();
-    renderOpList();
-    document.getElementById('selOperator').value = val;
-    render();
-}
-function deleteOperator(idx) { if (confirm('Hapus operator?')) { operators.splice(idx,1); db.set('spbu_ops', operators); updateOpList(); renderOpList(); render(); } }
-function updateOpList() {
-    const sel = document.getElementById('selOperator');
-    const cur = sel.value;
-    sel.innerHTML = operators.map(o=>`<option value="${o}">${o}</option>`).join('');
-    if (operators.includes(cur)) sel.value = cur;
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  SAVE & LOAD SETTINGS (DIPERBAIKI)
-// ─────────────────────────────────────────────────────────────────
-function saveSettings() {
-    const settings = {
-        alamat: document.getElementById('inAlamat').value,
-        logoWidth: document.getElementById('inLogoWidth').value,
-        logoMargin: document.getElementById('inLogoMargin').value,
-        fontSize: document.getElementById('inFontSize').value,
-        bold: document.getElementById('inBold').value,
-        pesan: document.getElementById('inPesan').value,
-        selectedLogo: document.getElementById('selLogo').value
-    };
-    db.set('spbu_settings', settings);
-    setStatus('✅ Konfigurasi tersimpan!', 'success');
-    setTimeout(clearStatus, 2000);
-}
-
-function loadSettings() {
-    const settings = db.get('spbu_settings', null);
-    if (!settings) return;
-
-    if (settings.alamat) document.getElementById('inAlamat').value = settings.alamat;
-    if (settings.logoWidth) document.getElementById('inLogoWidth').value = settings.logoWidth;
-    if (settings.logoMargin) document.getElementById('inLogoMargin').value = settings.logoMargin;
-    if (settings.fontSize) {
-        document.getElementById('inFontSize').value = settings.fontSize;
-        updateFontSize();
-    }
-    if (settings.bold) document.getElementById('inBold').value = settings.bold;
-    if (settings.pesan) document.getElementById('inPesan').value = settings.pesan;
-    
-    if (settings.selectedLogo) {
-        const sel = document.getElementById('selLogo');
-        // Pastikan daftar logo sudah diupdate sebelum set value
-        setTimeout(() => {
-            if ([...sel.options].some(opt => opt.value === settings.selectedLogo)) {
-                sel.value = settings.selectedLogo;
-                applySavedLogo();
-            }
-        }, 100);
-    }
-    render();
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  RIWAYAT TRANSAKSI & EKSPOR EXCEL
-// ─────────────────────────────────────────────────────────────────
-function saveCurrentTransaction() {
-    const get = id => document.getElementById(id).value;
-    const hrg = parseFloat(get('inHarga'))||0;
-    const ltr = parseFloat(get('inLiter'))||0;
-    const total = hrg*ltr;
-    const record = {
-        waktu: new Date().toLocaleString('id-ID'),
-        shift: get('inShift'),
-        noTrans: get('inTrans'),
-        produk: get('inBBM'),
-        volume: ltr,
-        total: total,
-        operator: get('selOperator'),
-        plat: get('inPlat').toUpperCase(),
-        odo: get('inOdo')
-    };
-    transactionHistory.push(record);
-    // Batasi maksimal 500 record agar tidak membloat localStorage
-    if (transactionHistory.length > 500) transactionHistory.shift();
-    db.set('spbu_history', transactionHistory);
-}
-
-function exportToExcel() {
-    if (transactionHistory.length === 0) {
-        setStatus('❌ Belum ada data transaksi.', 'error');
-        return;
-    }
-    // Buat CSV
-    const headers = ['Waktu', 'Shift', 'No. Trans', 'Produk', 'Volume (L)', 'Total (Rp)', 'Operator', 'Plat', 'Odo'];
-    const rows = transactionHistory.map(r => [
-        r.waktu, r.shift, r.noTrans, r.produk, r.volume, r.total, r.operator, r.plat, r.odo
-    ]);
-    let csvContent = headers.join(',') + '\n' + rows.map(row => row.join(',')).join('\n');
-    
-    // Download
-    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `riwayat_transaksi_spbu_${new Date().toISOString().slice(0,10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setStatus('✅ File CSV berhasil diunduh!', 'success');
-    setTimeout(clearStatus, 2000);
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  RENDER PREVIEW
-// ─────────────────────────────────────────────────────────────────
-function render() {
-    const get = id => document.getElementById(id);
-    get('outLogo').style.width = get('inLogoWidth').value + 'mm';
-    get('outLogo').style.marginBottom = get('inLogoMargin').value + 'mm';
-    get('outAlamat').innerText = get('inAlamat').value;
-    get('outPesan').innerText = get('inPesan').value;
-    get('outShift').innerText = get('inShift').value;
-    get('outTrans').innerText = get('inTrans').value;
-    const wt = get('inWaktu').value;
-    if (wt) {
-        const d = new Date(wt);
-        get('outWaktu').innerText = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${randomSec}`;
-    }
-    get('outPompa').innerText = get('inPompa').value;
-    get('outBBM').innerText = get('inBBM').value;
-    get('outOperator').innerText = get('selOperator').value;
-    get('outPlat').innerText = get('inPlat').value.toUpperCase();
-    get('outOdo').innerText = get('inOdo').value;
-    const h = parseFloat(get('inHarga').value)||0, l = parseFloat(get('inLiter').value)||0, tot = h*l;
-    const f = n => new Intl.NumberFormat('id-ID').format(n);
-    get('outHarga').innerText = 'Rp '+f(h);
-    get('outLiter').innerText = '(L) '+l;
-    get('outTotal').innerText = 'Rp '+f(tot);
-    get('outCash').innerText = f(tot);
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────────────────────────
-window.onload = function() {
-    updateLogoList();
-    updateOpList();
-    generateAllRandom();
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
-
-    // Load settings terakhir (setelah UI siap)
-    loadSettings();
-
-    render();
-    if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent)) {
-        setStatus('⚠️ Gunakan Chrome untuk fitur Bluetooth.', 'warning');
-    }
-};
+    window.detectAndRender = detectAndRender;
+    window.downloadAllTables = downloadAllTables;
 </script>
 </body>
 </html>
