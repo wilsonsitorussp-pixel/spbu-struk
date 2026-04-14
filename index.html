@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPBU Pro - Cetak Struk</title>
     <style>
-        /* === CSS SAMA SEPERTI SEBELUMNYA === */
+        /* === CSS TIDAK BERUBAH (sama seperti sebelumnya) === */
         :root {
             --bg: #0f1117;
             --surface: #1a1d27;
@@ -161,6 +161,7 @@
         .btn-green { background: var(--surface2); border: 1px solid #1a5c3a; color: var(--green); }
         .btn-blue  { background: var(--surface2); border: 1px solid #1e2d4a; color: var(--accent); }
         .btn-save { background: var(--accent); color: white; border: none; }
+        .btn-excel { background: #1e6f3f; color: white; border: none; }
         .print-section { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
         .btn-print-bt {
             width: 100%;
@@ -321,16 +322,15 @@
             <div>
                 <label>Ukuran Font Struk</label>
                 <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
-                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">3</span>
-                    <input type="range" id="inFontSize" min="3" max="20" value="9" step="1" oninput="updateFontSize()" style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;">
-                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">20</span>
+                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">5</span>
+                    <input type="range" id="inFontSize" min="5" max="15" value="9" step="1" oninput="updateFontSize()" style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;">
+                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono); width:16px;">15</span>
                     <span id="fontSizeLabel" style="font-size:12px; font-weight:700; font-family:var(--mono); color:var(--accent); background:var(--bg); border:1px solid var(--accent); border-radius:6px; padding:3px 8px; min-width:36px; text-align:center;">9px</span>
                 </div>
             </div>
             <div>
                 <label>Ketebalan Teks</label>
                 <select id="inBold" onchange="render()">
-                    <option value="thin">Thin (Tipis)</option>
                     <option value="normal" selected>Normal</option>
                     <option value="bold">Tebal (Bold)</option>
                 </select>
@@ -403,11 +403,15 @@
                 <button class="btn-print-thermer" onclick="printThermer()">🟡 Cetak via Thermer App</button>
                 <button class="btn-print-dialog" onclick="window.print()">🖨️ Print Dialog (Ctrl+P)</button>
             </div>
-            <div style="font-size:10px; color:var(--text2); line-height:1.6; padding:8px; background:var(--bg); border-radius:8px; font-family:var(--mono);">
-                🔵 Bluetooth → Chrome only, BLE printer<br>
-                🟡 Thermer → Semua tipe BT, perlu install app<br>
-                🖨️ Dialog → Semua printer, ada print dialog
-            </div>
+        </div>
+    </div>
+
+    <!-- Panel Riwayat & Ekspor -->
+    <div class="panel no-print">
+        <div class="panel-header">📋 Riwayat Transaksi</div>
+        <div class="panel-body">
+            <button class="btn btn-excel" onclick="exportToExcel()">📊 Ekspor ke Excel (CSV)</button>
+            <p style="font-size:11px; color:var(--text2);">Data otomatis tersimpan saat cetak atau random.</p>
         </div>
     </div>
 
@@ -459,6 +463,9 @@ let operators  = db.get('spbu_ops',   ["DINDA HALIMAH"]);
 let savedLogos = db.get('spbu_logos', []);
 let btChar = null, btDevice = null;
 
+// Riwayat transaksi
+let transactionHistory = db.get('spbu_history', []);
+
 // ─────────────────────────────────────────────────────────────────
 //  STATUS BAR
 // ─────────────────────────────────────────────────────────────────
@@ -484,9 +491,7 @@ const esc = {
     feed:   (n)   => [ESC,0x64,n],
     cut:    ()    => [GS,0x56,0x00],
     feedMM: (mm)  => [ESC, 0x4A, Math.round(mm * 8.5)],
-    lineSpacing: (n) => [ESC, 0x33, n],
-    // Thin font: ESC M 1 (font B) + ESC ! 0 (normal width/height)
-    thinFont: ()  => [ESC, 0x4D, 0x01, ESC, 0x21, 0x00]
+    lineSpacing: (n) => [ESC, 0x33, n]
 };
 function toBytes(str) { return Array.from(new TextEncoder().encode(str)); }
 function line(n=32) { return toBytes('-'.repeat(n)+'\n'); }
@@ -537,7 +542,7 @@ async function imageToEscPosRaster(imgElement, widthMM = 30) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  BUILD ESC/POS (dengan dukungan Thin/Normal/Bold)
+//  BUILD ESC/POS
 // ─────────────────────────────────────────────────────────────────
 async function buildEscPos() {
     const f = n => new Intl.NumberFormat('id-ID').format(n);
@@ -555,19 +560,12 @@ async function buildEscPos() {
     const plat = get('inPlat').value.toUpperCase();
     const odo = get('inOdo').value;
     const pesan = get('inPesan').value;
-    const weight = get('inBold').value; // "thin", "normal", "bold"
+    const isBold = get('inBold').value === 'bold';
 
     let b = [];
     b = b.concat(esc.init());
+    if (isBold) b = b.concat(esc.bold(true));
 
-    // Atur font sesuai pilihan
-    if (weight === 'thin') {
-        b = b.concat(esc.thinFont());
-    } else if (weight === 'bold') {
-        b = b.concat(esc.bold(true));
-    } // normal tidak perlu tambahan
-
-    // Logo
     const logoImg = document.getElementById('outLogo');
     if (logoImg.src && logoImg.src !== '' && logoImg.complete && logoImg.naturalWidth > 0) {
         b = b.concat(esc.center());
@@ -581,14 +579,9 @@ async function buildEscPos() {
 
     b = b.concat(escFontSize(getFontSize()));
     b = b.concat(esc.center());
-    // Header selalu bold, kecuali jika sudah bold global atau thin
-    if (weight === 'normal' || weight === 'thin') {
-        b = b.concat(esc.bold(true));
-    }
+    if (!isBold) b = b.concat(esc.bold(true));
     alamat.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
-    if (weight === 'normal' || weight === 'thin') {
-        b = b.concat(esc.bold(false));
-    }
+    if (!isBold) b = b.concat(esc.bold(false));
     b = b.concat(esc.lineSpacing(31));
     b = b.concat(line());
     b = b.concat(esc.left());
@@ -604,10 +597,9 @@ async function buildEscPos() {
     b = b.concat(toBytes('Operator    : '+operator+'\n'));
     b = b.concat(line());
 
-    // Cash bold jika tidak dalam mode bold global
-    if (weight !== 'bold') b = b.concat(esc.bold(true));
+    if (!isBold) b = b.concat(esc.bold(true));
     b = b.concat(row2('CASH', f(total)));
-    if (weight !== 'bold') b = b.concat(esc.bold(false));
+    if (!isBold) b = b.concat(esc.bold(false));
     b = b.concat(line());
 
     b = b.concat(toBytes('No. Plat    : '+plat+'\n'));
@@ -617,13 +609,7 @@ async function buildEscPos() {
     b = b.concat(esc.center());
     pesan.split('\n').forEach(l => b = b.concat(toBytes(l+'\n')));
 
-    // Kembalikan ke normal jika sebelumnya thin atau bold
-    if (weight === 'thin') {
-        // Kembalikan ke font A normal
-        b = b.concat([ESC, 0x4D, 0x00, ESC, 0x21, 0x00]);
-    } else if (weight === 'bold') {
-        b = b.concat(esc.bold(false));
-    }
+    if (isBold) b = b.concat(esc.bold(false));
 
     b = b.concat(esc.feed(4));
     b = b.concat(esc.cut());
@@ -696,6 +682,7 @@ async function printBluetooth() {
         setStatus('🖨️ Mengirim data ke printer...', 'info');
         await sendBytes(ch, await buildEscPos());
         setStatus('✅ Struk berhasil dicetak!', 'success');
+        saveCurrentTransaction(); // simpan ke riwayat
         setTimeout(clearStatus, 3000);
     } catch(err) {
         setStatus('❌ ' + err.message, 'error');
@@ -707,7 +694,7 @@ async function printBluetooth() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  THERMER (teks saja)
+//  THERMER
 // ─────────────────────────────────────────────────────────────────
 function buildThermerText() {
     const f = n => new Intl.NumberFormat('id-ID').format(n);
@@ -733,6 +720,7 @@ function buildThermerText() {
     ].join('\n');
 }
 function printThermer() {
+    saveCurrentTransaction(); // simpan ke riwayat
     const text = encodeURIComponent(buildThermerText());
     const intentUrl = `intent://print?text=${text}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
     if (/android/i.test(navigator.userAgent)) {
@@ -747,26 +735,21 @@ function printThermer() {
 function updateFontSize() {
     const val = parseInt(document.getElementById('inFontSize').value);
     document.getElementById('fontSizeLabel').textContent = val + 'px';
-    document.getElementById('fontPreviewText').style.fontSize = val + 'px';
     document.getElementById('struk').style.setProperty('--receipt-font', val + 'px');
-    db.set('spbu_fontsize', val);
     render();
 }
 function getFontSize() { return parseInt(document.getElementById('inFontSize').value) || 9; }
-function escFontSize(px) {
-    if (px <= 8) return [0x1D, 0x21, 0x00]; // normal width/height
-    else if (px <= 12) return [0x1D, 0x21, 0x11]; // double width & height
-    else return [0x1D, 0x21, 0x22]; // triple width & height (opsional)
-}
+function escFontSize(px) { return (px <= 11) ? [0x1D, 0x21, 0x00] : [0x1D, 0x21, 0x11]; }
 
 // ─────────────────────────────────────────────────────────────────
-//  FORM HELPERS & SAVE/LOAD SETTINGS
+//  FORM HELPERS
 // ─────────────────────────────────────────────────────────────────
 function adjOdo(v) { const el=document.getElementById('inOdo'); el.value = parseInt(el.value||0)+v; render(); }
 function generateAllRandom() {
     document.getElementById('inTrans').value = Math.floor(100000+Math.random()*900000);
     randomSec = Math.floor(Math.random()*60).toString().padStart(2,'0');
     render();
+    saveCurrentTransaction(); // simpan juga saat random
 }
 function handleNewLogo(e) {
     const reader = new FileReader();
@@ -831,7 +814,9 @@ function updateOpList() {
     if (operators.includes(cur)) sel.value = cur;
 }
 
-// Simpan semua konfigurasi
+// ─────────────────────────────────────────────────────────────────
+//  SAVE & LOAD SETTINGS (DIPERBAIKI)
+// ─────────────────────────────────────────────────────────────────
 function saveSettings() {
     const settings = {
         alamat: document.getElementById('inAlamat').value,
@@ -847,7 +832,6 @@ function saveSettings() {
     setTimeout(clearStatus, 2000);
 }
 
-// Muat konfigurasi - dipanggil setelah semua elemen siap
 function loadSettings() {
     const settings = db.get('spbu_settings', null);
     if (!settings) return;
@@ -861,25 +845,68 @@ function loadSettings() {
     }
     if (settings.bold) document.getElementById('inBold').value = settings.bold;
     if (settings.pesan) document.getElementById('inPesan').value = settings.pesan;
-
-    // Logo: restore jika ada di daftar
+    
     if (settings.selectedLogo) {
         const sel = document.getElementById('selLogo');
-        // Pastikan daftar logo sudah terisi
-        if ([...sel.options].some(opt => opt.value === settings.selectedLogo)) {
-            sel.value = settings.selectedLogo;
-            applySavedLogo();
-        } else {
-            // Mungkin logo belum di-load? Coba lagi nanti
-            setTimeout(() => {
-                if ([...sel.options].some(opt => opt.value === settings.selectedLogo)) {
-                    sel.value = settings.selectedLogo;
-                    applySavedLogo();
-                }
-            }, 200);
-        }
+        // Pastikan daftar logo sudah diupdate sebelum set value
+        setTimeout(() => {
+            if ([...sel.options].some(opt => opt.value === settings.selectedLogo)) {
+                sel.value = settings.selectedLogo;
+                applySavedLogo();
+            }
+        }, 100);
     }
-    // render() akan dipanggil setelah loadSettings di onload
+    render();
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  RIWAYAT TRANSAKSI & EKSPOR EXCEL
+// ─────────────────────────────────────────────────────────────────
+function saveCurrentTransaction() {
+    const get = id => document.getElementById(id).value;
+    const hrg = parseFloat(get('inHarga'))||0;
+    const ltr = parseFloat(get('inLiter'))||0;
+    const total = hrg*ltr;
+    const record = {
+        waktu: new Date().toLocaleString('id-ID'),
+        shift: get('inShift'),
+        noTrans: get('inTrans'),
+        produk: get('inBBM'),
+        volume: ltr,
+        total: total,
+        operator: get('selOperator'),
+        plat: get('inPlat').toUpperCase(),
+        odo: get('inOdo')
+    };
+    transactionHistory.push(record);
+    // Batasi maksimal 500 record agar tidak membloat localStorage
+    if (transactionHistory.length > 500) transactionHistory.shift();
+    db.set('spbu_history', transactionHistory);
+}
+
+function exportToExcel() {
+    if (transactionHistory.length === 0) {
+        setStatus('❌ Belum ada data transaksi.', 'error');
+        return;
+    }
+    // Buat CSV
+    const headers = ['Waktu', 'Shift', 'No. Trans', 'Produk', 'Volume (L)', 'Total (Rp)', 'Operator', 'Plat', 'Odo'];
+    const rows = transactionHistory.map(r => [
+        r.waktu, r.shift, r.noTrans, r.produk, r.volume, r.total, r.operator, r.plat, r.odo
+    ]);
+    let csvContent = headers.join(',') + '\n' + rows.map(row => row.join(',')).join('\n');
+    
+    // Download
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `riwayat_transaksi_spbu_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setStatus('✅ File CSV berhasil diunduh!', 'success');
+    setTimeout(clearStatus, 2000);
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -916,29 +943,16 @@ function render() {
 // ─────────────────────────────────────────────────────────────────
 window.onload = function() {
     updateLogoList();
-    // Jangan panggil applySavedLogo dulu, biar loadSettings yang atur
     updateOpList();
-    // Set waktu default
+    generateAllRandom();
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
 
-    // Load settings sebelum render lainnya
+    // Load settings terakhir (setelah UI siap)
     loadSettings();
 
-    // Jika setelah loadSettings logo masih kosong dan ada logo tersimpan, apply yang pertama
-    if (!document.getElementById('outLogo').src && savedLogos.length > 0) {
-        document.getElementById('selLogo').value = savedLogos[0].data;
-        applySavedLogo();
-    }
-
-    generateAllRandom(); // ini akan render()
-    // render() tambahan tidak perlu karena generateAllRandom sudah render
-
-    const savedFont = db.get('spbu_fontsize', 9);
-    document.getElementById('inFontSize').value = savedFont;
-    updateFontSize();
-
+    render();
     if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent)) {
         setStatus('⚠️ Gunakan Chrome untuk fitur Bluetooth.', 'warning');
     }
