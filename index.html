@@ -295,7 +295,26 @@
             margin-bottom: 2px;
             font-size: 9px;
         }
+        /* === TAMBAHAN: GitHub Sync === */
+        .btn-github { background: #24292e; color: #fff; border: 1px solid #444d56; }
+        .btn-github-pull { background: var(--surface2); color: var(--accent); border: 1px solid #1e2d4a; }
+        .gh-note {
+            font-size: 10px;
+            color: var(--text2);
+            line-height: 1.6;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+        .gh-sync-time {
+            font-size: 10px;
+            color: var(--text2);
+            text-align: center;
+            font-family: var(--mono);
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -370,6 +389,72 @@
         </div>
     </div>
 
+    <!-- Panel Sinkronisasi GitHub -->
+    <div class="panel no-print">
+        <div class="panel-header">☁️ Sinkronisasi Pengaturan (GitHub)</div>
+        <div class="panel-body">
+            <div class="gh-note">
+                Konfigurasi struk & riwayat transaksi bisa disimpan ke GitHub repo kamu,
+                sehingga saat dibuka dari HP/perangkat lain otomatis sama dan menyatu.
+                Token disimpan hanya di perangkat ini (localStorage), tidak dikirim ke
+                siapapun selain GitHub API.
+            </div>
+
+            <!-- Profil Konfigurasi Tersimpan -->
+            <div>
+                <label>Profil Konfigurasi Tersimpan</label>
+                <div class="row">
+                    <select id="ghProfileSelect" onchange="selectGithubProfile()" style="flex:2"></select>
+                    <button class="btn btn-icon" onclick="deleteGithubProfile()">🗑️</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    <label>GitHub Username</label>
+                    <input type="text" id="ghOwner" placeholder="contoh: username-anda">
+                </div>
+                <div>
+                    <label>Nama Repository</label>
+                    <input type="text" id="ghRepo" placeholder="contoh: spbu-struk">
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <label>Branch</label>
+                    <input type="text" id="ghBranch" placeholder="main" value="main">
+                </div>
+                <div>
+                    <label>Nama File Settings</label>
+                    <input type="text" id="ghPath" placeholder="spbu-settings.json" value="spbu-settings.json">
+                </div>
+            </div>
+            <div>
+                <label>Nama File Riwayat Transaksi</label>
+                <input type="text" id="ghHistoryPath" placeholder="spbu-history.json" value="spbu-history.json">
+            </div>
+            <div>
+                <label>Personal Access Token (PAT)</label>
+                <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            </div>
+
+            <div class="row">
+                <input type="text" id="ghProfileName" placeholder="Nama profil (misal: SPBU Polonia)" style="flex:2">
+                <button class="btn btn-green" onclick="saveGithubProfile()">💾 Simpan Profil</button>
+            </div>
+
+            <div class="row">
+                <button class="btn btn-github" onclick="pushSettingsToGithub(true)">☁️ Upload Konfigurasi</button>
+                <button class="btn btn-github-pull" onclick="pullSettingsFromGithub(true)">⬇️ Tarik Konfigurasi</button>
+            </div>
+            <div class="row">
+                <button class="btn btn-github" onclick="pushHistoryToGithub(true)">☁️ Upload Riwayat</button>
+                <button class="btn btn-github-pull" onclick="pullHistoryFromGithub(true)">⬇️ Tarik & Gabung Riwayat</button>
+            </div>
+            <div class="gh-sync-time" id="ghSyncTime">Belum pernah sinkronisasi</div>
+        </div>
+    </div>
+
     <!-- Panel Data Transaksi -->
     <div class="panel no-print">
         <div class="panel-header">🧾 Data Transaksi</div>
@@ -428,7 +513,7 @@
                 <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()"><span>🔵</span><span id="btBtnLabel">CETAK VIA BLUETOOTH</span></button>
                 <div class="divider">ATAU</div>
                 <button class="btn-print-thermer" onclick="printThermer()">🟡 Cetak via Thermer App</button>
-                <button class="btn-print-dialog" onclick="window.print()">🖨️ Print Dialog (Ctrl+P)</button>
+                <button class="btn-print-dialog" onclick="printDialog()">🖨️ Print Dialog (Ctrl+P)</button>
             </div>
         </div>
     </div>
@@ -437,8 +522,9 @@
     <div class="panel no-print">
         <div class="panel-header">📋 Riwayat Transaksi</div>
         <div class="panel-body">
-            <button class="btn btn-excel" onclick="exportToExcel()">📊 Ekspor ke Excel (CSV)</button>
-            <p style="font-size:11px; color:var(--text2);">Data otomatis tersimpan saat cetak atau random.</p>
+            <button class="btn btn-excel" onclick="exportToExcel()">📊 Ekspor ke Excel (.xlsx)</button>
+            <p style="font-size:11px; color:var(--text2);">Setiap struk yang dicetak (Bluetooth, Thermer, atau Print Dialog) otomatis tersimpan ke riwayat beserta waktu cetaknya.</p>
+            <p style="font-size:11px; color:var(--text2);">Total riwayat tersimpan: <b id="histCount">0</b> transaksi</p>
         </div>
     </div>
 
@@ -490,6 +576,9 @@ let operators  = db.get('spbu_ops',   ["DINDA HALIMAH"]);
 let savedLogos = db.get('spbu_logos', []);
 let btChar = null, btDevice = null;
 let transactionHistory = db.get('spbu_history', []);
+let usedTransNumbers = db.get('spbu_used_numbers', []);
+let githubConfig = db.get('spbu_github_config', null);
+let githubProfiles = db.get('spbu_github_profiles', []);
 let bbmPrices = db.get('spbu_harga_bbm', {
     'PERTALITE': 10000,
     'PERTAMAX': 12500,
@@ -761,6 +850,14 @@ function printThermer() {
 }
 
 // ─────────────────────────────────────────────────────────────────
+//  PRINT DIALOG (Ctrl+P) - simpan riwayat sebelum membuka dialog cetak
+// ─────────────────────────────────────────────────────────────────
+function printDialog() {
+    saveCurrentTransaction();
+    window.print();
+}
+
+// ─────────────────────────────────────────────────────────────────
 //  FONT SIZE
 // ─────────────────────────────────────────────────────────────────
 function updateFontSize() {
@@ -779,26 +876,39 @@ function adjOdo(v) { const el=document.getElementById('inOdo'); el.value = parse
 
 // Fungsi untuk menghasilkan nomor transaksi unik (6 digit numerik)
 function generateUniqueTransactionNumber() {
-    const existingNumbers = new Set(transactionHistory.map(r => r.noTrans));
+    // Gabungkan riwayat aktif + daftar nomor yang pernah dipakai (permanen, tidak terbatas 500)
+    const existingNumbers = new Set([
+        ...transactionHistory.map(r => String(r.noTrans)),
+        ...usedTransNumbers.map(String)
+    ]);
     let attempts = 0;
     let newNumber;
     do {
         newNumber = Math.floor(100000 + Math.random() * 900000).toString();
         attempts++;
-        if (attempts > 100) {
-            // fallback: tambahkan timestamp 2 digit terakhir
-            newNumber = (Math.floor(100000 + Math.random() * 900000)).toString() + Date.now().toString().slice(-2);
+        if (attempts > 200) {
+            // fallback: tambahkan 2 digit terakhir timestamp lalu potong jadi 6 digit
+            newNumber = (Math.floor(10000 + Math.random() * 90000)).toString() + Date.now().toString().slice(-1);
             break;
         }
     } while (existingNumbers.has(newNumber));
     return newNumber.slice(0,6); // pastikan 6 digit
 }
 
+function markTransNumberUsed(noTrans) {
+    const key = String(noTrans);
+    if (!usedTransNumbers.includes(key)) {
+        usedTransNumbers.push(key);
+        // Batasi penyimpanan daftar nomor agar tidak membengkak tanpa batas
+        if (usedTransNumbers.length > 5000) usedTransNumbers = usedTransNumbers.slice(-5000);
+        db.set('spbu_used_numbers', usedTransNumbers);
+    }
+}
+
 function generateUniqueRandom() {
     document.getElementById('inTrans').value = generateUniqueTransactionNumber();
     randomSec = Math.floor(Math.random()*60).toString().padStart(2,'0');
     render();
-    saveCurrentTransaction(); // simpan juga saat random
 }
 
 // Harga BBM
@@ -818,6 +928,9 @@ function saveBBMPrice() {
     db.set('spbu_harga_bbm', bbmPrices);
     // update harga saat ini jika produk yang dipilih ada di dropdown
     onBBMChange();
+    if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
+        pushSettingsToGithub(false);
+    }
 }
 function onBBMChange() {
     const produk = document.getElementById('inBBM').value;
@@ -834,6 +947,10 @@ function handleNewLogo(e) {
         updateLogoList();
         document.getElementById('selLogo').value = reader.result;
         applySavedLogo();
+        if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
+            saveSettings(); // simpan referensi logo aktif ke settings
+            pushSettingsToGithub(false);
+        }
     };
     reader.readAsDataURL(e.target.files[0]);
 }
@@ -880,8 +997,22 @@ function addOperator() {
     renderOpList();
     document.getElementById('selOperator').value = val;
     render();
+    if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
+        pushSettingsToGithub(false);
+    }
 }
-function deleteOperator(idx) { if (confirm('Hapus operator?')) { operators.splice(idx,1); db.set('spbu_ops', operators); updateOpList(); renderOpList(); render(); } }
+function deleteOperator(idx) {
+    if (confirm('Hapus operator?')) {
+        operators.splice(idx,1);
+        db.set('spbu_ops', operators);
+        updateOpList();
+        renderOpList();
+        render();
+        if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
+            pushSettingsToGithub(false);
+        }
+    }
+}
 function updateOpList() {
     const sel = document.getElementById('selOperator');
     const cur = sel.value;
@@ -905,6 +1036,11 @@ function saveSettings() {
     db.set('spbu_settings', settings);
     setStatus('✅ Konfigurasi tersimpan!', 'success');
     setTimeout(clearStatus, 2000);
+
+    // Jika GitHub sudah dikonfigurasi, otomatis sinkronkan juga ke GitHub
+    if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
+        pushSettingsToGithub(false);
+    }
 }
 
 function loadSettings() {
@@ -941,11 +1077,15 @@ function saveCurrentTransaction() {
     const hrg = parseFloat(get('inHarga'))||0;
     const ltr = parseFloat(get('inLiter'))||0;
     const total = hrg*ltr;
+    const noTrans = get('inTrans');
     const record = {
-        waktu: new Date().toLocaleString('id-ID'),
+        ts: Date.now(),
+        waktuCetak: new Date().toLocaleString('id-ID'),
+        waktuTransaksi: document.getElementById('outWaktu').innerText,
         shift: get('inShift'),
-        noTrans: get('inTrans'),
+        noTrans: noTrans,
         produk: get('inBBM'),
+        hargaLiter: hrg,
         volume: ltr,
         total: total,
         operator: get('selOperator'),
@@ -953,31 +1093,527 @@ function saveCurrentTransaction() {
         odo: get('inOdo')
     };
     transactionHistory.push(record);
-    if (transactionHistory.length > 500) transactionHistory.shift();
+    if (transactionHistory.length > 1000) transactionHistory.shift();
     db.set('spbu_history', transactionHistory);
+    markTransNumberUsed(noTrans);
+    updateHistCount();
+
+    // Jika GitHub sudah dikonfigurasi, sinkronkan riwayat (gabung otomatis lintas perangkat)
+    if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
+        pushHistoryToGithub(false);
+    }
 }
 
-function exportToExcel() {
+function updateHistCount() {
+    const el = document.getElementById('histCount');
+    if (el) el.textContent = transactionHistory.length;
+}
+
+async function exportToExcel() {
+    // Jika GitHub dikonfigurasi, tarik & gabung riwayat dari perangkat lain dulu
+    if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
+        setStatus('🔄 Menggabungkan riwayat dari semua perangkat...', 'info');
+        await pullHistoryFromGithub(false);
+    }
+
     if (transactionHistory.length === 0) {
         setStatus('❌ Belum ada data transaksi.', 'error');
         return;
     }
-    const headers = ['Waktu', 'Shift', 'No. Trans', 'Produk', 'Volume (L)', 'Total (Rp)', 'Operator', 'Plat', 'Odo'];
+    if (typeof XLSX === 'undefined') {
+        setStatus('❌ Library Excel belum termuat. Cek koneksi internet.', 'error');
+        return;
+    }
+    const headers = [
+        'Waktu Cetak', 'Waktu Transaksi', 'Shift', 'No. Trans', 'Produk',
+        'Harga/Liter (Rp)', 'Volume (L)', 'Total (Rp)', 'Operator', 'Plat', 'Odo (KM)'
+    ];
     const rows = transactionHistory.map(r => [
-        r.waktu, r.shift, r.noTrans, r.produk, r.volume, r.total, r.operator, r.plat, r.odo
+        r.waktuCetak || r.waktu || '',
+        r.waktuTransaksi || '',
+        r.shift,
+        r.noTrans,
+        r.produk,
+        r.hargaLiter !== undefined ? r.hargaLiter : '',
+        r.volume,
+        r.total,
+        r.operator,
+        r.plat,
+        r.odo
     ]);
-    let csvContent = headers.join(',') + '\n' + rows.map(row => row.join(',')).join('\n');
-    
-    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `riwayat_transaksi_spbu_${new Date().toISOString().slice(0,10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setStatus('✅ File CSV berhasil diunduh!', 'success');
+
+    const wsData = [headers, ...rows];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    // Lebar kolom otomatis agar rapi
+    ws['!cols'] = [
+        { wch: 20 }, // Waktu Cetak
+        { wch: 18 }, // Waktu Transaksi
+        { wch: 6 },  // Shift
+        { wch: 10 }, // No. Trans
+        { wch: 16 }, // Produk
+        { wch: 14 }, // Harga/Liter
+        { wch: 10 }, // Volume
+        { wch: 14 }, // Total
+        { wch: 18 }, // Operator
+        { wch: 14 }, // Plat
+        { wch: 10 }, // Odo
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Riwayat Transaksi');
+
+    const filename = `riwayat_transaksi_spbu_${new Date().toISOString().slice(0,10)}.xlsx`;
+    XLSX.writeFile(wb, filename);
+
+    setStatus('✅ File Excel (.xlsx) berhasil diunduh!', 'success');
     setTimeout(clearStatus, 2000);
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  GITHUB SYNC - Simpan & Tarik Konfigurasi Lintas Perangkat
+// ─────────────────────────────────────────────────────────────────
+
+// Helper: encode/decode UTF-8 ke/dari Base64 (aman untuk emoji & karakter ID)
+function utf8ToBase64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+}
+function base64ToUtf8(str) {
+    return decodeURIComponent(escape(atob(str)));
+}
+
+function loadGithubConfigToForm() {
+    if (!githubConfig) return;
+    if (document.getElementById('ghOwner'))  document.getElementById('ghOwner').value  = githubConfig.owner  || '';
+    if (document.getElementById('ghRepo'))   document.getElementById('ghRepo').value   = githubConfig.repo   || '';
+    if (document.getElementById('ghBranch')) document.getElementById('ghBranch').value = githubConfig.branch || 'main';
+    if (document.getElementById('ghPath'))   document.getElementById('ghPath').value   = githubConfig.path   || 'spbu-settings.json';
+    if (document.getElementById('ghHistoryPath')) document.getElementById('ghHistoryPath').value = githubConfig.historyPath || 'spbu-history.json';
+    if (document.getElementById('ghToken'))  document.getElementById('ghToken').value  = githubConfig.token  || '';
+    updateGhSyncTimeLabel();
+}
+
+function updateGhSyncTimeLabel() {
+    const el = document.getElementById('ghSyncTime');
+    if (!el) return;
+    const last = db.get('spbu_github_last_sync', null);
+    el.textContent = last ? ('Terakhir sinkron: ' + last) : 'Belum pernah sinkronisasi';
+}
+
+function saveGithubConfig() {
+    githubConfig = {
+        owner:  document.getElementById('ghOwner').value.trim(),
+        repo:   document.getElementById('ghRepo').value.trim(),
+        branch: document.getElementById('ghBranch').value.trim() || 'main',
+        path:   document.getElementById('ghPath').value.trim() || 'spbu-settings.json',
+        historyPath: document.getElementById('ghHistoryPath').value.trim() || 'spbu-history.json',
+        token:  document.getElementById('ghToken').value.trim()
+    };
+    if (!githubConfig.owner || !githubConfig.repo || !githubConfig.token) {
+        setStatus('❌ Lengkapi Username, Repository, dan Token terlebih dahulu.', 'error');
+        return;
+    }
+    db.set('spbu_github_config', githubConfig);
+    setStatus('✅ Konfigurasi GitHub tersimpan di perangkat ini.', 'success');
+    setTimeout(clearStatus, 2000);
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  PROFIL KONFIGURASI GITHUB (bisa simpan beberapa, tinggal pilih)
+// ─────────────────────────────────────────────────────────────────
+function updateGithubProfileSelect() {
+    const sel = document.getElementById('ghProfileSelect');
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Pilih Profil —</option>' +
+        githubProfiles.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
+    const activeName = db.get('spbu_github_active_profile_name', null);
+    if (activeName) {
+        const idx = githubProfiles.findIndex(p => p.name === activeName);
+        if (idx >= 0) { sel.value = idx; return; }
+    }
+    if (cur !== '' && githubProfiles[cur]) sel.value = cur;
+}
+
+function saveGithubProfile() {
+    const name = document.getElementById('ghProfileName').value.trim();
+    if (!name) { setStatus('❌ Isi nama profil terlebih dahulu.', 'error'); return; }
+    const profile = {
+        name: name,
+        owner: document.getElementById('ghOwner').value.trim(),
+        repo: document.getElementById('ghRepo').value.trim(),
+        branch: document.getElementById('ghBranch').value.trim() || 'main',
+        path: document.getElementById('ghPath').value.trim() || 'spbu-settings.json',
+        historyPath: document.getElementById('ghHistoryPath').value.trim() || 'spbu-history.json',
+        token: document.getElementById('ghToken').value.trim()
+    };
+    if (!profile.owner || !profile.repo || !profile.token) {
+        setStatus('❌ Lengkapi Username, Repository, dan Token.', 'error');
+        return;
+    }
+    const existingIdx = githubProfiles.findIndex(p => p.name === name);
+    if (existingIdx >= 0) githubProfiles[existingIdx] = profile;
+    else githubProfiles.push(profile);
+    db.set('spbu_github_profiles', githubProfiles);
+    db.set('spbu_github_active_profile_name', name);
+
+    githubConfig = profile;
+    db.set('spbu_github_config', githubConfig);
+
+    updateGithubProfileSelect();
+    setStatus('✅ Profil "'+name+'" tersimpan & aktif.', 'success');
+    setTimeout(clearStatus, 2000);
+}
+
+async function selectGithubProfile() {
+    const sel = document.getElementById('ghProfileSelect');
+    const idx = parseInt(sel.value);
+    if (isNaN(idx) || !githubProfiles[idx]) return;
+    const profile = githubProfiles[idx];
+
+    document.getElementById('ghOwner').value = profile.owner || '';
+    document.getElementById('ghRepo').value = profile.repo || '';
+    document.getElementById('ghBranch').value = profile.branch || 'main';
+    document.getElementById('ghPath').value = profile.path || 'spbu-settings.json';
+    document.getElementById('ghHistoryPath').value = profile.historyPath || 'spbu-history.json';
+    document.getElementById('ghToken').value = profile.token || '';
+    document.getElementById('ghProfileName').value = profile.name || '';
+
+    githubConfig = profile;
+    db.set('spbu_github_config', githubConfig);
+    db.set('spbu_github_active_profile_name', profile.name);
+
+    setStatus('🔄 Memuat konfigurasi & riwayat profil "'+profile.name+'"...', 'info');
+    await pullSettingsFromGithub(false);
+    await pullHistoryFromGithub(false);
+    setStatus('✅ Profil "'+profile.name+'" diterapkan!', 'success');
+    setTimeout(clearStatus, 2500);
+}
+
+function deleteGithubProfile() {
+    const sel = document.getElementById('ghProfileSelect');
+    const idx = parseInt(sel.value);
+    if (isNaN(idx) || !githubProfiles[idx]) {
+        setStatus('⚠️ Pilih profil yang ingin dihapus dari dropdown.', 'warning');
+        setTimeout(clearStatus, 2000);
+        return;
+    }
+    const name = githubProfiles[idx].name;
+    if (!confirm('Hapus profil "'+name+'" dari daftar? (file di GitHub tidak akan terhapus)')) return;
+    githubProfiles.splice(idx,1);
+    db.set('spbu_github_profiles', githubProfiles);
+    if (db.get('spbu_github_active_profile_name', null) === name) {
+        db.set('spbu_github_active_profile_name', null);
+    }
+    updateGithubProfileSelect();
+    setStatus('🗑️ Profil "'+name+'" dihapus dari daftar.', 'success');
+    setTimeout(clearStatus, 2000);
+}
+
+// Kumpulkan semua data yang perlu disinkronkan lintas perangkat
+function collectSyncPayload() {
+    return {
+        settings: db.get('spbu_settings', null),
+        operators: operators,
+        bbmPrices: bbmPrices,
+        savedLogos: savedLogos,
+        savedAt: new Date().toISOString()
+    };
+}
+
+// Terapkan data hasil tarikan dari GitHub ke aplikasi
+function applySyncPayload(payload) {
+    if (!payload) return;
+
+    // Pulihkan daftar logo terlebih dahulu (agar opsi tersedia sebelum logo dipilih)
+    if (Array.isArray(payload.savedLogos)) {
+        savedLogos = payload.savedLogos;
+        db.set('spbu_logos', savedLogos);
+        updateLogoList();
+    }
+
+    if (payload.settings) {
+        db.set('spbu_settings', payload.settings);
+        loadSettings();
+    }
+    if (Array.isArray(payload.operators) && payload.operators.length) {
+        operators = payload.operators;
+        db.set('spbu_ops', operators);
+        updateOpList();
+    }
+    if (payload.bbmPrices) {
+        bbmPrices = payload.bbmPrices;
+        db.set('spbu_harga_bbm', bbmPrices);
+        loadBBMPrices();
+        onBBMChange();
+    }
+
+    // Pastikan logo aktif benar-benar diterapkan setelah daftar logo & settings dimuat
+    if (payload.settings && payload.settings.selectedLogo) {
+        const sel = document.getElementById('selLogo');
+        const val = payload.settings.selectedLogo;
+        const exists = [...sel.options].some(opt => opt.value === val);
+        if (exists) {
+            sel.value = val;
+            applySavedLogo();
+        }
+    }
+
+    render();
+}
+
+// Upload konfigurasi saat ini ke file JSON di repo GitHub
+async function pushSettingsToGithub(showMsg) {
+    if (!githubConfig || !githubConfig.owner || !githubConfig.repo || !githubConfig.token) {
+        if (showMsg) setStatus('❌ Konfigurasi GitHub belum diisi. Isi & simpan dulu.', 'error');
+        return;
+    }
+    const { owner, repo, branch, path, token } = githubConfig;
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
+    try {
+        if (showMsg) setStatus('☁️ Mengupload konfigurasi ke GitHub...', 'info');
+
+        // Cek apakah file sudah ada (untuk dapatkan sha, perlu untuk update)
+        let sha = undefined;
+        try {
+            const getRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(branch)}`, {
+                headers: {
+                    'Authorization': 'token ' + token,
+                    'Accept': 'application/vnd.github+json'
+                }
+            });
+            if (getRes.ok) {
+                const getData = await getRes.json();
+                sha = getData.sha;
+            }
+        } catch(e) {}
+
+        const payload = collectSyncPayload();
+        const content = utf8ToBase64(JSON.stringify(payload, null, 2));
+
+        const body = {
+            message: 'Update konfigurasi SPBU Pro - ' + new Date().toLocaleString('id-ID'),
+            content: content,
+            branch: branch
+        };
+        if (sha) body.sha = sha;
+
+        const putRes = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'token ' + token,
+                'Accept': 'application/vnd.github+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!putRes.ok) {
+            const errData = await putRes.json().catch(()=>({}));
+            throw new Error(errData.message || ('HTTP ' + putRes.status));
+        }
+
+        const now = new Date().toLocaleString('id-ID');
+        db.set('spbu_github_last_sync', now);
+        updateGhSyncTimeLabel();
+
+        if (showMsg) {
+            setStatus('✅ Konfigurasi berhasil diupload ke GitHub!', 'success');
+            setTimeout(clearStatus, 3000);
+        }
+    } catch (err) {
+        if (showMsg) setStatus('❌ Gagal upload ke GitHub: ' + err.message, 'error');
+    }
+}
+
+// Tarik konfigurasi dari file JSON di repo GitHub & terapkan
+async function pullSettingsFromGithub(showMsg) {
+    if (!githubConfig || !githubConfig.owner || !githubConfig.repo || !githubConfig.token) {
+        if (showMsg) setStatus('❌ Konfigurasi GitHub belum diisi. Isi & simpan dulu.', 'error');
+        return;
+    }
+    const { owner, repo, branch, path, token } = githubConfig;
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
+    try {
+        if (showMsg) setStatus('⬇️ Menarik konfigurasi dari GitHub...', 'info');
+
+        const res = await fetch(`${apiUrl}?ref=${encodeURIComponent(branch)}`, {
+            headers: {
+                'Authorization': 'token ' + token,
+                'Accept': 'application/vnd.github+json'
+            }
+        });
+
+        if (res.status === 404) {
+            if (showMsg) setStatus('⚠️ File belum ada di GitHub. Klik "Upload ke GitHub" dulu.', 'warning');
+            return;
+        }
+        if (!res.ok) {
+            const errData = await res.json().catch(()=>({}));
+            throw new Error(errData.message || ('HTTP ' + res.status));
+        }
+
+        const data = await res.json();
+        const jsonStr = base64ToUtf8(data.content.replace(/\n/g, ''));
+        const payload = JSON.parse(jsonStr);
+
+        applySyncPayload(payload);
+
+        const now = new Date().toLocaleString('id-ID');
+        db.set('spbu_github_last_sync', now);
+        updateGhSyncTimeLabel();
+
+        if (showMsg) {
+            setStatus('✅ Konfigurasi berhasil ditarik dari GitHub!', 'success');
+            setTimeout(clearStatus, 3000);
+        }
+    } catch (err) {
+        if (showMsg) setStatus('❌ Gagal menarik dari GitHub: ' + err.message, 'error');
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  SINKRONISASI RIWAYAT TRANSAKSI (gabung otomatis lintas perangkat)
+// ─────────────────────────────────────────────────────────────────
+
+// Gabungkan riwayat lokal + remote tanpa duplikat, urut berdasarkan waktu cetak
+function mergeHistories(local, remote) {
+    const keyOf = r => (r.noTrans || '') + '_' + (r.ts || r.waktuCetak || Math.random());
+    const map = new Map();
+    [...remote, ...local].forEach(r => map.set(keyOf(r), r));
+    const merged = Array.from(map.values());
+    merged.sort((a,b) => (a.ts||0) - (b.ts||0));
+    if (merged.length > 1000) return merged.slice(-1000);
+    return merged;
+}
+
+function getHistoryApiUrl() {
+    const { owner, repo, historyPath } = githubConfig;
+    const path = historyPath || 'spbu-history.json';
+    return `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
+}
+
+// Upload riwayat transaksi (hasil gabungan) ke file JSON di GitHub
+async function pushHistoryToGithub(showMsg) {
+    if (!githubConfig || !githubConfig.owner || !githubConfig.repo || !githubConfig.token) {
+        if (showMsg) setStatus('❌ Konfigurasi GitHub belum diisi. Isi & simpan dulu.', 'error');
+        return;
+    }
+    const { branch, token } = githubConfig;
+    const apiUrl = getHistoryApiUrl();
+    try {
+        if (showMsg) setStatus('☁️ Mengupload riwayat ke GitHub...', 'info');
+
+        let sha = undefined;
+        try {
+            const getRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(branch)}`, {
+                headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github+json' }
+            });
+            if (getRes.ok) {
+                const getData = await getRes.json();
+                sha = getData.sha;
+            }
+        } catch(e) {}
+
+        const payload = {
+            history: transactionHistory,
+            usedNumbers: usedTransNumbers,
+            savedAt: new Date().toISOString()
+        };
+        const content = utf8ToBase64(JSON.stringify(payload, null, 2));
+
+        const body = {
+            message: 'Update riwayat transaksi SPBU - ' + new Date().toLocaleString('id-ID'),
+            content: content,
+            branch: branch
+        };
+        if (sha) body.sha = sha;
+
+        const putRes = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'token ' + token,
+                'Accept': 'application/vnd.github+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!putRes.ok) {
+            const errData = await putRes.json().catch(()=>({}));
+            throw new Error(errData.message || ('HTTP ' + putRes.status));
+        }
+
+        const now = new Date().toLocaleString('id-ID');
+        db.set('spbu_github_last_sync', now);
+        updateGhSyncTimeLabel();
+
+        if (showMsg) {
+            setStatus('✅ Riwayat berhasil diupload ke GitHub!', 'success');
+            setTimeout(clearStatus, 3000);
+        }
+    } catch (err) {
+        if (showMsg) setStatus('❌ Gagal upload riwayat: ' + err.message, 'error');
+    }
+}
+
+// Tarik riwayat dari GitHub, gabungkan dengan riwayat lokal (tanpa duplikat)
+async function pullHistoryFromGithub(showMsg) {
+    if (!githubConfig || !githubConfig.owner || !githubConfig.repo || !githubConfig.token) {
+        if (showMsg) setStatus('❌ Konfigurasi GitHub belum diisi. Isi & simpan dulu.', 'error');
+        return;
+    }
+    const { branch, token } = githubConfig;
+    const apiUrl = getHistoryApiUrl();
+    try {
+        if (showMsg) setStatus('⬇️ Menarik & menggabungkan riwayat dari GitHub...', 'info');
+
+        const res = await fetch(`${apiUrl}?ref=${encodeURIComponent(branch)}`, {
+            headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github+json' }
+        });
+
+        if (res.status === 404) {
+            if (showMsg) setStatus('⚠️ Belum ada file riwayat di GitHub. Klik "Upload Riwayat" dulu.', 'warning');
+            return;
+        }
+        if (!res.ok) {
+            const errData = await res.json().catch(()=>({}));
+            throw new Error(errData.message || ('HTTP ' + res.status));
+        }
+
+        const data = await res.json();
+        const jsonStr = base64ToUtf8(data.content.replace(/\n/g, ''));
+        const remote = JSON.parse(jsonStr);
+
+        const remoteHistory = Array.isArray(remote.history) ? remote.history : [];
+        const remoteUsed = Array.isArray(remote.usedNumbers) ? remote.usedNumbers : [];
+
+        transactionHistory = mergeHistories(transactionHistory, remoteHistory);
+        db.set('spbu_history', transactionHistory);
+
+        usedTransNumbers = Array.from(new Set([
+            ...usedTransNumbers.map(String),
+            ...remoteUsed.map(String)
+        ]));
+        if (usedTransNumbers.length > 5000) usedTransNumbers = usedTransNumbers.slice(-5000);
+        db.set('spbu_used_numbers', usedTransNumbers);
+
+        updateHistCount();
+
+        // Upload kembali hasil gabungan agar perangkat lain juga mendapat versi terbaru
+        await pushHistoryToGithub(false);
+
+        const now = new Date().toLocaleString('id-ID');
+        db.set('spbu_github_last_sync', now);
+        updateGhSyncTimeLabel();
+
+        if (showMsg) {
+            setStatus('✅ Riwayat berhasil digabung dari GitHub! Total: ' + transactionHistory.length, 'success');
+            setTimeout(clearStatus, 3000);
+        }
+    } catch (err) {
+        if (showMsg) setStatus('❌ Gagal menarik riwayat: ' + err.message, 'error');
+    }
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -1023,9 +1659,18 @@ window.onload = function() {
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
     loadSettings();
+    updateHistCount();
+    loadGithubConfigToForm();
+    updateGithubProfileSelect();
     render();
     if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent)) {
         setStatus('⚠️ Gunakan Chrome untuk fitur Bluetooth.', 'warning');
+    }
+    // Jika konfigurasi GitHub sudah ada, tarik & gabung otomatis agar settingan
+    // dan riwayat selalu sama/menyatu di semua perangkat
+    if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
+        pullSettingsFromGithub(false);
+        pullHistoryFromGithub(false);
     }
 };
 </script>
