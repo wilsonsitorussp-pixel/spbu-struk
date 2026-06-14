@@ -1,28 +1,6 @@
 {
   "history": [
     {
-      "waktu": "14/4/2026, 15.56.46",
-      "shift": "2",
-      "noTrans": "141820",
-      "produk": "PERTAMAX",
-      "volume": 2,
-      "total": 25200,
-      "operator": "SUTRISNO",
-      "plat": "BK 2854 ADK",
-      "odo": "61.494"
-    },
-    {
-      "waktu": "15/4/2026, 18.07.35",
-      "shift": "1",
-      "noTrans": "849587",
-      "produk": "PERTALITE",
-      "volume": 5,
-      "total": 50000,
-      "operator": "DINDA HALIMAH",
-      "plat": "BK 2854 ADK",
-      "odo": "25430"
-    },
-    {
       "waktu": "25/4/2026, 21.46.38",
       "shift": "1",
       "noTrans": "507999",
@@ -11017,6 +10995,34 @@
       "operator": "SUTRISNO",
       "plat": "BK 2854 ADK",
       "odo": "63.738"
+    },
+    {
+      "ts": 1781447891387,
+      "waktuCetak": "14/6/2026, 21.38.11",
+      "waktuTransaksi": "13/05/2026 06:29:18",
+      "shift": "1",
+      "noTrans": "674835",
+      "produk": "PERTALITE",
+      "hargaLiter": 10000,
+      "volume": 4.7,
+      "total": 47000,
+      "operator": "DINDA HALIMAH",
+      "plat": "BK 2854 ADK",
+      "odo": "63.917"
+    },
+    {
+      "ts": 1781447958010,
+      "waktuCetak": "14/6/2026, 21.39.18",
+      "waktuTransaksi": "20/05/2026 06:42:40",
+      "shift": "1",
+      "noTrans": "875282",
+      "produk": "PERTAMAX",
+      "hargaLiter": 12300,
+      "volume": 4.5,
+      "total": 55350,
+      "operator": "ILHAM RAMADHAN",
+      "plat": "BK 2854 ADK",
+      "odo": "64.101"
     }
   ],
   "usedNumbers": [
@@ -11024,7 +11030,9 @@
     "515120",
     "730824",
     "486800",
-    "465258"
+    "465258",
+    "674835",
+    "875282"
   ],
-  "savedAt": "2026-06-14T14:37:17.458Z"
+  "savedAt": "2026-06-14T14:39:19.514Z"
 }
