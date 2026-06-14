@@ -386,6 +386,10 @@
                 <textarea id="inPesan" rows="4" oninput="render()">ANDA MENDAPAT SUBSIDI DARI&#10;PEMERINTAHAN SEBESAR RP.2.750&#10;(PERHITUNGAN SUBSIDI UNAUDITED&#10;ATAU ESTIMASI).GUNAKAN BBM&#10;SUBSIDI SECARA BIJAK.</textarea>
             </div>
             <button class="btn btn-save" onclick="saveSettings()">💾 Simpan Konfigurasi</button>
+            <p style="font-size:10px; color:var(--text2); margin-top:4px; text-align:center;">
+                Tombol ini cukup ditekan setiap ada perubahan — otomatis tersimpan
+                di HP ini, dan jika GitHub sudah diatur, otomatis ikut terupload juga.
+            </p>
         </div>
     </div>
 
@@ -443,14 +447,16 @@
                 <button class="btn btn-green" onclick="saveGithubProfile()">💾 Simpan Profil</button>
             </div>
 
-            <div class="row">
-                <button class="btn btn-github" onclick="pushSettingsToGithub(true)">☁️ Upload Konfigurasi</button>
-                <button class="btn btn-github-pull" onclick="pullSettingsFromGithub(true)">⬇️ Tarik Konfigurasi</button>
-            </div>
-            <div class="row">
-                <button class="btn btn-github" onclick="pushHistoryToGithub(true)">☁️ Upload Riwayat</button>
-                <button class="btn btn-github-pull" onclick="pullHistoryFromGithub(true)">⬇️ Tarik & Gabung Riwayat</button>
-            </div>
+            <p style="font-size:10px; color:var(--text2); margin-top:2px; margin-bottom:-2px;">
+                "💾 Simpan Konfigurasi" di atas sudah otomatis upload ke GitHub
+                setiap kali kamu ubah pengaturan. Tombol di bawah ini untuk
+                <b>menyamakan semua data antar perangkat</b>: menarik data dari
+                GitHub, menggabungkannya dengan data di perangkat ini (riwayat,
+                profil, operator, logo), lalu mengupload hasil gabungannya
+                kembali ke GitHub. Tekan ini setiap kali baru membuka app di
+                perangkat lain, atau ingin memastikan semua perangkat sama.
+            </p>
+            <button class="btn btn-github" onclick="syncAllWithGithub(true)" style="width:100%;">🔄 Sinkronkan Semua dengan GitHub</button>
             <div class="gh-sync-time" id="ghSyncTime">Belum pernah sinkronisasi</div>
         </div>
     </div>
@@ -1034,12 +1040,26 @@ function saveSettings() {
         selectedLogo: document.getElementById('selLogo').value
     };
     db.set('spbu_settings', settings);
+
+    // Sertakan juga harga BBM saat ini, agar 1 tombol = semua konfigurasi
+    bbmPrices = {
+        'PERTALITE': parseFloat(document.getElementById('pricePertalite').value) || 10000,
+        'PERTAMAX': parseFloat(document.getElementById('pricePertamax').value) || 12500,
+        'PERTAMAX TURBO': parseFloat(document.getElementById('priceTurbo').value) || 14000,
+        'DEXLITE': parseFloat(document.getElementById('priceDexlite').value) || 13500
+    };
+    db.set('spbu_harga_bbm', bbmPrices);
+    onBBMChange();
+
     setStatus('✅ Konfigurasi tersimpan!', 'success');
     setTimeout(clearStatus, 2000);
 
-    // Jika GitHub sudah dikonfigurasi, otomatis sinkronkan juga ke GitHub
+    // Jika GitHub sudah dikonfigurasi, otomatis sinkronkan SEMUA ke GitHub:
+    // settings (header, logo, font, pesan, harga BBM, operator, profil)
+    // sekaligus riwayat transaksi
     if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
         pushSettingsToGithub(false);
+        pushHistoryToGithub(false);
     }
 }
 
@@ -1182,6 +1202,25 @@ function base64ToUtf8(str) {
     return decodeURIComponent(escape(atob(str)));
 }
 
+// Ambil konfigurasi GitHub aktif: pakai yang sudah tersimpan, atau baca
+// langsung dari form (memudahkan perangkat baru menarik profil tanpa
+// harus "Simpan Profil" terlebih dahulu)
+function getActiveGithubConfig() {
+    const owner = document.getElementById('ghOwner').value.trim();
+    const repo = document.getElementById('ghRepo').value.trim();
+    const branch = document.getElementById('ghBranch').value.trim() || 'main';
+    const path = document.getElementById('ghPath').value.trim() || 'spbu-settings.json';
+    const historyPath = document.getElementById('ghHistoryPath').value.trim() || 'spbu-history.json';
+    const token = document.getElementById('ghToken').value.trim();
+
+    if (!owner || !repo || !token) return null;
+
+    const cfg = { owner, repo, branch, path, historyPath, token };
+    githubConfig = cfg;
+    db.set('spbu_github_config', cfg);
+    return cfg;
+}
+
 function loadGithubConfigToForm() {
     if (!githubConfig) return;
     if (document.getElementById('ghOwner'))  document.getElementById('ghOwner').value  = githubConfig.owner  || '';
@@ -1261,8 +1300,14 @@ function saveGithubProfile() {
     db.set('spbu_github_config', githubConfig);
 
     updateGithubProfileSelect();
-    setStatus('✅ Profil "'+name+'" tersimpan & aktif.', 'success');
-    setTimeout(clearStatus, 2000);
+    setStatus('☁️ Menyimpan profil & mengupload ke GitHub...', 'info');
+
+    // Upload daftar profil (termasuk profil baru ini) ke GitHub agar
+    // muncul juga di perangkat lain yang memakai repo+token yang sama
+    pushSettingsToGithub(false).then(() => {
+        setStatus('✅ Profil "'+name+'" tersimpan, aktif, & diupload ke GitHub.', 'success');
+        setTimeout(clearStatus, 2500);
+    });
 }
 
 async function selectGithubProfile() {
@@ -1286,6 +1331,7 @@ async function selectGithubProfile() {
     setStatus('🔄 Memuat konfigurasi & riwayat profil "'+profile.name+'"...', 'info');
     await pullSettingsFromGithub(false);
     await pullHistoryFromGithub(false);
+    generateUniqueRandom(); // pastikan nomor transaksi tidak bertabrakan dengan riwayat profil ini
     setStatus('✅ Profil "'+profile.name+'" diterapkan!', 'success');
     setTimeout(clearStatus, 2500);
 }
@@ -1317,6 +1363,7 @@ function collectSyncPayload() {
         operators: operators,
         bbmPrices: bbmPrices,
         savedLogos: savedLogos,
+        githubProfiles: githubProfiles,
         savedAt: new Date().toISOString()
     };
 }
@@ -1348,6 +1395,16 @@ function applySyncPayload(payload) {
         onBBMChange();
     }
 
+    // Gabungkan daftar profil GitHub dari remote (tanpa duplikat berdasarkan nama)
+    if (Array.isArray(payload.githubProfiles) && payload.githubProfiles.length) {
+        const map = new Map();
+        githubProfiles.forEach(p => map.set(p.name, p));
+        payload.githubProfiles.forEach(p => map.set(p.name, p)); // remote menang jika nama sama
+        githubProfiles = Array.from(map.values());
+        db.set('spbu_github_profiles', githubProfiles);
+        updateGithubProfileSelect();
+    }
+
     // Pastikan logo aktif benar-benar diterapkan setelah daftar logo & settings dimuat
     if (payload.settings && payload.settings.selectedLogo) {
         const sel = document.getElementById('selLogo');
@@ -1364,11 +1421,12 @@ function applySyncPayload(payload) {
 
 // Upload konfigurasi saat ini ke file JSON di repo GitHub
 async function pushSettingsToGithub(showMsg) {
-    if (!githubConfig || !githubConfig.owner || !githubConfig.repo || !githubConfig.token) {
-        if (showMsg) setStatus('❌ Konfigurasi GitHub belum diisi. Isi & simpan dulu.', 'error');
+    const cfg = getActiveGithubConfig();
+    if (!cfg) {
+        if (showMsg) setStatus('❌ Isi Username, Repository, dan Token terlebih dahulu.', 'error');
         return;
     }
-    const { owner, repo, branch, path, token } = githubConfig;
+    const { owner, repo, branch, path, token } = cfg;
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
     try {
         if (showMsg) setStatus('☁️ Mengupload konfigurasi ke GitHub...', 'info');
@@ -1428,11 +1486,12 @@ async function pushSettingsToGithub(showMsg) {
 
 // Tarik konfigurasi dari file JSON di repo GitHub & terapkan
 async function pullSettingsFromGithub(showMsg) {
-    if (!githubConfig || !githubConfig.owner || !githubConfig.repo || !githubConfig.token) {
-        if (showMsg) setStatus('❌ Konfigurasi GitHub belum diisi. Isi & simpan dulu.', 'error');
+    const cfg = getActiveGithubConfig();
+    if (!cfg) {
+        if (showMsg) setStatus('❌ Isi Username, Repository, dan Token terlebih dahulu.', 'error');
         return;
     }
-    const { owner, repo, branch, path, token } = githubConfig;
+    const { owner, repo, branch, path, token } = cfg;
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
     try {
         if (showMsg) setStatus('⬇️ Menarik konfigurasi dari GitHub...', 'info');
@@ -1495,11 +1554,12 @@ function getHistoryApiUrl() {
 
 // Upload riwayat transaksi (hasil gabungan) ke file JSON di GitHub
 async function pushHistoryToGithub(showMsg) {
-    if (!githubConfig || !githubConfig.owner || !githubConfig.repo || !githubConfig.token) {
-        if (showMsg) setStatus('❌ Konfigurasi GitHub belum diisi. Isi & simpan dulu.', 'error');
+    const cfg = getActiveGithubConfig();
+    if (!cfg) {
+        if (showMsg) setStatus('❌ Isi Username, Repository, dan Token terlebih dahulu.', 'error');
         return;
     }
-    const { branch, token } = githubConfig;
+    const { branch, token } = cfg;
     const apiUrl = getHistoryApiUrl();
     try {
         if (showMsg) setStatus('☁️ Mengupload riwayat ke GitHub...', 'info');
@@ -1559,11 +1619,12 @@ async function pushHistoryToGithub(showMsg) {
 
 // Tarik riwayat dari GitHub, gabungkan dengan riwayat lokal (tanpa duplikat)
 async function pullHistoryFromGithub(showMsg) {
-    if (!githubConfig || !githubConfig.owner || !githubConfig.repo || !githubConfig.token) {
-        if (showMsg) setStatus('❌ Konfigurasi GitHub belum diisi. Isi & simpan dulu.', 'error');
+    const cfg = getActiveGithubConfig();
+    if (!cfg) {
+        if (showMsg) setStatus('❌ Isi Username, Repository, dan Token terlebih dahulu.', 'error');
         return;
     }
-    const { branch, token } = githubConfig;
+    const { branch, token } = cfg;
     const apiUrl = getHistoryApiUrl();
     try {
         if (showMsg) setStatus('⬇️ Menarik & menggabungkan riwayat dari GitHub...', 'info');
@@ -1617,6 +1678,41 @@ async function pullHistoryFromGithub(showMsg) {
 }
 
 // ─────────────────────────────────────────────────────────────────
+//  SINKRONISASI ALL-IN-ONE
+//  Tarik → gabung → upload kembali, untuk settings & history sekaligus
+// ─────────────────────────────────────────────────────────────────
+async function syncAllWithGithub(showMsg) {
+    const cfg = getActiveGithubConfig();
+    if (!cfg) {
+        if (showMsg) setStatus('❌ Isi Username, Repository, dan Token terlebih dahulu.', 'error');
+        return;
+    }
+    try {
+        if (showMsg) setStatus('🔄 Menarik & menggabungkan data dari GitHub...', 'info');
+
+        // 1. Tarik settings/profil/operator/logo/harga BBM dari GitHub & terapkan
+        await pullSettingsFromGithub(false);
+
+        // 2. Tarik riwayat, gabung dengan lokal, lalu upload hasil gabungannya
+        await pullHistoryFromGithub(false);
+
+        // 3. Upload kembali settings (termasuk profil/operator/logo hasil gabungan)
+        //    agar perangkat lain juga menerima data terbaru dari perangkat ini
+        await pushSettingsToGithub(false);
+
+        // Regenerate nomor transaksi agar tidak bertabrakan dengan hasil gabungan
+        generateUniqueRandom();
+
+        if (showMsg) {
+            setStatus('✅ Semua data tersinkron! Riwayat: ' + transactionHistory.length + ' transaksi.', 'success');
+            setTimeout(clearStatus, 3000);
+        }
+    } catch (err) {
+        if (showMsg) setStatus('❌ Sinkronisasi gagal: ' + err.message, 'error');
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────
 //  RENDER PREVIEW
 // ─────────────────────────────────────────────────────────────────
 function render() {
@@ -1648,13 +1744,12 @@ function render() {
 // ─────────────────────────────────────────────────────────────────
 //  INIT
 // ─────────────────────────────────────────────────────────────────
-window.onload = function() {
+window.onload = async function() {
     updateLogoList();
     updateOpList();
     loadBBMPrices();
     // Set harga default sesuai produk awal
     onBBMChange();
-    generateUniqueRandom(); // langsung generate nomor unik pertama
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
@@ -1666,12 +1761,19 @@ window.onload = function() {
     if (!/chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent)) {
         setStatus('⚠️ Gunakan Chrome untuk fitur Bluetooth.', 'warning');
     }
-    // Jika konfigurasi GitHub sudah ada, tarik & gabung otomatis agar settingan
-    // dan riwayat selalu sama/menyatu di semua perangkat
+
+    // Jika konfigurasi GitHub sudah ada, tarik & gabung dulu (settingan,
+    // profil, dan riwayat termasuk daftar nomor transaksi terpakai) SEBELUM
+    // generate nomor transaksi baru, agar tidak bertabrakan dengan nomor
+    // yang sudah dipakai di perangkat lain
     if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
-        pullSettingsFromGithub(false);
-        pullHistoryFromGithub(false);
+        setStatus('🔄 Menyinkronkan dengan GitHub...', 'info');
+        await pullSettingsFromGithub(false);
+        await pullHistoryFromGithub(false);
+        clearStatus();
     }
+
+    generateUniqueRandom(); // generate nomor unik SETELAH sinkronisasi
 };
 </script>
 </body>
