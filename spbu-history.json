@@ -1,39 +1,6 @@
 {
   "history": [
     {
-      "waktu": "14/4/2026, 15.53.52",
-      "shift": "2",
-      "noTrans": "790341",
-      "produk": "PERTAMAX",
-      "volume": 4.5,
-      "total": 56700,
-      "operator": "MHD RIZKY",
-      "plat": "BK 2854 ADK",
-      "odo": "60.038"
-    },
-    {
-      "waktu": "14/4/2026, 15.53.52",
-      "shift": "2",
-      "noTrans": "789757",
-      "produk": "PERTAMAX",
-      "volume": 4.5,
-      "total": 56700,
-      "operator": "MHD RIZKY",
-      "plat": "BK 2854 ADK",
-      "odo": "60.038"
-    },
-    {
-      "waktu": "14/4/2026, 15.53.53",
-      "shift": "2",
-      "noTrans": "443220",
-      "produk": "PERTAMAX",
-      "volume": 4.5,
-      "total": 56700,
-      "operator": "MHD RIZKY",
-      "plat": "BK 2854 ADK",
-      "odo": "60.038"
-    },
-    {
       "waktu": "14/4/2026, 15.53.53",
       "shift": "2",
       "noTrans": "310258",
@@ -10999,8 +10966,53 @@
       "operator": "DINDA HALIMAH",
       "plat": "BK 2854 ADK",
       "odo": "25430"
+    },
+    {
+      "ts": 1781447435213,
+      "waktuCetak": "14/6/2026, 21.30.35",
+      "waktuTransaksi": "14/06/2026 12:04:40",
+      "shift": "1",
+      "noTrans": "611223",
+      "produk": "PERTALITE",
+      "hargaLiter": 10000,
+      "volume": 5,
+      "total": 50000,
+      "operator": "DINDA HALIMAH",
+      "plat": "BK 2854 ADK",
+      "odo": "25430"
+    },
+    {
+      "ts": 1781447456377,
+      "waktuCetak": "14/6/2026, 21.30.56",
+      "waktuTransaksi": "14/06/2026 12:04:40",
+      "shift": "1",
+      "noTrans": "611223",
+      "produk": "PERTALITE",
+      "hargaLiter": 10000,
+      "volume": 5,
+      "total": 50000,
+      "operator": "DINDA HALIMAH",
+      "plat": "BK 2854 ADK",
+      "odo": "25430"
+    },
+    {
+      "ts": 1781447567926,
+      "waktuCetak": "14/6/2026, 21.32.47",
+      "waktuTransaksi": "04/05/2026 06:04:19",
+      "shift": "1",
+      "noTrans": "515120",
+      "produk": "PERTAMAX",
+      "hargaLiter": 12300,
+      "volume": 4.8,
+      "total": 59040,
+      "operator": "MHD RIZKY",
+      "plat": "BK 2854 ADK",
+      "odo": "63.270"
     }
   ],
-  "usedNumbers": [],
-  "savedAt": "2026-06-14T14:30:16.194Z"
+  "usedNumbers": [
+    "611223",
+    "515120"
+  ],
+  "savedAt": "2026-06-14T14:32:48.975Z"
 }
