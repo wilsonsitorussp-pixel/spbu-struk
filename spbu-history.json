@@ -1,17 +1,6 @@
 {
   "history": [
     {
-      "waktu": "25/4/2026, 21.47.23",
-      "shift": "1",
-      "noTrans": "760575",
-      "produk": "PERTALITE",
-      "volume": 5,
-      "total": 50000,
-      "operator": "DINDA HALIMAH",
-      "plat": "BK 2854 ADK",
-      "odo": "25430"
-    },
-    {
       "waktu": "12/5/2026, 18.22.54",
       "shift": "1",
       "noTrans": "847670",
@@ -11026,6 +11015,20 @@
       "operator": "PUTRI FEBRIYANI",
       "plat": "BK 2854 ADK",
       "odo": "64.257"
+    },
+    {
+      "ts": 1781448113386,
+      "waktuCetak": "14/6/2026, 21.41.53",
+      "waktuTransaksi": "22/05/2026 07:06:42",
+      "shift": "1",
+      "noTrans": "287241",
+      "produk": "PERTALITE",
+      "hargaLiter": 10000,
+      "volume": 5.2,
+      "total": 52000,
+      "operator": "DINDA HALIMAH",
+      "plat": "BK 2854 ADK",
+      "odo": "64.455"
     }
   ],
   "usedNumbers": [
@@ -11036,7 +11039,8 @@
     "465258",
     "674835",
     "875282",
-    "904735"
+    "904735",
+    "287241"
   ],
-  "savedAt": "2026-06-14T14:40:55.803Z"
+  "savedAt": "2026-06-14T14:41:55.266Z"
 }
