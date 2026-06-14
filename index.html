@@ -447,14 +447,21 @@
                 <button class="btn btn-green" onclick="saveGithubProfile()">💾 Simpan Profil</button>
             </div>
 
-            <p style="font-size:10px; color:var(--text2); margin-top:2px; margin-bottom:-2px;">
-                "💾 Simpan Konfigurasi" di atas sudah otomatis upload ke GitHub
-                setiap kali kamu ubah pengaturan. Tombol di bawah ini untuk
-                <b>menyamakan semua data antar perangkat</b>: menarik data dari
-                GitHub, menggabungkannya dengan data di perangkat ini (riwayat,
-                profil, operator, logo), lalu mengupload hasil gabungannya
-                kembali ke GitHub. Tekan ini setiap kali baru membuka app di
-                perangkat lain, atau ingin memastikan semua perangkat sama.
+            <div class="gh-note" style="margin-top:10px;">
+                <b>🔗 Link Setup Perangkat Lain</b><br>
+                Buat 1 link berisi konfigurasi GitHub di atas. Buka link itu sekali
+                di HP/perangkat lain → otomatis tersambung tanpa perlu ketik
+                username/repo/token lagi.
+            </div>
+            <button class="btn btn-blue" onclick="generateSetupLink()" style="width:100%;">🔗 Buat Link Setup</button>
+            <textarea id="setupLinkOutput" rows="3" readonly style="display:none; font-size:10px; font-family:var(--mono);" onclick="this.select()"></textarea>
+
+            <p style="font-size:10px; color:var(--text2); margin-top:8px; margin-bottom:-2px;">
+                "💾 Simpan Konfigurasi" otomatis upload ke GitHub setiap ada
+                perubahan. Tombol di bawah ini untuk <b>menyamakan semua data
+                antar perangkat</b> (riwayat, profil, operator, logo, harga BBM):
+                menarik dari GitHub, menggabungkan dengan data perangkat ini,
+                lalu mengupload hasil gabungannya kembali.
             </p>
             <button class="btn btn-github" onclick="syncAllWithGithub(true)" style="width:100%;">🔄 Sinkronkan Semua dengan GitHub</button>
             <div class="gh-sync-time" id="ghSyncTime">Belum pernah sinkronisasi</div>
@@ -1681,6 +1688,95 @@ async function pullHistoryFromGithub(showMsg) {
 //  SINKRONISASI ALL-IN-ONE
 //  Tarik → gabung → upload kembali, untuk settings & history sekaligus
 // ─────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  LINK SETUP - konfigurasi otomatis di perangkat lain via 1 link
+// ─────────────────────────────────────────────────────────────────
+function generateSetupLink() {
+    const cfg = getActiveGithubConfig();
+    if (!cfg) {
+        setStatus('❌ Isi Username, Repository, dan Token terlebih dahulu.', 'error');
+        return;
+    }
+    const profileName = document.getElementById('ghProfileName').value.trim() || (cfg.owner + '/' + cfg.repo);
+    const data = Object.assign({}, cfg, { name: profileName });
+    const encoded = utf8ToBase64(JSON.stringify(data));
+
+    // Buang hash lama jika ada, lalu tempel setup baru
+    const baseUrl = window.location.href.split('#')[0];
+    const link = baseUrl + '#setup=' + encoded;
+
+    const out = document.getElementById('setupLinkOutput');
+    out.style.display = 'block';
+    out.value = link;
+    out.select();
+
+    // Coba salin otomatis ke clipboard
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(link).then(() => {
+            setStatus('✅ Link disalin! Kirim & buka 1x di perangkat lain.', 'success');
+            setTimeout(clearStatus, 3000);
+        }).catch(() => {
+            setStatus('✅ Link dibuat. Salin manual dari kotak di bawah.', 'success');
+            setTimeout(clearStatus, 3000);
+        });
+    } else {
+        setStatus('✅ Link dibuat. Salin manual dari kotak di bawah.', 'success');
+        setTimeout(clearStatus, 3000);
+    }
+}
+
+// Deteksi & terapkan link setup (#setup=...) di awal load, return true jika ada
+async function applySetupLinkFromUrl() {
+    const hash = window.location.hash || '';
+    const m = hash.match(/setup=([^&]+)/);
+    if (!m) return false;
+
+    try {
+        setStatus('🔗 Menerapkan konfigurasi dari link setup...', 'info');
+        const json = base64ToUtf8(decodeURIComponent(m[1]));
+        const cfg = JSON.parse(json);
+
+        if (!cfg.owner || !cfg.repo || !cfg.token) {
+            setStatus('❌ Link setup tidak valid.', 'error');
+            return false;
+        }
+
+        // Terapkan ke form
+        document.getElementById('ghOwner').value = cfg.owner || '';
+        document.getElementById('ghRepo').value = cfg.repo || '';
+        document.getElementById('ghBranch').value = cfg.branch || 'main';
+        document.getElementById('ghPath').value = cfg.path || 'spbu-settings.json';
+        document.getElementById('ghHistoryPath').value = cfg.historyPath || 'spbu-history.json';
+        document.getElementById('ghToken').value = cfg.token || '';
+        document.getElementById('ghProfileName').value = cfg.name || (cfg.owner + '/' + cfg.repo);
+
+        githubConfig = {
+            owner: cfg.owner, repo: cfg.repo, branch: cfg.branch || 'main',
+            path: cfg.path || 'spbu-settings.json',
+            historyPath: cfg.historyPath || 'spbu-history.json',
+            token: cfg.token
+        };
+        db.set('spbu_github_config', githubConfig);
+
+        // Simpan juga sebagai profil di perangkat ini agar muncul di dropdown
+        const name = cfg.name || (cfg.owner + '/' + cfg.repo);
+        const existingIdx = githubProfiles.findIndex(p => p.name === name);
+        const profileEntry = Object.assign({ name }, githubConfig);
+        if (existingIdx >= 0) githubProfiles[existingIdx] = profileEntry;
+        else githubProfiles.push(profileEntry);
+        db.set('spbu_github_profiles', githubProfiles);
+        db.set('spbu_github_active_profile_name', name);
+
+        // Bersihkan hash dari URL agar token tidak tertinggal di address bar/history
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+
+        return true;
+    } catch (err) {
+        setStatus('❌ Gagal membaca link setup: ' + err.message, 'error');
+        return false;
+    }
+}
+
 async function syncAllWithGithub(showMsg) {
     const cfg = getActiveGithubConfig();
     if (!cfg) {
@@ -1762,6 +1858,14 @@ window.onload = async function() {
         setStatus('⚠️ Gunakan Chrome untuk fitur Bluetooth.', 'warning');
     }
 
+    // Jika ada link setup (#setup=...), terapkan dulu - ini membuat
+    // perangkat baru langsung tersambung tanpa perlu ketik apapun
+    const fromSetupLink = await applySetupLinkFromUrl();
+    if (fromSetupLink) {
+        loadGithubConfigToForm();
+        updateGithubProfileSelect();
+    }
+
     // Jika konfigurasi GitHub sudah ada, tarik & gabung dulu (settingan,
     // profil, dan riwayat termasuk daftar nomor transaksi terpakai) SEBELUM
     // generate nomor transaksi baru, agar tidak bertabrakan dengan nomor
@@ -1770,7 +1874,9 @@ window.onload = async function() {
         setStatus('🔄 Menyinkronkan dengan GitHub...', 'info');
         await pullSettingsFromGithub(false);
         await pullHistoryFromGithub(false);
-        clearStatus();
+        if (fromSetupLink) await pushSettingsToGithub(false); // pastikan profil baru ikut terupload
+        setStatus('✅ Tersinkron dengan GitHub.', 'success');
+        setTimeout(clearStatus, 1500);
     }
 
     generateUniqueRandom(); // generate nomor unik SETELAH sinkronisasi
