@@ -1,17 +1,6 @@
 {
   "history": [
     {
-      "waktu": "14/4/2026, 15.56.05",
-      "shift": "2",
-      "noTrans": "141820",
-      "produk": "PERTAMAX",
-      "volume": 5.5,
-      "total": 69300,
-      "operator": "PUTRI FEBRIYANI",
-      "plat": "BK 2854 ADK",
-      "odo": "59.915"
-    },
-    {
       "waktu": "14/4/2026, 15.56.46",
       "shift": "2",
       "noTrans": "141820",
@@ -11014,13 +11003,28 @@
       "operator": "ILHAM RAMADHAN",
       "plat": "BK 2854 ADK",
       "odo": "63.595"
+    },
+    {
+      "ts": 1781447836202,
+      "waktuCetak": "14/6/2026, 21.37.16",
+      "waktuTransaksi": "12/05/2026 06:38:23",
+      "shift": "1",
+      "noTrans": "465258",
+      "produk": "PERTAMAX",
+      "hargaLiter": 12300,
+      "volume": 3.5,
+      "total": 43050,
+      "operator": "SUTRISNO",
+      "plat": "BK 2854 ADK",
+      "odo": "63.738"
     }
   ],
   "usedNumbers": [
     "611223",
     "515120",
     "730824",
-    "486800"
+    "486800",
+    "465258"
   ],
-  "savedAt": "2026-06-14T14:35:14.418Z"
+  "savedAt": "2026-06-14T14:37:17.458Z"
 }
