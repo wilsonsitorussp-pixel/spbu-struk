@@ -10908,16 +10908,22 @@
     {
       "ts": 1781447648965,
       "waktuCetak": "14/6/2026, 21.34.08",
-      "waktuTransaksi": "06/05/2026 06:17:11",
+      "waktuTransaksi": "06/05/2026 06:17:02",
       "shift": "1",
       "noTrans": "730824",
       "produk": "PERTAMAX",
-      "hargaLiter": 12300,
+      "hargaLiter": 12600,
       "volume": 3.2,
-      "total": 39360,
+      "total": 40320,
       "operator": "PUTRI FEBRIYANI",
       "plat": "BK 2854 ADK",
-      "odo": "63.401"
+      "odo": "63.401",
+      "waktuTransaksiRaw": "2026-05-06T06:17",
+      "randomSec": "02",
+      "pompa": "1",
+      "direvisi": true,
+      "waktuRevisi": "15/6/2026, 17.32.55",
+      "updatedAt": 1781519575952
     },
     {
       "ts": 1781447712497,
@@ -10936,16 +10942,22 @@
     {
       "ts": 1781447836202,
       "waktuCetak": "14/6/2026, 21.37.16",
-      "waktuTransaksi": "12/05/2026 06:38:23",
+      "waktuTransaksi": "12/05/2026 06:38:09",
       "shift": "1",
       "noTrans": "465258",
       "produk": "PERTAMAX",
-      "hargaLiter": 12300,
+      "hargaLiter": 12600,
       "volume": 3.5,
-      "total": 43050,
+      "total": 44100,
       "operator": "SUTRISNO",
       "plat": "BK 2854 ADK",
-      "odo": "63.738"
+      "odo": "63.738",
+      "waktuTransaksiRaw": "2026-05-12T06:38",
+      "randomSec": "09",
+      "pompa": "1",
+      "direvisi": true,
+      "waktuRevisi": "15/6/2026, 17.33.31",
+      "updatedAt": 1781519611145
     },
     {
       "ts": 1781447891387,
@@ -11060,5 +11072,5 @@
     "355987",
     "687342"
   ],
-  "savedAt": "2026-06-15T10:32:16.964Z"
+  "savedAt": "2026-06-15T10:33:33.148Z"
 }
