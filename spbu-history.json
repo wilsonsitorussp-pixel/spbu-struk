@@ -10888,16 +10888,22 @@
     {
       "ts": 1781447567926,
       "waktuCetak": "14/6/2026, 21.32.47",
-      "waktuTransaksi": "04/05/2026 06:04:19",
+      "waktuTransaksi": "04/05/2026 06:04:04",
       "shift": "1",
       "noTrans": "515120",
       "produk": "PERTAMAX",
-      "hargaLiter": 12300,
+      "hargaLiter": 12600,
       "volume": 4.8,
-      "total": 59040,
+      "total": 60480,
       "operator": "MHD RIZKY",
       "plat": "BK 2854 ADK",
-      "odo": "63.270"
+      "odo": "63.270",
+      "waktuTransaksiRaw": "2026-05-04T06:04",
+      "randomSec": "04",
+      "pompa": "1",
+      "direvisi": true,
+      "waktuRevisi": "15/6/2026, 17.32.15",
+      "updatedAt": 1781519535471
     },
     {
       "ts": 1781447648965,
@@ -11054,5 +11060,5 @@
     "355987",
     "687342"
   ],
-  "savedAt": "2026-06-15T10:30:41.363Z"
+  "savedAt": "2026-06-15T10:32:16.964Z"
 }
