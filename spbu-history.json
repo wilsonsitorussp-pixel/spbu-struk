@@ -11058,16 +11058,22 @@
     {
       "ts": 1781448293551,
       "waktuCetak": "14/6/2026, 21.44.53",
-      "waktuTransaksi": "25/05/2026 06:12:53",
+      "waktuTransaksi": "25/05/2026 06:12:47",
       "shift": "1",
       "noTrans": "687342",
       "produk": "PERTAMAX",
-      "hargaLiter": 12300,
+      "hargaLiter": 12600,
       "volume": 5,
-      "total": 61500,
+      "total": 63000,
       "operator": "ILHAM RAMADHAN",
       "plat": "BK 2854 ADK",
-      "odo": "64.660"
+      "odo": "64.660",
+      "waktuTransaksiRaw": "2026-05-25T06:12",
+      "randomSec": "47",
+      "pompa": "1",
+      "direvisi": true,
+      "waktuRevisi": "15/6/2026, 17.35.38",
+      "updatedAt": 1781519738936
     }
   ],
   "usedNumbers": [
@@ -11084,5 +11090,5 @@
     "355987",
     "687342"
   ],
-  "savedAt": "2026-06-15T10:34:56.599Z"
+  "savedAt": "2026-06-15T10:42:47.843Z"
 }
