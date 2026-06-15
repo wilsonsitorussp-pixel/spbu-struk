@@ -10976,30 +10976,42 @@
     {
       "ts": 1781447958010,
       "waktuCetak": "14/6/2026, 21.39.18",
-      "waktuTransaksi": "20/05/2026 06:42:40",
+      "waktuTransaksi": "20/05/2026 06:42:45",
       "shift": "1",
       "noTrans": "875282",
       "produk": "PERTAMAX",
-      "hargaLiter": 12300,
+      "hargaLiter": 12600,
       "volume": 4.5,
-      "total": 55350,
+      "total": 56700,
       "operator": "ILHAM RAMADHAN",
       "plat": "BK 2854 ADK",
-      "odo": "64.101"
+      "odo": "64.101",
+      "waktuTransaksiRaw": "2026-05-20T06:42",
+      "randomSec": "45",
+      "pompa": "1",
+      "direvisi": true,
+      "waktuRevisi": "15/6/2026, 17.34.24",
+      "updatedAt": 1781519664731
     },
     {
       "ts": 1781448053247,
       "waktuCetak": "14/6/2026, 21.40.53",
-      "waktuTransaksi": "21/05/2026 06:17:42",
+      "waktuTransaksi": "21/05/2026 06:17:08",
       "shift": "1",
       "noTrans": "904735",
       "produk": "PERTAMAX",
-      "hargaLiter": 12300,
+      "hargaLiter": 12600,
       "volume": 3.8,
-      "total": 46740,
+      "total": 47880,
       "operator": "PUTRI FEBRIYANI",
       "plat": "BK 2854 ADK",
-      "odo": "64.257"
+      "odo": "64.257",
+      "waktuTransaksiRaw": "2026-05-21T06:17",
+      "randomSec": "08",
+      "pompa": "1",
+      "direvisi": true,
+      "waktuRevisi": "15/6/2026, 17.34.55",
+      "updatedAt": 1781519695462
     },
     {
       "ts": 1781448113386,
@@ -11072,5 +11084,5 @@
     "355987",
     "687342"
   ],
-  "savedAt": "2026-06-15T10:33:33.148Z"
+  "savedAt": "2026-06-15T10:34:56.599Z"
 }
