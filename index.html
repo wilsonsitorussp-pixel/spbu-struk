@@ -313,6 +313,171 @@
             text-align: center;
             font-family: var(--mono);
         }
+        /* === TAMBAHAN: Edit Mode & Riwayat Struk === */
+        .edit-mode-bar {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            background: #2a2410;
+            border: 1px solid var(--yellow);
+            border-radius: 8px;
+            padding: 9px 12px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: var(--yellow);
+            line-height: 1.5;
+        }
+        .edit-mode-bar.show { display: flex; }
+        .edit-mode-bar b { color: #fff; }
+        .edit-mode-bar .btn-cancel-edit {
+            margin-left: auto;
+            flex-shrink: 0;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+        .history-item .hi-main { flex: 1; min-width: 0; }
+        .history-item .hi-no { font-size: 12px; font-weight: 700; color: var(--text); }
+        .history-item .hi-sub { font-size: 10.5px; color: var(--text2); margin-top: 1px; }
+        .history-item .hi-revised { color: var(--accent); font-size: 10px; font-weight: 600; }
+        .history-item .btn-edit-hist {
+            flex-shrink: 0;
+            background: var(--surface2);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .history-list-wrap {
+            max-height: 360px;
+            overflow-y: auto;
+            margin-top: 8px;
+        }
+        .history-empty {
+            padding: 14px;
+            text-align: center;
+            color: var(--text2);
+            font-size: 12px;
+        }
+        /* Sub-section collapsible di panel Kelola */
+        .kelola-section { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+        .kelola-section:last-child { margin-bottom: 0; }
+        .kelola-section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: var(--surface2);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            user-select: none;
+        }
+        .kelola-section-header .chevron { margin-left: auto; transition: transform 0.2s; color: var(--text2); font-size: 11px; }
+        .kelola-section-header.open .chevron { transform: rotate(180deg); }
+        .kelola-section-body { display: none; padding: 12px; }
+        .kelola-section-body.open { display: block; }
+
+        /* === TAMBAHAN: Sidebar Menu === */
+        body { overflow-x: hidden; }
+        .hamburger-btn {
+            margin-left: auto;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.show { opacity: 1; visibility: visible; }
+        .sidebar-drawer {
+            position: fixed;
+            top: 0; right: 0;
+            height: 100%;
+            width: min(380px, 90vw);
+            background: var(--bg);
+            border-left: 1px solid var(--border);
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar-drawer.open { transform: translateX(0); }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .sidebar-header h2 { font-size: 14px; font-weight: 700; color: var(--text); }
+        .sidebar-close {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 34px; height: 34px;
+            border-radius: 9px;
+            font-size: 15px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .sidebar-body {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .sidebar-body .panel { margin: 0; }
+        .save-flash {
+            display: inline-block;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--green);
+            margin-left: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .save-flash.show { opacity: 1; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -321,10 +486,19 @@
 <div class="app-header no-print">
     <div class="icon">⛽</div>
     <div><h1>SPBU PRO</h1><p>Sistem Cetak Struk Digital</p></div>
+    <span id="saveFlash" class="save-flash">✓ Tersimpan</span>
+    <button class="hamburger-btn" onclick="openSidebar()" aria-label="Menu">☰</button>
 </div>
 <div id="btBar" class="bt-bar no-print"><div class="bt-dot"></div><span id="btMsg">—</span></div>
 
-<div class="container">
+<!-- Sidebar Menu (Kelola Data Master + Riwayat & Edit Struk) -->
+<div class="sidebar-overlay no-print" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar-drawer no-print" id="sidebarDrawer">
+    <div class="sidebar-header">
+        <h2>☰ Menu Pengaturan</h2>
+        <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+    <div class="sidebar-body" id="sidebarBody">
     <!-- Panel Konfigurasi SPBU -->
     <div class="panel no-print">
         <div class="panel-header">⚙️ Konfigurasi SPBU</div>
@@ -371,16 +545,7 @@
                     <option value="bold">Tebal (Bold)</option>
                 </select>
             </div>
-            <!-- Manajemen Harga BBM -->
-            <div>
-                <label>💰 Harga BBM per Liter (Default)</label>
-                <div class="price-grid">
-                    <div class="price-item"><label>PERTALITE</label><input type="number" id="pricePertalite" value="10000" step="100" onchange="saveBBMPrice()"></div>
-                    <div class="price-item"><label>PERTAMAX</label><input type="number" id="pricePertamax" value="12500" step="100" onchange="saveBBMPrice()"></div>
-                    <div class="price-item"><label>PERTAMAX TURBO</label><input type="number" id="priceTurbo" value="14000" step="100" onchange="saveBBMPrice()"></div>
-                    <div class="price-item"><label>DEXLITE</label><input type="number" id="priceDexlite" value="13500" step="100" onchange="saveBBMPrice()"></div>
-                </div>
-            </div>
+            <!-- Harga BBM & Operator dipindah ke panel "⚙️ Kelola Data Master" di bawah -->
             <div>
                 <label>Pesan Footer</label>
                 <textarea id="inPesan" rows="4" oninput="render()">ANDA MENDAPAT SUBSIDI DARI&#10;PEMERINTAHAN SEBESAR RP.2.750&#10;(PERHITUNGAN SUBSIDI UNAUDITED&#10;ATAU ESTIMASI).GUNAKAN BBM&#10;SUBSIDI SECARA BIJAK.</textarea>
@@ -468,10 +633,77 @@
         </div>
     </div>
 
+    <!-- Panel Kelola Data Master (Harga BBM & Operator) -->
+    <div class="panel no-print">
+        <div class="panel-header">⚙️ Kelola Data Master</div>
+        <div class="panel-body">
+
+            <!-- Sub: Harga BBM -->
+            <div class="kelola-section">
+                <div class="kelola-section-header" onclick="toggleKelolaSection('kelolaHarga')">
+                    <span>💰 Harga BBM per Liter</span>
+                    <span class="chevron">▼</span>
+                </div>
+                <div class="kelola-section-body" id="kelolaHarga">
+                    <div class="price-grid">
+                        <div class="price-item"><label>PERTALITE</label><input type="number" id="pricePertalite" value="10000" step="100" onchange="saveBBMPrice()"></div>
+                        <div class="price-item"><label>PERTAMAX</label><input type="number" id="pricePertamax" value="12500" step="100" onchange="saveBBMPrice()"></div>
+                        <div class="price-item"><label>PERTAMAX TURBO</label><input type="number" id="priceTurbo" value="14000" step="100" onchange="saveBBMPrice()"></div>
+                        <div class="price-item"><label>DEXLITE</label><input type="number" id="priceDexlite" value="13500" step="100" onchange="saveBBMPrice()"></div>
+                    </div>
+                    <p style="font-size:10px; color:var(--text2); margin-top:6px;">Harga otomatis tersimpan & tersinkron ke GitHub saat diubah.</p>
+                </div>
+            </div>
+
+            <!-- Sub: Database Operator -->
+            <div class="kelola-section">
+                <div class="kelola-section-header" onclick="toggleKelolaSection('kelolaOperator')">
+                    <span>👤 Database Operator</span>
+                    <span class="chevron">▼</span>
+                </div>
+                <div class="kelola-section-body" id="kelolaOperator">
+                    <div id="opList" style="display:flex; flex-direction:column; gap:4px; max-height:200px; overflow-y:auto;"></div>
+                    <div style="padding-top:8px; display:flex; gap:6px;">
+                        <input type="text" id="inNewOp" placeholder="Nama operator baru..." style="flex:1; padding:8px 10px; font-size:13px;" onkeydown="if(event.key==='Enter') addOperator()">
+                        <button class="btn btn-green" onclick="addOperator()" style="white-space:nowrap; padding:8px 12px;">+ Tambah</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Panel Riwayat & Ekspor -->
+    <div class="panel no-print">
+        <div class="panel-header">📜 Riwayat &amp; Edit Struk</div>
+        <div class="panel-body">
+            <button class="btn btn-excel" onclick="exportToExcel()">📊 Ekspor ke Excel (.xlsx)</button>
+            <p style="font-size:11px; color:var(--text2);">Setiap struk yang dicetak (Bluetooth, Thermer, atau Print Dialog) otomatis tersimpan ke riwayat beserta waktu cetaknya.</p>
+            <p style="font-size:11px; color:var(--text2);">Total riwayat tersimpan: <b id="histCount">0</b> transaksi</p>
+
+            <button class="btn btn-blue" onclick="refreshHistoryList()" style="width:100%;">🔄 Muat Ulang Riwayat</button>
+
+            <p style="font-size:11px; color:var(--text2); margin-top:6px;">
+                Salah isi struk? Klik <b>✏️ Edit</b> pada riwayat di bawah untuk
+                memuat datanya kembali ke form (header sampai footer), perbaiki,
+                lalu cetak ulang — nomor transaksi tidak berubah dan tidak boros kode.
+            </p>
+            <div class="history-list-wrap" id="historyList"></div>
+        </div>
+    </div>
+
+    </div>
+</div>
+
+<div class="container">
     <!-- Panel Data Transaksi -->
     <div class="panel no-print">
         <div class="panel-header">🧾 Data Transaksi</div>
         <div class="panel-body">
+            <div id="editModeBar" class="edit-mode-bar">
+                <span>✏️ Mode Edit struk No. <b id="editModeTrans"></b> — cetak ulang akan <b>memperbarui</b> riwayat ini (nomor tidak berubah, tidak boros kode).</span>
+                <button class="btn-cancel-edit" onclick="cancelEditMode()">Batal Edit</button>
+            </div>
             <div class="row">
                 <div><label>Shift</label><select id="inShift" onchange="render()"><option>1</option><option>2</option></select></div>
                 <div><label>Pompa</label><select id="inPompa" onchange="render()"><script>for(let i=1;i<=12;i++) document.write(`<option>${i}</option>`)</script></select></div>
@@ -493,18 +725,8 @@
             </div>
             <div>
                 <label>Operator</label>
-                <div class="row">
-                    <select id="selOperator" onchange="render()" style="flex:1"></select>
-                    <button class="btn btn-blue" onclick="toggleOpManager()" id="btnOpMgr">&#9881; Kelola</button>
-                </div>
-                <div id="opManager" style="display:none; margin-top:8px; background:var(--bg); border:1px solid var(--border); border-radius:10px; overflow:hidden;">
-                    <div style="padding:8px 12px; background:var(--surface2); font-size:10px; font-weight:700; color:var(--text2); letter-spacing:1px; text-transform:uppercase;">Database Operator</div>
-                    <div id="opList" style="padding:8px; display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
-                    <div style="padding:8px; border-top:1px solid var(--border); display:flex; gap:6px;">
-                        <input type="text" id="inNewOp" placeholder="Nama operator baru..." style="flex:1; padding:8px 10px; font-size:13px;" onkeydown="if(event.key==='Enter') addOperator()">
-                        <button class="btn btn-green" onclick="addOperator()" style="white-space:nowrap; padding:8px 12px;">+ Tambah</button>
-                    </div>
-                </div>
+                <select id="selOperator" onchange="render()"></select>
+                <p style="font-size:10px; color:var(--text2); margin-top:4px;">Kelola daftar operator di panel "⚙️ Kelola Data Master" di bawah.</p>
             </div>
             <div><label>No. Plat</label><input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()"></div>
             <div>
@@ -531,15 +753,6 @@
         </div>
     </div>
 
-    <!-- Panel Riwayat & Ekspor -->
-    <div class="panel no-print">
-        <div class="panel-header">📋 Riwayat Transaksi</div>
-        <div class="panel-body">
-            <button class="btn btn-excel" onclick="exportToExcel()">📊 Ekspor ke Excel (.xlsx)</button>
-            <p style="font-size:11px; color:var(--text2);">Setiap struk yang dicetak (Bluetooth, Thermer, atau Print Dialog) otomatis tersimpan ke riwayat beserta waktu cetaknya.</p>
-            <p style="font-size:11px; color:var(--text2);">Total riwayat tersimpan: <b id="histCount">0</b> transaksi</p>
-        </div>
-    </div>
 
     <!-- Preview Struk -->
     <div class="panel">
@@ -592,6 +805,7 @@ let transactionHistory = db.get('spbu_history', []);
 let usedTransNumbers = db.get('spbu_used_numbers', []);
 let githubConfig = db.get('spbu_github_config', null);
 let githubProfiles = db.get('spbu_github_profiles', []);
+let editingRecordTs = null; // jika terisi, sedang mode edit riwayat (bukan transaksi baru)
 let bbmPrices = db.get('spbu_harga_bbm', {
     'PERTALITE': 10000,
     'PERTAMAX': 12500,
@@ -610,6 +824,33 @@ function setStatus(msg, type='info') {
 }
 function clearStatus() {
     document.getElementById('btBar').className = 'bt-bar no-print';
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  SIDEBAR MENU (Konfigurasi, GitHub Sync, Kelola Data Master, Riwayat)
+// ─────────────────────────────────────────────────────────────────
+function openSidebar() {
+    document.getElementById('sidebarDrawer').classList.add('open');
+    document.getElementById('sidebarOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+    document.getElementById('sidebarDrawer').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Indikator kecil "✓ Tersimpan" di sebelah ikon menu - feedback ringan
+// untuk perubahan yang otomatis tersimpan (harga BBM, operator, dll)
+// tanpa perlu membuka sidebar.
+let flashTimer = null;
+function flashSaved(label) {
+    const el = document.getElementById('saveFlash');
+    if (!el) return;
+    el.textContent = label || '✓ Tersimpan';
+    el.classList.add('show');
+    if (flashTimer) clearTimeout(flashTimer);
+    flashTimer = setTimeout(() => el.classList.remove('show'), 1800);
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -941,6 +1182,7 @@ function saveBBMPrice() {
     db.set('spbu_harga_bbm', bbmPrices);
     // update harga saat ini jika produk yang dipilih ada di dropdown
     onBBMChange();
+    flashSaved('✓ Harga tersimpan');
     if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
         pushSettingsToGithub(false);
     }
@@ -975,18 +1217,19 @@ function applySavedLogo() {
     document.getElementById('outLogo').src = data || '';
     render();
 }
-function toggleOpManager() {
-    const mgr = document.getElementById('opManager');
-    const btn = document.getElementById('btnOpMgr');
-    const isOpen = mgr.style.display !== 'none';
-    mgr.style.display = isOpen ? 'none' : 'block';
-    btn.textContent = isOpen ? '⚙️ Kelola' : '✕ Tutup';
-    if (!isOpen) renderOpList();
+// Toggle collapsible section di panel "Kelola Data Master"
+function toggleKelolaSection(id) {
+    const body = document.getElementById(id);
+    const header = body.previousElementSibling;
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    header.classList.toggle('open', !isOpen);
+    if (!isOpen && id === 'kelolaOperator') renderOpList();
 }
 function renderOpList() {
     const list = document.getElementById('opList');
     if (operators.length === 0) {
-        list.innerHTML = '<div style="padding:8px; color:var(--text2); text-align:center;">Belum ada operator</div>';
+        list.innerHTML = '<div style="padding:8px; color:var(--text2); text-align:center; font-size:12px;">Belum ada operator</div>';
         return;
     }
     list.innerHTML = operators.map((op,i)=>`
@@ -997,7 +1240,7 @@ function renderOpList() {
         </div>
     `).join('');
 }
-function selectOperator(name) { document.getElementById('selOperator').value = name; render(); toggleOpManager(); }
+function selectOperator(name) { document.getElementById('selOperator').value = name; render(); }
 function addOperator() {
     const inp = document.getElementById('inNewOp');
     const val = inp.value.trim().toUpperCase();
@@ -1010,6 +1253,7 @@ function addOperator() {
     renderOpList();
     document.getElementById('selOperator').value = val;
     render();
+    flashSaved('✓ Operator ditambahkan');
     if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
         pushSettingsToGithub(false);
     }
@@ -1021,6 +1265,7 @@ function deleteOperator(idx) {
         updateOpList();
         renderOpList();
         render();
+        flashSaved('✓ Operator dihapus');
         if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
             pushSettingsToGithub(false);
         }
@@ -1059,6 +1304,7 @@ function saveSettings() {
     onBBMChange();
 
     setStatus('✅ Konfigurasi tersimpan!', 'success');
+    flashSaved('✓ Konfigurasi tersimpan');
     setTimeout(clearStatus, 2000);
 
     // Jika GitHub sudah dikonfigurasi, otomatis sinkronkan SEMUA ke GitHub:
@@ -1105,11 +1351,73 @@ function saveCurrentTransaction() {
     const ltr = parseFloat(get('inLiter'))||0;
     const total = hrg*ltr;
     const noTrans = get('inTrans');
-    const record = {
-        ts: Date.now(),
-        waktuCetak: new Date().toLocaleString('id-ID'),
+    const now = new Date().toLocaleString('id-ID');
+
+    if (editingRecordTs) {
+        // ── MODE EDIT: perbarui riwayat yang sudah ada, JANGAN tambah baru ──
+        const idx = transactionHistory.findIndex(r => r.ts === editingRecordTs);
+        if (idx >= 0) {
+            const original = transactionHistory[idx];
+            transactionHistory[idx] = {
+                ...original,
+                waktuTransaksi: document.getElementById('outWaktu').innerText,
+                waktuTransaksiRaw: get('inWaktu'),
+                randomSec: randomSec,
+                shift: get('inShift'),
+                pompa: get('inPompa'),
+                noTrans: noTrans,
+                produk: get('inBBM'),
+                hargaLiter: hrg,
+                volume: ltr,
+                total: total,
+                operator: get('selOperator'),
+                plat: get('inPlat').toUpperCase(),
+                odo: get('inOdo'),
+                direvisi: true,
+                waktuRevisi: now,
+                updatedAt: Date.now()
+            };
+        } else {
+            // record asli tidak ketemu (mungkin sudah terhapus) -> simpan sebagai baru
+            transactionHistory.push(buildHistoryRecord(noTrans, hrg, ltr, total, now));
+            if (transactionHistory.length > 1000) transactionHistory.shift();
+        }
+    } else {
+        // ── TRANSAKSI BARU ──
+        transactionHistory.push(buildHistoryRecord(noTrans, hrg, ltr, total, now));
+        if (transactionHistory.length > 1000) transactionHistory.shift();
+    }
+
+    db.set('spbu_history', transactionHistory);
+    markTransNumberUsed(noTrans);
+    updateHistCount();
+    renderHistoryList();
+
+    // Jika GitHub sudah dikonfigurasi, sinkronkan riwayat (gabung otomatis lintas perangkat)
+    if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
+        pushHistoryToGithub(false);
+    }
+
+    // Keluar dari mode edit setelah cetak ulang, siapkan transaksi baru
+    if (editingRecordTs) {
+        editingRecordTs = null;
+        hideEditBanner();
+        generateUniqueRandom();
+    }
+}
+
+function buildHistoryRecord(noTrans, hrg, ltr, total, waktuCetak) {
+    const get = id => document.getElementById(id).value;
+    const ts = Date.now();
+    return {
+        ts: ts,
+        updatedAt: ts,
+        waktuCetak: waktuCetak,
         waktuTransaksi: document.getElementById('outWaktu').innerText,
+        waktuTransaksiRaw: get('inWaktu'),
+        randomSec: randomSec,
         shift: get('inShift'),
+        pompa: get('inPompa'),
         noTrans: noTrans,
         produk: get('inBBM'),
         hargaLiter: hrg,
@@ -1119,21 +1427,111 @@ function saveCurrentTransaction() {
         plat: get('inPlat').toUpperCase(),
         odo: get('inOdo')
     };
-    transactionHistory.push(record);
-    if (transactionHistory.length > 1000) transactionHistory.shift();
-    db.set('spbu_history', transactionHistory);
-    markTransNumberUsed(noTrans);
-    updateHistCount();
-
-    // Jika GitHub sudah dikonfigurasi, sinkronkan riwayat (gabung otomatis lintas perangkat)
-    if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
-        pushHistoryToGithub(false);
-    }
 }
 
 function updateHistCount() {
     const el = document.getElementById('histCount');
     if (el) el.textContent = transactionHistory.length;
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  RIWAYAT & EDIT STRUK
+// ─────────────────────────────────────────────────────────────────
+
+// Konversi "DD/MM/YYYY HH:MM:SS" (format lama, sebelum ada waktuTransaksiRaw)
+// menjadi value yang valid untuk <input type="datetime-local">
+function parseDisplayWaktu(str) {
+    const m = String(str || '').match(/^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+    if (!m) return null;
+    const [, dd, mm, yyyy, hh, min] = m;
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+}
+
+function showEditBanner(noTrans) {
+    const bar = document.getElementById('editModeBar');
+    document.getElementById('editModeTrans').textContent = noTrans;
+    bar.classList.add('show');
+}
+function hideEditBanner() {
+    document.getElementById('editModeBar').classList.remove('show');
+}
+function cancelEditMode() {
+    editingRecordTs = null;
+    hideEditBanner();
+    generateUniqueRandom();
+    setStatus('↩️ Mode edit dibatalkan. Nomor transaksi baru digenerate.', 'info');
+    setTimeout(clearStatus, 2000);
+}
+
+// Muat satu record riwayat ke form (header s/d footer ikut karena
+// header/footer adalah pengaturan global yang sudah aktif di form)
+function loadHistoryRecord(ts) {
+    const rec = transactionHistory.find(r => r.ts === ts);
+    if (!rec) {
+        setStatus('❌ Data riwayat tidak ditemukan.', 'error');
+        return;
+    }
+    const set = (id, val) => { const el = document.getElementById(id); if (el !== null && val !== undefined && val !== null) el.value = val; };
+
+    set('inShift', rec.shift);
+    set('inPompa', rec.pompa || '1');
+    set('inTrans', rec.noTrans);
+    set('inBBM', rec.produk);
+    set('inHarga', rec.hargaLiter);
+    set('inLiter', rec.volume);
+    if (operators.includes(rec.operator)) set('selOperator', rec.operator);
+    set('inPlat', rec.plat);
+    set('inOdo', rec.odo);
+
+    const waktuRaw = rec.waktuTransaksiRaw || parseDisplayWaktu(rec.waktuTransaksi);
+    if (waktuRaw) document.getElementById('inWaktu').value = waktuRaw;
+    if (rec.randomSec !== undefined) randomSec = rec.randomSec;
+
+    editingRecordTs = ts;
+    showEditBanner(rec.noTrans);
+    render();
+    setStatus('✏️ Data struk No. ' + rec.noTrans + ' dimuat ke form. Perbaiki lalu cetak ulang.', 'info');
+    setTimeout(clearStatus, 3000);
+
+    // Tutup sidebar agar form Data Transaksi (yang sudah terisi) & banner
+    // mode edit langsung terlihat di halaman utama
+    closeSidebar();
+
+    // Scroll ke panel Data Transaksi agar langsung terlihat
+    const panel = document.getElementById('editModeBar');
+    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderHistoryList() {
+    const container = document.getElementById('historyList');
+    if (!container) return;
+    if (transactionHistory.length === 0) {
+        container.innerHTML = '<div class="history-empty">Belum ada riwayat struk.</div>';
+        return;
+    }
+    const f = n => new Intl.NumberFormat('id-ID').format(n);
+    const sorted = [...transactionHistory].sort((a,b) => (b.ts||0) - (a.ts||0)).slice(0, 50);
+    container.innerHTML = sorted.map(r => `
+        <div class="history-item">
+            <div class="hi-main">
+                <div class="hi-no">No. ${r.noTrans}${r.direvisi ? ' <span class="hi-revised">(direvisi)</span>' : ''}</div>
+                <div class="hi-sub">${r.waktuTransaksi || '-'} • ${r.produk || '-'} • Rp ${f(r.total||0)}</div>
+                <div class="hi-sub">Cetak: ${r.waktuCetak || '-'}</div>
+            </div>
+            <button class="btn-edit-hist" onclick="loadHistoryRecord(${r.ts})">✏️ Edit</button>
+        </div>
+    `).join('');
+}
+
+// Tarik riwayat terbaru dari GitHub (gabung) lalu tampilkan ulang daftarnya
+async function refreshHistoryList() {
+    if (githubConfig && githubConfig.owner && githubConfig.repo && githubConfig.token) {
+        setStatus('🔄 Memuat riwayat dari GitHub...', 'info');
+        await pullHistoryFromGithub(false);
+        setStatus('✅ Riwayat dimuat ulang.', 'success');
+        setTimeout(clearStatus, 1500);
+    }
+    renderHistoryList();
 }
 
 async function exportToExcel() {
@@ -1152,13 +1550,15 @@ async function exportToExcel() {
         return;
     }
     const headers = [
-        'Waktu Cetak', 'Waktu Transaksi', 'Shift', 'No. Trans', 'Produk',
-        'Harga/Liter (Rp)', 'Volume (L)', 'Total (Rp)', 'Operator', 'Plat', 'Odo (KM)'
+        'Waktu Cetak', 'Waktu Transaksi', 'Shift', 'Pompa', 'No. Trans', 'Produk',
+        'Harga/Liter (Rp)', 'Volume (L)', 'Total (Rp)', 'Operator', 'Plat', 'Odo (KM)', 'Status'
     ];
-    const rows = transactionHistory.map(r => [
+    const sortedHistory = [...transactionHistory].sort((a,b) => (b.ts||0) - (a.ts||0));
+    const rows = sortedHistory.map(r => [
         r.waktuCetak || r.waktu || '',
         r.waktuTransaksi || '',
         r.shift,
+        r.pompa || '',
         r.noTrans,
         r.produk,
         r.hargaLiter !== undefined ? r.hargaLiter : '',
@@ -1166,7 +1566,8 @@ async function exportToExcel() {
         r.total,
         r.operator,
         r.plat,
-        r.odo
+        r.odo,
+        r.direvisi ? ('Direvisi (' + (r.waktuRevisi || '-') + ')') : ''
     ]);
 
     const wsData = [headers, ...rows];
@@ -1177,6 +1578,7 @@ async function exportToExcel() {
         { wch: 20 }, // Waktu Cetak
         { wch: 18 }, // Waktu Transaksi
         { wch: 6 },  // Shift
+        { wch: 6 },  // Pompa
         { wch: 10 }, // No. Trans
         { wch: 16 }, // Produk
         { wch: 14 }, // Harga/Liter
@@ -1185,6 +1587,7 @@ async function exportToExcel() {
         { wch: 18 }, // Operator
         { wch: 14 }, // Plat
         { wch: 10 }, // Odo
+        { wch: 24 }, // Status
     ];
 
     const wb = XLSX.utils.book_new();
@@ -1546,7 +1949,19 @@ async function pullSettingsFromGithub(showMsg) {
 function mergeHistories(local, remote) {
     const keyOf = r => (r.noTrans || '') + '_' + (r.ts || r.waktuCetak || Math.random());
     const map = new Map();
-    [...remote, ...local].forEach(r => map.set(keyOf(r), r));
+    [...remote, ...local].forEach(r => {
+        const key = keyOf(r);
+        const existing = map.get(key);
+        if (!existing) {
+            map.set(key, r);
+        } else {
+            // Konflik (record yang sama diedit di 2 perangkat) -> yang
+            // updatedAt-nya paling baru menang, bukan asal lokal/remote
+            const existingTime = existing.updatedAt || existing.ts || 0;
+            const newTime = r.updatedAt || r.ts || 0;
+            map.set(key, newTime >= existingTime ? r : existing);
+        }
+    });
     const merged = Array.from(map.values());
     merged.sort((a,b) => (a.ts||0) - (b.ts||0));
     if (merged.length > 1000) return merged.slice(-1000);
@@ -1667,8 +2082,7 @@ async function pullHistoryFromGithub(showMsg) {
         db.set('spbu_used_numbers', usedTransNumbers);
 
         updateHistCount();
-
-        // Upload kembali hasil gabungan agar perangkat lain juga mendapat versi terbaru
+        renderHistoryList();
         await pushHistoryToGithub(false);
 
         const now = new Date().toLocaleString('id-ID');
@@ -1851,6 +2265,7 @@ window.onload = async function() {
     document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
     loadSettings();
     updateHistCount();
+    renderHistoryList();
     loadGithubConfigToForm();
     updateGithubProfileSelect();
     render();
