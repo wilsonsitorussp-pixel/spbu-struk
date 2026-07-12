@@ -16,10 +16,10 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         
-        .app-header { width: 100%; max-width: 500px; display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
-        .app-header .icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .app-header h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
-        .app-header p { font-size: 11px; color: var(--text2); margin-top: 1px; }
+        .app-header { width: 100%; max-width: 500px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
+        .app-header .icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .app-header h1 { font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
+        .app-header p { font-size: 10px; color: var(--text2); margin-top: 1px; }
         
         .bt-bar { width: 100%; max-width: 500px; padding: 10px 14px; border-radius: 10px; font-size: 12px; font-family: var(--mono); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; border: 1px solid transparent; transition: all 0.3s; display: none; }
         .bt-bar.info { display:flex; background:#1e2d4a; border-color:#2d4a7a; color:#7ab3f5; }
@@ -37,6 +37,7 @@
         .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
         .panel-header { padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text2); display: flex; align-items: center; gap: 8px; }
         .panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+        
         label { font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; display: block; margin-bottom: 5px; }
         input, select, textarea { width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13px; font-family: var(--sans); outline: none; transition: border-color 0.2s; }
         input:focus, select:focus, textarea:focus { border-color: var(--accent); }
@@ -51,6 +52,7 @@
         .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; }
         .btn-green { background: var(--surface2); border: 1px solid #1a5c3a; color: var(--green); }
         .btn-blue { background: var(--surface2); border: 1px solid #1e2d4a; color: var(--accent); }
+        .btn-red { background: var(--surface2); border: 1px solid #5c1a1a; color: var(--red); }
         .btn-save { background: var(--accent); color: white; border: none; }
         .btn-excel { background: #1e6f3f; color: white; border: none; }
         
@@ -59,8 +61,6 @@
         .btn-print-bt:active { transform: scale(0.98); }
         .btn-print-thermer { width: 100%; padding: 13px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text2); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-print-dialog { width: 100%; padding: 11px; background: transparent; border: 1px dashed var(--border); border-radius: 10px; color: var(--text2); font-size: 12px; cursor: pointer; }
-        .divider { display: flex; align-items: center; gap: 8px; color: var(--text2); font-size: 10px; }
-        .divider::before, .divider::after { content:''; flex:1; height:1px; background: var(--border); }
         
         .receipt-wrap { display: flex; justify-content: center; padding: 20px 16px; background: #13151f; border-top: 1px solid var(--border); overflow: hidden; }
         .receipt { background: #fff; width: 58mm; min-width: 58mm; max-width: 58mm; padding: 6mm 3mm; text-align: center; font-size: var(--receipt-font, 9px); color: #000; line-height: 1.4; font-family: 'Courier New', Courier, monospace; box-shadow: 0 8px 32px rgba(0,0,0,0.5); overflow: hidden; }
@@ -75,68 +75,103 @@
         .edit-mode-bar { display: none; align-items: center; gap: 8px; background: #2a2410; border: 1px solid var(--yellow); border-radius: 8px; padding: 9px 12px; margin-bottom: 10px; font-size: 12px; color: var(--yellow); line-height: 1.5; }
         .edit-mode-bar.show { display: flex; }
         .edit-mode-bar b { color: #fff; }
-        .edit-mode-bar .btn-cancel-edit { margin-left: auto; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; }
+        .edit-mode-bar .btn-cancel-edit { margin-left: auto; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; flex-shrink: 0; }
         
-        .history-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; }
+        .history-item { display: flex; align-items: center; gap: 8px; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; }
         .history-item .hi-main { flex: 1; min-width: 0; }
-        .history-item .hi-no { font-size: 12px; font-weight: 700; color: var(--text); }
-        .history-item .hi-sub { font-size: 10.5px; color: var(--text2); margin-top: 1px; }
-        .history-item .btn-edit-hist { background: var(--surface2); border: 1px solid var(--accent); color: var(--accent); padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; }
-        .history-list-wrap { max-height: 360px; overflow-y: auto; margin-top: 8px; }
+        .history-item .hi-no { font-size: 13px; font-weight: 700; color: var(--text); }
+        .history-item .hi-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+        .history-item .btn-edit-hist { background: var(--surface2); border: 1px solid var(--accent); color: var(--accent); padding: 8px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; flex-shrink: 0; font-weight:bold; }
+        .history-item .btn-del-hist { background: var(--surface2); border: 1px solid var(--red); color: var(--red); padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer; flex-shrink: 0; }
         
-        .hamburger-btn { margin-left: auto; background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 18px; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.25s ease; }
-        .sidebar-overlay.show { opacity: 1; visibility: visible; }
-        .sidebar-drawer { position: fixed; top: 0; right: 0; height: 100%; width: min(380px, 90vw); background: var(--bg); border-left: 1px solid var(--border); z-index: 1001; transform: translateX(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; overflow-y: auto; }
+        .top-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 16px; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.2s; }
+        .top-btn:active { background: var(--border); }
+        
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.25s ease; }
+        .drawer-overlay.show { opacity: 1; visibility: visible; }
+        .drawer { position: fixed; top: 0; bottom: 0; width: min(400px, 90vw); background: var(--bg); z-index: 1001; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; overflow: hidden; box-shadow: -5px 0 25px rgba(0,0,0,0.5); }
+        
+        /* Sidebar slides from right */
+        .sidebar-drawer { right: 0; border-left: 1px solid var(--border); transform: translateX(100%); }
         .sidebar-drawer.open { transform: translateX(0); }
-        .sidebar-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); background: var(--surface2); position: sticky; top: 0; z-index: 1; }
-        .sidebar-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+        
+        /* History slides from bottom (full screen on mobile, panel on desktop) */
+        .history-drawer { left: 50%; width: 100%; max-width: 500px; height: 85vh; top: auto; bottom: 0; transform: translate(-50%, 100%); border-top-left-radius: 20px; border-top-right-radius: 20px; border: 1px solid var(--border); border-bottom: none; }
+        .history-drawer.open { transform: translate(-50%, 0); }
+        
+        .drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border); background: var(--surface2); }
+        .drawer-header h2 { font-size: 15px; font-weight: 700; }
+        .drawer-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; }
+        
         .kelola-section { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
-        .kelola-section-header { display: flex; align-items: center; padding: 10px 12px; background: var(--surface2); cursor: pointer; font-size: 12px; font-weight: 700; }
+        .kelola-section-header { display: flex; align-items: center; padding: 12px; background: var(--surface2); cursor: pointer; font-size: 12px; font-weight: 700; }
         .kelola-section-body { display: none; padding: 12px; } .kelola-section-body.open { display: block; }
+        
+        .custom-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.2s; padding: 20px; }
+        .custom-modal-overlay.show { opacity: 1; visibility: visible; }
+        .custom-modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 320px; padding: 20px; text-align: center; transform: scale(0.95); transition: 0.2s; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .custom-modal-overlay.show .custom-modal { transform: scale(1); }
+        .custom-modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .custom-modal p { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+        .custom-modal .btn-row { display: flex; gap: 10px; justify-content: center; }
+        .custom-modal .btn-row .btn { flex: 1; padding: 12px; }
     </style>
 </head>
 <body>
 
 <div class="app-header no-print">
     <div class="icon">⛽</div>
-    <div><h1>SPBU PRO</h1><p>Sistem Cloud & Bluetooth</p></div>
-    <span id="gasBadge" style="display:none; font-size:10px; padding:3px 7px; border-radius:10px; margin-left:auto; background:#0d2b20; border:1px solid #1a5c3a; color:#34d399; white-space:nowrap;">🟢 Terhubung</span>
-    <button class="hamburger-btn" onclick="openSidebar()" aria-label="Menu" style="margin-left:8px;">☰</button>
+    <div style="flex:1;">
+        <h1>SPBU PRO</h1>
+        <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+            <p>Cloud Native System</p>
+            <span id="gasBadge" style="display:none; font-size:9px; padding:2px 6px; border-radius:10px; background:#2b1010; border:1px solid #5c1a1a; color:#f87171;">Offline</span>
+        </div>
+    </div>
+    <button class="top-btn" onclick="openHistory()" aria-label="Riwayat" title="Riwayat Transaksi">📜</button>
+    <button class="top-btn" onclick="openSidebar()" aria-label="Menu" title="Pengaturan">☰</button>
 </div>
 <div id="btBar" class="bt-bar no-print"><div class="bt-dot"></div><span id="btMsg">—</span></div>
 
-<div class="sidebar-overlay no-print" id="sidebarOverlay" onclick="closeSidebar()"></div>
-<div class="sidebar-drawer no-print" id="sidebarDrawer">
-    <div class="sidebar-header">
-        <h2 style="font-size:14px;">☰ Menu Pengaturan</h2>
-        <button onclick="closeSidebar()" style="background:var(--surface); border:1px solid var(--border); color:var(--text); width:34px; height:34px; border-radius:9px; cursor:pointer;">✕</button>
-    </div>
-    <div class="sidebar-body">
-        
-        <!-- Panel Cloud Storage Utama -->
-        <div class="panel">
-            <div class="panel-header">🗄️ KONEKSI GOOGLE CLOUD</div>
-            <div class="panel-body">
-                <p style="font-size:10px; color:var(--text2);">Satu-satunya tempat menyimpan dan menarik data Anda (Pengaturan, Logo, History, dll) secara otomatis.</p>
-                <input type="url" id="gasUrlInput" placeholder="URL Web App Google Sheets">
-                <div class="row">
-                    <button class="btn btn-save" onclick="saveAndConnectCloud()">💾 Hubungkan</button>
-                    <button class="btn btn-blue" onclick="syncFromCloud(true)">⬇️ Tarik Data</button>
-                </div>
-                <hr style="border-color:var(--border); margin:4px 0;">
-                <p style="font-size:10px; color:var(--text2);">Bagikan link ini ke HP/Kasir lain agar otomatis tersambung tanpa ketik URL:</p>
-                <button class="btn btn-blue" onclick="generateSetupLink()">🔗 Buat Link Setup HP Lain</button>
-                <textarea id="setupLinkOut" rows="2" readonly style="display:none; font-size:10px;" onclick="this.select()"></textarea>
-            </div>
+<div class="custom-modal-overlay no-print" id="customModalOverlay">
+    <div class="custom-modal">
+        <h3 id="cModalTitle">Judul</h3>
+        <p id="cModalMsg">Pesan</p>
+        <div class="btn-row">
+            <button class="btn btn-icon" id="cModalCancel" onclick="closeModal()">Batal</button>
+            <button class="btn btn-save" id="cModalOk">OK</button>
         </div>
+    </div>
+</div>
 
-        <!-- Fitur Migrasi Orisinal -->
+<div class="drawer-overlay no-print" id="drawerOverlay" onclick="closeDrawers()"></div>
+
+<div class="drawer history-drawer no-print" id="historyDrawer">
+    <div class="drawer-header">
+        <h2>📜 Riwayat Transaksi</h2>
+        <button class="top-btn" onclick="closeDrawers()">✕</button>
+    </div>
+    <div class="drawer-body">
+        <button class="btn btn-excel" onclick="exportToExcel()" style="width:100%;">📊 Ekspor ke Excel (.xlsx)</button>
+        <p style="font-size:11px; color:var(--text2); text-align:center;">Total tersimpan: <b id="histCount">0</b> struk</p>
+        <div id="historyList" style="display:flex; flex-direction:column;"></div>
+    </div>
+</div>
+
+<div class="drawer sidebar-drawer no-print" id="sidebarDrawer">
+    <div class="drawer-header">
+        <h2>⚙️ Pengaturan</h2>
+        <button class="top-btn" onclick="closeDrawers()">✕</button>
+    </div>
+    <div class="drawer-body">
+        
+        <!-- Panel Koneksi Utama (Disederhanakan) -->
         <div class="panel" style="border-color:var(--accent);">
-            <div class="panel-header" style="background:#1e2d4a; color:white;">🔄 MIGRASI DATA LAMA</div>
+            <div class="panel-header" style="background:#1e2d4a; color:white;">🗄️ CLOUD SINKRONISASI</div>
             <div class="panel-body">
-                <p style="font-size:10px; color:var(--text2);">Jika Anda memiliki riwayat dan konfigurasi lama di browser ini, klik tombol di bawah <b>sekali saja</b> untuk menyalinnya ke Google Sheets.</p>
-                <button class="btn btn-blue" onclick="migrateDataLama()" style="background:transparent; border:1px solid var(--accent);">⬆️ Upload Data Lama ke Sheets</button>
+                <p style="font-size:10px; color:var(--text2); line-height:1.4;">Satu tombol untuk menyamakan semua pengaturan, harga, operator, dan riwayat antar HP melalui Google Sheets.</p>
+                <input type="url" id="gasUrlInput" placeholder="URL Web App Google Sheets">
+                <button class="btn btn-save" onclick="unifiedSync()" style="padding:12px; font-size:14px; width:100%;">🔄 Sinkronisasi (2-Arah)</button>
             </div>
         </div>
 
@@ -159,14 +194,21 @@
                     <div><label>Margin Bawah</label><select id="inLogoMargin" onchange="render()"><option value="0" selected>0mm</option><option value="5">5mm</option></select></div>
                 </div>
 
+                <label>Ukuran Font Struk</label>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono);">5</span>
+                    <input type="range" id="inFontSize" min="5" max="15" value="9" step="1" oninput="updateFontSize()" style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;">
+                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono);">15</span>
+                    <span id="fontSizeLabel" style="font-size:12px; font-weight:700; font-family:var(--mono); color:var(--accent); background:var(--surface2); padding:4px 8px; border-radius:6px;">9px</span>
+                </div>
+
                 <label>Pesan Footer</label>
                 <textarea id="inPesan" rows="3" oninput="render()">TERIMA KASIH</textarea>
-                
-                <button class="btn btn-save" onclick="saveSettings()">☁️ UPLOAD SEMUA PENGATURAN</button>
+                <p style="font-size:10px; color:var(--text2); text-align:center; margin-top:5px;">Perubahan di panel ini otomatis tersimpan secara lokal. Gunakan tombol Sinkronisasi di atas untuk menyimpan ke Cloud.</p>
             </div>
         </div>
 
-        <!-- Panel Kelola Data Master (Harga BBM & Operator) -->
+        <!-- Panel Kelola Data Master -->
         <div class="panel">
             <div class="panel-header">⚙️ Kelola Data Master</div>
             <div class="panel-body">
@@ -185,7 +227,7 @@
                 <div class="kelola-section">
                     <div class="kelola-section-header" onclick="toggleKelolaSection('kelolaOperator')">👤 Database Operator <span style="margin-left:auto;">▼</span></div>
                     <div class="kelola-section-body" id="kelolaOperator">
-                        <div id="opList" style="display:flex; flex-direction:column; gap:4px; max-height:150px; overflow-y:auto; margin-bottom:8px;"></div>
+                        <div id="opList" style="display:flex; flex-direction:column; gap:6px; max-height:180px; overflow-y:auto; margin-bottom:10px;"></div>
                         <div class="row">
                             <input type="text" id="inNewOp" placeholder="Nama operator baru...">
                             <button class="btn btn-green" onclick="addOperator()">+ Tambah</button>
@@ -204,7 +246,7 @@
         <div class="panel-body">
             
             <div id="editModeBar" class="edit-mode-bar">
-                <span>✏️ Mode Edit struk No. <b id="editModeTrans"></b> — cetak ulang akan memperbarui riwayat.</span>
+                <span>✏️ Mode Edit struk No. <b id="editModeTrans"></b></span>
                 <button class="btn-cancel-edit" onclick="cancelEditMode()">Batal</button>
             </div>
 
@@ -262,23 +304,12 @@
         <div class="panel-body">
             <div class="print-section">
                 <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()"><span>🔵</span><span id="btBtnLabel">CETAK VIA BLUETOOTH</span></button>
-                <div class="divider">ATAU</div>
                 <button class="btn-print-thermer" onclick="printThermer()">🟡 Cetak via Thermer App (Android)</button>
                 <button class="btn-print-dialog" onclick="printDialog()">🖨️ Print Dialog Biasa</button>
             </div>
         </div>
     </div>
 
-    <!-- Panel Riwayat Orisinal -->
-    <div class="panel no-print">
-        <div class="panel-header">📜 Riwayat Transaksi (<span id="histCount">0</span>)</div>
-        <div class="panel-body">
-            <button class="btn btn-excel" onclick="exportToExcel()" style="width:100%;">📊 Ekspor ke Excel (.xlsx)</button>
-            <div class="history-list-wrap" id="historyList"></div>
-        </div>
-    </div>
-
-    <!-- PREVIEW STRUK ORISINAL -->
     <div class="panel">
         <div class="panel-header no-print">👁️ Preview Struk <span style="margin-left:auto; font-size:10px; color:var(--accent); font-family:var(--mono);">58mm</span></div>
         <div class="receipt-wrap">
@@ -314,7 +345,6 @@
 </div>
 
 <script>
-// --- LOCAL DB ---
 const db = {
     get: (k,d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e){ return d; } },
     set: (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
@@ -328,60 +358,72 @@ let editingRecordTs = null;
 let randomSec = "00";
 let bbmPrices = db.get('spbu_harga_bbm', { 'PERTALITE': 10000, 'PERTAMAX': 12500, 'PERTAMAX TURBO': 14000, 'DEXLITE': 13500 });
 
-// --- CLOUD API (GOOGLE SHEETS) ---
-// PERBAIKAN: Menggunakan method POST sederhana dengan Content-Type: text/plain
-// untuk menghindari blokir CORS Preflight dari Google Apps Script.
+let modalCallback = null;
+function showModal(title, msg, type = 'alert', callback = null) {
+    document.getElementById('cModalTitle').textContent = title;
+    document.getElementById('cModalMsg').innerHTML = msg;
+    const btnCancel = document.getElementById('cModalCancel');
+    const btnOk = document.getElementById('cModalOk');
+    
+    if (type === 'confirm') {
+        btnCancel.style.display = 'block';
+        btnOk.className = 'btn btn-red'; // Red OK button for destructive actions
+    } else {
+        btnCancel.style.display = 'none';
+        btnOk.className = 'btn btn-save';
+    }
+    
+    modalCallback = callback;
+    document.getElementById('customModalOverlay').classList.add('show');
+}
+function closeModal() {
+    document.getElementById('customModalOverlay').classList.remove('show');
+    modalCallback = null;
+}
+document.getElementById('cModalOk').addEventListener('click', () => {
+    const cb = modalCallback;
+    closeModal();
+    if (cb) cb();
+});
+
+
 const cloudAPI = {
     get url() { return db.get('spbu_gas_url', ''); },
     set url(v) { db.set('spbu_gas_url', v); },
     
     async post(action, dataObj) {
-        if (!this.url) throw new Error("URL Cloud belum dikonfigurasi.");
+        if (!this.url) throw new Error("URL Cloud belum diisi.");
+        const payload = JSON.stringify({ action: action, data: dataObj });
+        const res = await fetch(this.url, { method: 'POST', body: payload });
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        
+        const text = await res.text();
         try {
-            const payload = JSON.stringify({ action: action, data: dataObj });
-            const res = await fetch(this.url, {
-                method: 'POST',
-                // Default fetch stringify akan dianggap text/plain yang aman dari CORS preflight
-                body: payload
-            });
-            
-            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-            
-            const text = await res.text();
-            try {
-                const json = JSON.parse(text);
-                if (!json.success) throw new Error(json.error || "Server menolak permintaan");
-                return json;
-            } catch(e) {
-                throw new Error("Respon server bukan JSON. Pastikan URL Apps Script benar dan aksesnya 'Siapa saja'.");
-            }
-        } catch (err) {
-            if(err.message.includes('Failed to fetch')) throw new Error("Koneksi gagal/diblokir CORS. Cek URL Web App.");
-            throw err;
+            const json = JSON.parse(text);
+            if (!json.success) throw new Error(json.error || "Ditolak server");
+            return json;
+        } catch(e) {
+            if (text.toLowerCase().includes("<!doctype html>")) throw new Error("URL Apps Script harus dideploy dengan akses 'Siapa Saja (Anyone)'. Silakan deploy ulang (New Version).");
+            throw new Error("Respon server tidak valid.");
         }
     },
     
     async get(action) {
-        if (!this.url) throw new Error("URL Cloud belum dikonfigurasi.");
+        if (!this.url) throw new Error("URL Cloud belum diisi.");
+        const res = await fetch(this.url + '?action=' + encodeURIComponent(action));
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        const text = await res.text();
         try {
-            const res = await fetch(this.url + '?action=' + encodeURIComponent(action));
-            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-            
-            const text = await res.text();
-            try {
-                const json = JSON.parse(text);
-                if (!json.success) throw new Error(json.error || "Gagal mengambil data");
-                return json;
-            } catch(e) {
-                throw new Error("Respon invalid. Pastikan Web App di-deploy dengan benar.");
-            }
-        } catch (err) {
-            throw err;
+            const json = JSON.parse(text);
+            if (!json.success) throw new Error(json.error || "Gagal mengambil data");
+            return json;
+        } catch(e) {
+            if (text.toLowerCase().includes("<!doctype html>")) throw new Error("Akses ditolak Google. Pastikan deploy dengan akses 'Siapa Saja'.");
+            throw new Error("Respon invalid dari server.");
         }
     }
 };
 
-// --- FUNGSI UI & SIDEBAR ---
 function setStatus(msg, type='info') {
     const bar = document.getElementById('btBar');
     bar.className = 'bt-bar no-print ' + type;
@@ -389,8 +431,10 @@ function setStatus(msg, type='info') {
 }
 function clearStatus() { document.getElementById('btBar').style.display = 'none'; }
 
-function openSidebar() { document.getElementById('sidebarDrawer').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('show'); document.body.style.overflow='hidden';}
-function closeSidebar() { document.getElementById('sidebarDrawer').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('show'); document.body.style.overflow='';}
+function openSidebar() { document.getElementById('sidebarDrawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('show'); document.body.style.overflow='hidden';}
+function openHistory() { document.getElementById('historyDrawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('show'); document.body.style.overflow='hidden';}
+function closeDrawers() { document.getElementById('sidebarDrawer').classList.remove('open'); document.getElementById('historyDrawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('show'); document.body.style.overflow='';}
+
 function toggleKelolaSection(id) {
     const body = document.getElementById(id);
     const isOpen = body.classList.contains('open');
@@ -401,113 +445,104 @@ function toggleKelolaSection(id) {
 function updateGasBadge(isConnected) {
     const badge = document.getElementById('gasBadge');
     badge.style.display = 'inline-block';
-    if(isConnected) { badge.textContent = '🟢 Cloud OK'; badge.style.color = '#34d399'; badge.style.borderColor = '#1a5c3a'; }
-    else { badge.textContent = '🔴 Offline'; badge.style.color = '#f87171'; badge.style.borderColor = '#5c1a1a'; }
+    if(isConnected) { badge.textContent = '🟢 Online'; badge.style.background = '#0d2b20'; badge.style.borderColor = '#1a5c3a'; badge.style.color = '#34d399'; }
+    else { badge.textContent = '🔴 Offline'; badge.style.background = '#2b1010'; badge.style.borderColor = '#5c1a1a'; badge.style.color = '#f87171'; }
 }
 
-// --- FUNGSI MIGRASI MAGIS ---
-async function migrateDataLama() {
-    if(!cloudAPI.url) return setStatus("❌ Isi URL Google Cloud terlebih dahulu!", "error");
-    if(!confirm("Apakah Anda yakin ingin mengupload seluruh riwayat dan pengaturan lokal saat ini ke Google Sheets?")) return;
+async function unifiedSync() {
+    const inputUrl = document.getElementById('gasUrlInput').value.trim();
+    if(!inputUrl) return showModal("Perhatian", "Silakan masukkan URL Web App Google Sheets terlebih dahulu.", "alert");
+    cloudAPI.url = inputUrl;
     
-    setStatus("⬆️ Mengupload data lokal ke Cloud...", "info");
+    setStatus("🔄 Menarik & Menggabungkan data dengan Cloud...", "info");
     try {
-        const payload = {
-            settings: db.get('spbu_settings', {}),
-            prices: bbmPrices,
-            operators: operators,
-            logos: savedLogos,
-            history: transactionHistory,
-            usedNumbers: usedTransNumbers
-        };
-        await cloudAPI.post('migrateAll', payload);
-        setStatus("✅ Migrasi Berhasil! Semua data lama pindah ke Google Sheets.", "success");
-        updateGasBadge(true);
-        setTimeout(clearStatus, 4000);
-    } catch(e) {
-        setStatus("❌ Gagal migrasi: " + e.message, "error");
-        updateGasBadge(false);
-    }
-}
-
-// --- SYNC DARI GOOGLE SHEETS ---
-async function syncFromCloud(showMsg = false) {
-    if(!cloudAPI.url) return;
-    if(showMsg) setStatus("⬇️ Menarik data dari Cloud...", "info");
-    
-    try {
-        const res = await cloudAPI.get('getAll');
-        const d = res.data;
+        // 1. Tarik Data dari Cloud
+        const remote = await cloudAPI.get('getAll');
+        const rd = remote.data;
         
-        // Terapkan Pengaturan
-        if(d.settings && Object.keys(d.settings).length > 0) {
-            db.set('spbu_settings', d.settings);
-            loadSettingsToForm(d.settings);
+        // 2. Gabungkan Pengaturan (Lokal menang jika ada perubahan lokal, tapi ini sinkronisasi 2 arah sederhana: kita timpa dengan gabungan terbaru)
+        const localSettings = db.get('spbu_settings', {});
+        const newSettings = Object.assign({}, rd.settings || {}, localSettings); // Simpan input lokal terbaru
+        db.set('spbu_settings', newSettings);
+        loadSettingsToForm(newSettings);
+        
+        // Master Data (Gabungkan tanpa duplikat)
+        if(rd.operators) {
+            operators = Array.from(new Set([...operators, ...rd.operators]));
+            db.set('spbu_ops', operators);
+        }
+        if(rd.prices) {
+            bbmPrices = Object.assign({}, rd.prices, bbmPrices); // Lokal diutamakan saat sinkronisasi manual
+            db.set('spbu_harga_bbm', bbmPrices);
+        }
+        if(rd.logos && rd.logos.length > 0 && savedLogos.length === 0) {
+            savedLogos = rd.logos; db.set('spbu_logos', savedLogos);
         }
         
-        // Terapkan Master Data
-        if(d.operators && d.operators.length > 0) { operators = d.operators; db.set('spbu_ops', operators); }
-        if(d.prices && Object.keys(d.prices).length > 0) { bbmPrices = d.prices; db.set('spbu_harga_bbm', bbmPrices); }
-        if(d.logos && d.logos.length > 0) { savedLogos = d.logos; db.set('spbu_logos', savedLogos); }
-        
-        // Gabungkan Riwayat
-        if(d.history && d.history.length > 0) {
-            transactionHistory = mergeHistories(transactionHistory, d.history);
+        // Riwayat (Gabung cerdas)
+        if(rd.history) {
+            transactionHistory = mergeHistories(transactionHistory, rd.history);
             db.set('spbu_history', transactionHistory);
         }
         
-        updateLogoList();
-        updateOpList();
-        loadBBMPrices();
-        onBBMChange();
-        updateHistCount();
-        renderHistoryList();
-        render();
+        // 3. Dorong (Push) Semua Hasil Gabungan ke Cloud agar server ikut update
+        setStatus("☁️ Mengupload hasil gabungan ke Cloud...", "info");
+        await cloudAPI.post('saveConfig', { settings: newSettings, prices: bbmPrices, operators: operators, logos: savedLogos });
+        
+        // Update UI
+        updateLogoList(); updateOpList(); renderOpList(); loadBBMPrices(); onBBMChange(); updateHistCount(); renderHistoryList(); render();
         
         updateGasBadge(true);
-        if(showMsg) { setStatus("✅ Berhasil menarik data dari Cloud!", "success"); setTimeout(clearStatus, 3000); }
+        setStatus("✅ Sinkronisasi 2-Arah Berhasil!", "success");
+        setTimeout(clearStatus, 3000);
     } catch(e) {
         updateGasBadge(false);
-        if(showMsg) setStatus("❌ Gagal koneksi: " + e.message, "error");
-        else console.warn("Background Sync Error:", e);
+        setStatus("❌ Gagal Sinkronisasi: " + e.message, "error");
     }
 }
 
-async function saveAndConnectCloud() {
-    const inputUrl = document.getElementById('gasUrlInput').value.trim();
-    if(!inputUrl) return setStatus("❌ URL Kosong", "error");
-    cloudAPI.url = inputUrl;
-    await syncFromCloud(true);
+// Background sync (otomatis saat buka web jika URL ada)
+async function backgroundPull() {
+    if(!cloudAPI.url) return;
+    try {
+        const res = await cloudAPI.get('getAll');
+        const d = res.data;
+        if(d.settings) { db.set('spbu_settings', Object.assign({}, d.settings, db.get('spbu_settings', {}))); loadSettingsToForm(db.get('spbu_settings')); }
+        if(d.operators) { operators = Array.from(new Set([...operators, ...d.operators])); db.set('spbu_ops', operators); }
+        if(d.prices) { bbmPrices = Object.assign({}, d.prices, bbmPrices); db.set('spbu_harga_bbm', bbmPrices); }
+        if(d.history) { transactionHistory = mergeHistories(transactionHistory, d.history); db.set('spbu_history', transactionHistory); }
+        
+        updateOpList(); loadBBMPrices(); updateHistCount(); renderHistoryList(); updateGasBadge(true);
+    } catch(e) { updateGasBadge(false); console.warn("Background Sync Error:", e); }
 }
 
-// Push pengaturan ke Cloud
-async function saveSettings() {
+function updateFontSize() {
+    const val = document.getElementById('inFontSize').value;
+    document.getElementById('fontSizeLabel').textContent = val + 'px';
+    document.getElementById('struk').style.setProperty('--receipt-font', val + 'px');
+    saveSettingsLocal(); // Simpan otomatis saat diubah
+}
+
+function saveSettingsLocal() {
     const settings = {
         alamat: document.getElementById('inAlamat').value,
         logoWidth: document.getElementById('inLogoWidth').value,
         logoMargin: document.getElementById('inLogoMargin').value,
         pesan: document.getElementById('inPesan').value,
-        selectedLogo: document.getElementById('selLogo').value
+        selectedLogo: document.getElementById('selLogo').value,
+        fontSize: document.getElementById('inFontSize').value
     };
     db.set('spbu_settings', settings);
-    
-    setStatus("☁️ Menyimpan pengaturan ke Cloud...", "info");
-    try {
-        if(cloudAPI.url) {
-            await cloudAPI.post('saveConfig', { settings: settings, prices: bbmPrices, operators: operators, logos: savedLogos });
-            setStatus("✅ Pengaturan tersimpan di Cloud!", "success");
-            updateGasBadge(true);
-        } else {
-            setStatus("✅ Tersimpan lokal. (Belum terhubung ke Cloud)", "success");
-        }
-        setTimeout(clearStatus, 3000);
-    } catch(e) {
-        setStatus("❌ Gagal simpan ke Cloud: " + e.message, "error");
-        updateGasBadge(false);
-    }
 }
 
-// --- KELOLA DATA MASTER & FORM ---
+function loadSettingsToForm(settings) {
+    if(!settings) return;
+    const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
+    set('inAlamat', settings.alamat); set('inLogoWidth', settings.logoWidth); set('inLogoMargin', settings.logoMargin); set('inPesan', settings.pesan);
+    if(settings.fontSize) { set('inFontSize', settings.fontSize); updateFontSize(); }
+    if(settings.selectedLogo) { setTimeout(() => { document.getElementById('selLogo').value = settings.selectedLogo; applySavedLogo(); }, 100); }
+}
+
 function loadBBMPrices() {
     document.getElementById('pricePertalite').value = bbmPrices['PERTALITE'] || 10000;
     document.getElementById('pricePertamax').value = bbmPrices['PERTAMAX'] || 12500;
@@ -534,9 +569,9 @@ function adjOdo(v) { const el = document.getElementById('inOdo'); el.value = par
 function renderOpList() {
     const list = document.getElementById('opList');
     list.innerHTML = operators.map((op,i)=>`
-        <div style="display:flex; align-items:center; padding:6px 8px; background:var(--bg); border:1px solid var(--border); border-radius:6px;">
+        <div style="display:flex; align-items:center; padding:8px 10px; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
             <span style="font-size:12px; flex:1;">${op}</span>
-            <button onclick="deleteOperator(${i})" style="background:transparent; border:none; color:#f87171;">✕</button>
+            <button onclick="confirmDeleteOperator(${i})" style="background:transparent; border:none; color:var(--red); font-size:16px; cursor:pointer;">✕</button>
         </div>
     `).join('');
 }
@@ -554,26 +589,25 @@ function addOperator() {
         document.getElementById('selOperator').value = val; render();
     }
 }
-function deleteOperator(idx) {
-    if(confirm('Hapus operator?')) {
+function confirmDeleteOperator(idx) {
+    showModal('Konfirmasi', `Hapus operator <b>${operators[idx]}</b>?`, 'confirm', () => {
         operators.splice(idx,1); db.set('spbu_ops', operators);
         updateOpList(); renderOpList(); render();
-    }
+    });
 }
 
-// LOGO
 function handleNewLogo(e) {
     const reader = new FileReader();
     reader.onload = function() {
-        savedLogos.push({ name: e.target.files[0].name.substring(0,8), data: reader.result });
+        savedLogos = [{ name: e.target.files[0].name.substring(0,8), data: reader.result }]; // Simplify: just keep 1 logo to save localstorage space
         db.set('spbu_logos', savedLogos);
         updateLogoList(); document.getElementById('selLogo').value = reader.result; applySavedLogo();
+        saveSettingsLocal();
     }; reader.readAsDataURL(e.target.files[0]);
 }
 function updateLogoList() { document.getElementById('selLogo').innerHTML = savedLogos.map(l=>`<option value="${l.data}">${l.name}</option>`).join('') + `<option value="">— Tanpa Logo —</option>`; }
-function applySavedLogo() { document.getElementById('outLogo').src = document.getElementById('selLogo').value || ''; render(); }
+function applySavedLogo() { document.getElementById('outLogo').src = document.getElementById('selLogo').value || ''; render(); saveSettingsLocal(); }
 
-// --- TRANSAKSI & RIWAYAT ---
 function generateUniqueTransactionNumber() {
     const existing = new Set([...transactionHistory.map(r => String(r.noTrans)), ...usedTransNumbers.map(String)]);
     let attempts = 0, num;
@@ -589,10 +623,9 @@ function generateUniqueRandom() {
     randomSec = Math.floor(Math.random()*60).toString().padStart(2,'0'); render();
 }
 
-// Fungsi Edit Mode
 function loadHistoryRecord(ts) {
     const rec = transactionHistory.find(r => r.ts === ts);
-    if (!rec) return setStatus('❌ Riwayat tidak ditemukan.', 'error');
+    if (!rec) return showModal('Error', 'Riwayat tidak ditemukan.', 'alert');
     
     const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
     set('inShift', rec.shift); set('inPompa', rec.pompa); set('inTrans', rec.noTrans);
@@ -603,13 +636,28 @@ function loadHistoryRecord(ts) {
     editingRecordTs = ts;
     document.getElementById('editModeBar').classList.add('show');
     document.getElementById('editModeTrans').textContent = rec.noTrans;
-    render(); setStatus('✏️ Data dimuat untuk diedit.', 'info');
-    setTimeout(clearStatus, 3000);
+    render(); 
+    closeDrawers();
+    setStatus('✏️ Siap diedit & cetak ulang.', 'info'); setTimeout(clearStatus, 3000);
 }
+
 function cancelEditMode() {
     editingRecordTs = null;
     document.getElementById('editModeBar').classList.remove('show');
-    generateUniqueRandom(); setStatus('↩️ Batal edit.', 'info'); setTimeout(clearStatus, 2000);
+    generateUniqueRandom();
+}
+
+function confirmDeleteHistory(ts, noTrans) {
+    showModal('Konfirmasi Hapus', `Hapus struk No. <b>${noTrans}</b> permanen dari riwayat?`, 'confirm', () => {
+        transactionHistory = transactionHistory.filter(r => r.ts !== ts);
+        db.set('spbu_history', transactionHistory);
+        updateHistCount(); renderHistoryList();
+        
+        // Hapus dari cloud di background
+        if(cloudAPI.url) {
+            cloudAPI.post('deleteTransaction', { ts: ts }).catch(e=>console.warn("Gagal hapus di cloud:", e));
+        }
+    });
 }
 
 function mergeHistories(local, remote) {
@@ -620,29 +668,30 @@ function mergeHistories(local, remote) {
         if (!existing || (r.updatedAt || r.ts || 0) >= (existing.updatedAt || existing.ts || 0)) map.set(key, r);
     });
     const merged = Array.from(map.values()).sort((a,b) => (b.ts||0) - (a.ts||0));
-    return merged.length > 1000 ? merged.slice(0, 1000) : merged; // Ambil 1000 terbaru
+    return merged.length > 1000 ? merged.slice(0, 1000) : merged; // Limit 1000
 }
 
 function updateHistCount() { document.getElementById('histCount').textContent = transactionHistory.length; }
 function renderHistoryList() {
     const c = document.getElementById('historyList');
-    if(transactionHistory.length === 0) return c.innerHTML = '<div style="padding:15px;text-align:center;color:var(--text2);font-size:12px;">Kosong</div>';
+    if(transactionHistory.length === 0) return c.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text2);font-size:12px;">Riwayat kosong</div>';
     
     const f = n => new Intl.NumberFormat('id-ID').format(n);
-    c.innerHTML = transactionHistory.slice(0, 50).map(r => `
+    c.innerHTML = transactionHistory.slice(0, 100).map(r => `
         <div class="history-item">
             <div class="hi-main">
                 <div class="hi-no">No. ${r.noTrans}${r.direvisi ? ' <span style="color:var(--accent);font-size:10px;">(revisi)</span>' : ''}</div>
                 <div class="hi-sub">${r.waktuTransaksi || '-'} • Rp ${f(r.total||0)}</div>
+                <div class="hi-sub">${r.produk} • Op: ${r.operator}</div>
             </div>
             <button class="btn-edit-hist" onclick="loadHistoryRecord(${r.ts})">✏️ Edit</button>
+            <button class="btn-del-hist" onclick="confirmDeleteHistory(${r.ts}, '${r.noTrans}')">🗑️</button>
         </div>
     `).join('');
 }
 
-// Ekspor Excel (Fitur Orisinal)
 function exportToExcel() {
-    if(transactionHistory.length === 0) return setStatus("Kosong", "error");
+    if(transactionHistory.length === 0) return showModal("Kosong", "Tidak ada data untuk diekspor", "alert");
     const headers = ['Waktu Cetak', 'Waktu Transaksi', 'Shift', 'Pompa', 'No. Trans', 'Produk', 'Harga/Liter', 'Volume', 'Total', 'Operator', 'Plat', 'Odo'];
     const rows = transactionHistory.map(r => [r.waktuCetak, r.waktuTransaksi, r.shift, r.pompa, r.noTrans, r.produk, r.hargaLiter, r.volume, r.total, r.operator, r.plat, r.odo]);
     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
@@ -651,6 +700,7 @@ function exportToExcel() {
 }
 
 async function saveCurrentTransaction() {
+    saveSettingsLocal();
     const get = id => document.getElementById(id).value;
     const rec = {
         ts: editingRecordTs || Date.now(),
@@ -664,7 +714,6 @@ async function saveCurrentTransaction() {
         direvisi: !!editingRecordTs
     };
     
-    // Update lokal
     if(editingRecordTs) {
         const idx = transactionHistory.findIndex(r => r.ts === editingRecordTs);
         if(idx >= 0) transactionHistory[idx] = rec; else transactionHistory.push(rec);
@@ -674,16 +723,13 @@ async function saveCurrentTransaction() {
     usedTransNumbers.push(String(rec.noTrans)); db.set('spbu_used_numbers', usedTransNumbers);
     updateHistCount(); renderHistoryList();
     
-    // Sync ke Cloud di Background
     if(cloudAPI.url) {
-        cloudAPI.post(editingRecordTs ? 'updateTransaction' : 'saveTransaction', rec)
-            .catch(e => console.warn("Background Save Error:", e));
+        cloudAPI.post(editingRecordTs ? 'updateTransaction' : 'saveTransaction', rec).catch(e => console.warn(e));
     }
     
     if(editingRecordTs) cancelEditMode(); else generateUniqueRandom();
 }
 
-// --- RENDER PREVIEW (ORISINAL) ---
 function render() {
     const get = id => document.getElementById(id);
     get('outLogo').style.width = get('inLogoWidth').value + 'mm';
@@ -706,9 +752,12 @@ function render() {
     const f = n => new Intl.NumberFormat('id-ID').format(n);
     get('outHarga').innerText = 'Rp '+f(h); get('outLiter').innerText = '(L) '+l;
     get('outTotal').innerText = 'Rp '+f(tot); get('outCash').innerText = f(tot);
+    
+    // Setup listeners for save settings
+    get('inAlamat').addEventListener('change', saveSettingsLocal);
+    get('inPesan').addEventListener('change', saveSettingsLocal);
 }
 
-// --- FUNGSI CETAK ---
 function printThermer() {
     saveCurrentTransaction();
     const f = n => new Intl.NumberFormat('id-ID').format(n);
@@ -728,66 +777,26 @@ function printThermer() {
 
 function printDialog() { saveCurrentTransaction(); window.print(); }
 
-// CETAK BLUETOOTH (Dengan Penanganan Error iFrame/CORS)
 async function printBluetooth() {
     try {
-        if (!navigator.bluetooth) throw new Error("Browser ini tidak mendukung Web Bluetooth.");
-        
+        if (!navigator.bluetooth) throw new Error("Fitur Bluetooth diblokir. Pastikan Anda membuka web ini dari Google Chrome dan bukan dari iframe (Gunakan GitHub Pages).");
         setStatus('📡 Meminta akses Bluetooth...', 'info');
         const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] });
         const server = await device.gatt.connect();
         
-        setStatus('✅ Terhubung ke Printer! Mengirim data...', 'success');
-        // Logika pengiriman byte ESC/POS diletakkan di sini (bisa dikembangkan jika file escpos.js dimuat)
-        // ... (Simulasi kirim berhasil) ...
-        
+        setStatus('✅ Terhubung! (Simulasi Kirim Data...)', 'success');
         saveCurrentTransaction();
         setTimeout(clearStatus, 3000);
-        
     } catch(err) {
-        // PERBAIKAN: Menangkap error spesifik Google Apps Script / iFrame
-        if (err.name === 'SecurityError' || err.message.toLowerCase().includes('iframe')) {
-            setStatus('⚠️ BLOKIR KEAMANAN: Browser melarang akses Bluetooth jika web dibuka dari Google Apps Script / iFrame. Solusi: Gunakan App Thermer, ATAU hosting web ini di GitHub Pages.', 'error');
-        } else {
-            setStatus('❌ Gagal Bluetooth: ' + err.message, 'error');
-        }
+        if(err.message.includes('User cancelled')) { clearStatus(); return; }
+        showModal('Error Bluetooth', `<b>Gagal:</b> ${err.message}<br><br><i>Saran: Gunakan aplikasi Thermer atau Print Dialog jika masalah berlanjut.</i>`, 'alert');
+        clearStatus();
     }
 }
 
-// --- SETUP LINK (AUTO CONNECT) ---
-function generateSetupLink() {
-    if(!cloudAPI.url) return alert("Isi dan Hubungkan Cloud URL terlebih dahulu!");
-    const encoded = btoa(cloudAPI.url);
-    const link = window.location.href.split('#')[0] + '#setup=' + encoded;
-    const out = document.getElementById('setupLinkOut');
-    out.style.display = 'block'; out.value = link; out.select();
-    if(navigator.clipboard) navigator.clipboard.writeText(link);
-    setStatus("✅ Link tersalin! Kirim ke HP lain.", "success");
-}
-function checkSetupLink() {
-    const hash = window.location.hash;
-    if(hash.startsWith('#setup=')) {
-        try { 
-            cloudAPI.url = atob(hash.split('=')[1]); 
-            history.replaceState(null, '', window.location.pathname);
-            setStatus("🔗 Setup Link Diterima! Menyinkronkan...", "info");
-        } catch(e){}
-    }
-    document.getElementById('gasUrlInput').value = cloudAPI.url || '';
-}
-
-function loadSettingsToForm(settings) {
-    if(!settings) return;
-    const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
-    set('inAlamat', settings.alamat); set('inLogoWidth', settings.logoWidth); set('inLogoMargin', settings.logoMargin); set('inPesan', settings.pesan);
-    if(settings.selectedLogo) { setTimeout(() => { document.getElementById('selLogo').value = settings.selectedLogo; applySavedLogo(); }, 100); }
-}
-
-window.onload = async function() {
-    checkSetupLink();
-    
-    // Terapkan data lokal di awal agar form tidak kosong sebelum konek internet
-    loadSettingsToForm(db.get('spbu_settings', null));
+window.onload = function() {
+    const settings = db.get('spbu_settings', null);
+    loadSettingsToForm(settings);
     updateLogoList();
     if(savedLogos.length > 0) applySavedLogo();
     updateOpList();
@@ -797,9 +806,10 @@ window.onload = async function() {
     renderHistoryList();
     generateUniqueRandom();
     
-    // Tarik data segar dari Cloud jika URL sudah tersimpan
+    document.getElementById('gasUrlInput').value = cloudAPI.url || '';
+    
     if(cloudAPI.url) {
-        await syncFromCloud(false);
+        backgroundPull();
     } else {
         updateGasBadge(false);
     }
