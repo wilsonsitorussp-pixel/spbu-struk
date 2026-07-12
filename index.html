@@ -5,55 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SPBU Pro - Cetak Struk</title>
     <style>
-        /* === CSS UTAMA (ORISINAL) === */
         :root {
-            --bg: #0f1117;
-            --surface: #1a1d27;
-            --surface2: #22263a;
-            --border: #2e3352;
-            --accent: #4f8ef7;
-            --accent2: #7c3aed;
-            --green: #10b981;
-            --yellow: #f59e0b;
-            --red: #ef4444;
-            --text: #e2e8f0;
-            --text2: #8892a4;
+            --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a;
+            --border: #2e3352; --accent: #4f8ef7; --accent2: #7c3aed;
+            --green: #10b981; --yellow: #f59e0b; --red: #ef4444;
+            --text: #e2e8f0; --text2: #8892a4;
             --mono: 'Courier New', 'Lucida Console', monospace;
             --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body {
-            font-family: var(--sans); background: var(--bg); color: var(--text);
-            min-height: 100vh; padding: 16px; padding-bottom: 30px;
-            display: flex; flex-direction: column; align-items: center;
-            overflow-x: hidden;
-        }
+        body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; padding-bottom: 30px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         
-        .app-header {
-            width: 100%; max-width: 500px; display: flex; align-items: center; gap: 12px;
-            margin-bottom: 16px; padding: 14px 18px; background: var(--surface);
-            border: 1px solid var(--border); border-radius: 14px;
-        }
-        .app-header .icon {
-            width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2));
-            border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;
-        }
+        .app-header { width: 100%; max-width: 500px; display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
+        .app-header .icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .app-header h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
         .app-header p { font-size: 11px; color: var(--text2); margin-top: 1px; }
         
-        /* Tombol Top Menu */
         .top-btn-group { margin-left: auto; display: flex; gap: 8px; }
-        .btn-top {
-            background: var(--surface2); border: 1px solid var(--border); color: var(--text);
-            width: 38px; height: 38px; border-radius: 10px; font-size: 16px;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
+        .btn-top { background: var(--surface2); border: 1px solid var(--border); color: var(--text); width: 38px; height: 38px; border-radius: 10px; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
-        .bt-bar {
-            width: 100%; max-width: 500px; padding: 10px 14px; border-radius: 10px;
-            font-size: 12px; font-family: var(--mono); display: flex; align-items: center; gap: 8px;
-            margin-bottom: 10px; border: 1px solid transparent; transition: all 0.3s; display: none;
-        }
+        .bt-bar { width: 100%; max-width: 500px; padding: 10px 14px; border-radius: 10px; font-size: 12px; font-family: var(--mono); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; border: 1px solid transparent; transition: all 0.3s; display: none; }
         .bt-bar.info    { display:flex; background:#1e2d4a; border-color:#2d4a7a; color:#7ab3f5; }
         .bt-bar.success { display:flex; background:#0d2b20; border-color:#1a5c3a; color:#34d399; }
         .bt-bar.error   { display:flex; background:#2b1010; border-color:#5c1a1a; color:#f87171; }
@@ -61,26 +32,17 @@
         
         .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
         .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 10px; }
-        .panel-header {
-            padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border);
-            font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text2);
-        }
+        .panel-header { padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text2); }
         .panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
         
         label { font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; display: block; margin-bottom: 5px; }
-        input, select, textarea {
-            width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border);
-            border-radius: 8px; color: var(--text); font-size: 13px; font-family: var(--sans); outline: none; transition: border-color 0.2s;
-        }
+        input, select, textarea { width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13px; font-family: var(--sans); outline: none; transition: border-color 0.2s; }
         input:focus, select:focus, textarea:focus { border-color: var(--accent); }
         .row { display: flex; gap: 8px; }
         .row > * { flex: 1; min-width: 0; }
         
         .odo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 6px; }
-        .btn-odo {
-            background: var(--surface2); border: 1px solid var(--border); color: var(--accent);
-            padding: 8px 2px; border-radius: 7px; font-size: 10px; font-weight: 600; font-family: var(--mono); cursor: pointer;
-        }
+        .btn-odo { background: var(--surface2); border: 1px solid var(--border); color: var(--accent); padding: 8px 2px; border-radius: 7px; font-size: 10px; font-weight: 600; font-family: var(--mono); cursor: pointer; }
         
         .btn { padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; text-align: center; font-family: var(--sans); }
         .btn-save { background: var(--accent); color: white; }
@@ -88,79 +50,44 @@
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
         .btn-danger { background: rgba(239, 68, 68, 0.1); border: 1px solid #7f1d1d; color: #ef4444; }
         
-        /* Tombol Cetak */
         .btn-print-bt { width: 100%; padding: 15px; background: linear-gradient(135deg, #1e3a8a, #2d1b69); border: 1px solid #3b5bdb; border-radius: 12px; color: white; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-print-thermer { width: 100%; padding: 13px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text2); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; }
 
-        /* Struk Preview */
         .receipt-wrap { display: flex; justify-content: center; padding: 20px 16px; background: #13151f; border-top: 1px solid var(--border); }
-        .receipt {
-            background: #fff; width: 58mm; padding: 6mm 3mm; text-align: center;
-            font-size: var(--receipt-font, 9px); color: #000; line-height: 1.4;
-            font-family: 'Courier New', Courier, monospace; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-        }
+        .receipt { background: #fff; width: 58mm; padding: 6mm 3mm; text-align: center; font-size: var(--receipt-font, 9px); color: #000; line-height: 1.4; font-family: 'Courier New', Courier, monospace; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
         .receipt .r-line { border-top: 1px dashed #000; margin: 4px 0; }
         .receipt .r-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         .receipt .r-table td { padding: 1px 0; vertical-align: top; text-align: left; font-size: var(--receipt-font, 9px); }
         .receipt .lc { width: 22mm; } .receipt .cc { width: 4mm; text-align: center; }
 
-        /* === MENU ANDROID NATIVE STYLE === */
-        .android-drawer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); z-index: 2000;
-            transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex; flex-direction: column;
-        }
+        .android-drawer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
         .android-drawer.open { transform: translateX(0); }
-        .android-header {
-            background: var(--surface2); padding: 16px; display: flex; align-items: center; gap: 16px;
-            border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 2;
-        }
+        .android-header { background: var(--surface2); padding: 16px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 2; }
         .android-header button { background: transparent; border: none; color: var(--text); font-size: 22px; padding: 4px; cursor: pointer; }
         .android-header h2 { font-size: 18px; margin: 0; font-weight: 600; color: #fff; }
-        .android-content {
-            flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 40px;
-            -webkit-overflow-scrolling: touch; /* Scroll lancar di HP */
-        }
+        .android-content { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 40px; -webkit-overflow-scrolling: touch; }
 
-        /* History Items */
-        .history-item {
-            display: flex; align-items: center; gap: 8px; padding: 12px;
-            background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px;
-        }
+        .history-item { display: flex; align-items: center; gap: 8px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
         .history-item .hi-main { flex: 1; min-width: 0; }
         .history-item .hi-no { font-size: 13px; font-weight: 700; color: var(--text); }
         .history-item .hi-sub { font-size: 11px; color: var(--text2); margin-top: 4px; }
         .btn-edit-hist { background: rgba(79, 142, 247, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
         .btn-del-hist { background: transparent; border: none; color: var(--red); font-size: 16px; padding: 8px; cursor: pointer; opacity: 0.7; }
         
-        /* Custom Modal Box */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000;
-            display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s;
-        }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
         .modal-overlay.show { opacity: 1; pointer-events: auto; }
-        .modal-box {
-            background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-            width: 90%; max-width: 320px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            transform: scale(0.95); transition: transform 0.2s;
-        }
+        .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 90%; max-width: 320px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.2s; }
         .modal-overlay.show .modal-box { transform: scale(1); }
         .modal-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
         .modal-msg { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 20px; }
         .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
         
-        /* Utility */
-        .edit-banner {
-            background: rgba(245, 158, 11, 0.1); border: 1px solid var(--yellow); color: var(--yellow);
-            padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; display: none; align-items: center;
-        }
+        .edit-banner { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--yellow); color: var(--yellow); padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; display: none; align-items: center; }
         @media print { body { padding:0; background:#fff; } .no-print { display:none !important; } .receipt-wrap { padding:0; border:none; background:#fff; } .receipt { box-shadow:none; } }
     </style>
 </head>
 <body>
 
-<!-- Custom Modal Box -->
 <div id="customModal" class="modal-overlay no-print">
     <div class="modal-box">
         <div id="modalTitle" class="modal-title">Konfirmasi</div>
@@ -184,12 +111,11 @@
 </div>
 
 <div class="container">
-    <!-- Panel Data Transaksi -->
     <div class="panel no-print">
         <div class="panel-header">🧾 Data Transaksi</div>
         <div class="panel-body">
             <div id="editBanner" class="edit-banner">
-                <span style="flex:1">✏️ <b>Mode Edit:</b> Struk No. <span id="editNoTrans"></span>. Cetak ulang akan menimpa data lama.</span>
+                <span style="flex:1">✏️ <b>Mode Edit:</b> Struk <span id="editNoTrans"></span></span>
                 <button onclick="cancelEdit()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:10px;">Batal</button>
             </div>
             
@@ -209,7 +135,6 @@
                 </div>
             </div>
             
-            <!-- FITUR WAKTU TRANSAKSI -->
             <div>
                 <label>Waktu Transaksi</label>
                 <input type="datetime-local" id="inWaktu" onchange="render()">
@@ -241,7 +166,6 @@
         </div>
     </div>
 
-    <!-- Panel Cetak -->
     <div class="panel no-print">
         <div class="panel-header">🖨️ Tindakan Cetak</div>
         <div class="panel-body">
@@ -250,7 +174,6 @@
         </div>
     </div>
 
-    <!-- Preview Struk -->
     <div class="panel">
         <div class="panel-header no-print">👁️ Preview <span style="float:right; font-size:9px; color:var(--accent); border:1px solid var(--accent); padding:2px 6px; border-radius:10px;">Kertas 58mm</span></div>
         <div class="receipt-wrap">
@@ -285,9 +208,6 @@
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- LACI PENGATURAN (ANDROID MENU STYLE)       -->
-<!-- ========================================== -->
 <div id="settingsDrawer" class="android-drawer no-print">
     <div class="android-header">
         <button onclick="closeDrawer('settingsDrawer')">←</button>
@@ -295,17 +215,15 @@
     </div>
     <div class="android-content">
         
-        <!-- Koneksi Cloud (1 Tombol Sinkronisasi) -->
         <div class="panel">
             <div class="panel-header">☁️ Database Cloud (Google Sheets)</div>
             <div class="panel-body">
                 <p style="font-size:11px; color:var(--text2); margin-bottom:4px;">Masukkan URL Apps Script untuk menyinkronkan data otomatis.</p>
                 <input type="url" id="cloudUrl" placeholder="https://script.google.com/macros/s/.../exec">
-                <button class="btn btn-sync" onclick="syncAllWithCloud()" style="width:100%; margin-top:8px;">🔄 SINKRONISASI DATA</button>
+                <button class="btn btn-sync" onclick="syncAllWithCloud()" style="width:100%; margin-top:8px;">🔄 SINKRONISASI PINTAR</button>
             </div>
         </div>
 
-        <!-- Konfigurasi Header & Struk -->
         <div class="panel">
             <div class="panel-header">⚙️ Desain Struk</div>
             <div class="panel-body">
@@ -320,7 +238,6 @@
                     </div>
                 </div>
 
-                <!-- FITUR UKURAN FONT -->
                 <div style="margin-top:8px;">
                     <label>Ukuran Font Struk: <span id="fontLabel" style="color:var(--accent);">9px</span></label>
                     <input type="range" id="inFontSize" min="6" max="14" value="9" step="1" oninput="changeFontSize()" style="accent-color:var(--accent); width:100%;">
@@ -331,7 +248,6 @@
             </div>
         </div>
 
-        <!-- Kelola Data Master -->
         <div class="panel">
             <div class="panel-header">💰 Kelola Data Master</div>
             <div class="panel-body">
@@ -359,9 +275,6 @@
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- LACI RIWAYAT TRANSAKSI                     -->
-<!-- ========================================== -->
 <div id="historyDrawer" class="android-drawer no-print">
     <div class="android-header">
         <button onclick="closeDrawer('historyDrawer')">←</button>
@@ -374,13 +287,22 @@
 </div>
 
 <script>
-// ==========================================
-// STATE & DATABASE LOKAL
-// ==========================================
 const db = {
     get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e){ return d; } },
     set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
 };
+
+// Mencegah HTML/atribut rusak saat nama operator atau nomor transaksi
+// mengandung karakter khusus seperti " < > &
+function escapeHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+}
+// Untuk ID yang disisipkan ke dalam string JS ber-kutip-satu di atribut onclick
+function escapeJsAttr(str) {
+    return String(str ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
 
 let randomSec = "00";
 let editingId = null; 
@@ -397,17 +319,13 @@ let settings = db.get('spbu_cfg', {
     fontSize: 9
 });
 
-// ==========================================
-// UI KONTROL & MODAL
-// ==========================================
-function openDrawer(id) {
-    document.getElementById(id).classList.add('open');
-    document.body.style.overflow = 'hidden'; // cegah scroll background
+// Penanda waktu agar Cloud tahu HP mana yang paling update
+function markUpdated() {
+    db.set('spbu_update_ts', Date.now());
 }
-function closeDrawer(id) {
-    document.getElementById(id).classList.remove('open');
-    document.body.style.overflow = '';
-}
+
+function openDrawer(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeDrawer(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
 function setStatus(msg, type='info') {
     const bar = document.getElementById('btBar');
     bar.className = 'bt-bar no-print ' + type;
@@ -418,10 +336,7 @@ function showConfirm(title, msg, onConfirm) {
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalMsg').textContent = msg;
     const actions = document.getElementById('modalActions');
-    actions.innerHTML = `
-        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
-        <button class="btn btn-save" id="btnConfirmModal">Ya, Lanjutkan</button>
-    `;
+    actions.innerHTML = `<button class="btn btn-outline" onclick="closeModal()">Batal</button> <button class="btn btn-save" id="btnConfirmModal">Ya, Lanjutkan</button>`;
     document.getElementById('btnConfirmModal').onclick = () => { closeModal(); onConfirm(); };
     document.getElementById('customModal').classList.add('show');
 }
@@ -433,11 +348,7 @@ function showAlert(title, msg) {
 }
 function closeModal() { document.getElementById('customModal').classList.remove('show'); }
 
-// ==========================================
-// INISIALISASI & FUNGSI DASAR
-// ==========================================
 window.onload = () => {
-    // Set Input Waktu ke waktu lokal saat ini
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
@@ -452,60 +363,33 @@ window.onload = () => {
     renderHistory();
 };
 
-// MENCEGAH DUPLIKASI KODE TRANSAKSI
 function generateRandomTrans() {
-    if(editingId) return; // Jika mode edit, jangan ubah
-    
-    let isUnique = false;
-    let newTrans = "";
-    
-    // Looping terus sampai dapat angka acak yang TIDAK ADA di historyData
+    if(editingId) return;
+    let isUnique = false; let newTrans = "";
     while (!isUnique) {
         newTrans = Math.floor(100000 + Math.random() * 900000).toString();
-        
-        // Pengecekan aktif ke riwayat lokal (dan hasil sinkronisasi cloud)
         const isExist = historyData.some(record => record.noTrans === newTrans);
-        
-        if (!isExist) {
-            isUnique = true; // Angka aman dipakai! Keluar dari loop.
-        }
+        if (!isExist) isUnique = true;
     }
-
     document.getElementById('inTrans').value = newTrans;
     randomSec = Math.floor(Math.random() * 60).toString().padStart(2, '0');
     render();
 }
 
-function adjOdo(v) {
-    const el = document.getElementById('inOdo');
-    el.value = (parseInt(el.value) || 0) + v;
-    render();
-}
-
-function applyPrice() {
-    const prod = document.getElementById('inBBM').value;
-    document.getElementById('inHarga').value = prices[prod] || 10000;
-    render();
-}
-
+function adjOdo(v) { document.getElementById('inOdo').value = (parseInt(document.getElementById('inOdo').value) || 0) + v; render(); }
+function applyPrice() { document.getElementById('inHarga').value = prices[document.getElementById('inBBM').value] || 10000; render(); }
 function changeFontSize() {
     const val = document.getElementById('inFontSize').value;
     document.getElementById('fontLabel').textContent = val + 'px';
     document.getElementById('struk').style.setProperty('--receipt-font', val + 'px');
 }
 
-// ==========================================
-// PENGATURAN & MASTER DATA
-// ==========================================
 function applySettingsToForm() {
     document.getElementById('inAlamat').value = settings.alamat || '';
     document.getElementById('inPesan').value = settings.pesan || '';
     document.getElementById('outLogo').src = settings.logo || '';
-    if(settings.logo) document.getElementById('outLogo').style.display = 'block';
-    else document.getElementById('outLogo').style.display = 'none';
-    
-    const fsize = settings.fontSize || 9;
-    document.getElementById('inFontSize').value = fsize;
+    document.getElementById('outLogo').style.display = settings.logo ? 'block' : 'none';
+    document.getElementById('inFontSize').value = settings.fontSize || 9;
     changeFontSize();
     render();
 }
@@ -515,6 +399,7 @@ function saveSettings() {
     settings.pesan = document.getElementById('inPesan').value;
     settings.fontSize = document.getElementById('inFontSize').value;
     db.set('spbu_cfg', settings);
+    markUpdated(); // Lapor pembaruan ke sistem cloud
     showAlert('Berhasil', 'Pengaturan struk telah disimpan ke memori HP.');
     render();
 }
@@ -526,6 +411,7 @@ function handleNewLogo(e) {
     reader.onload = function() {
         settings.logo = reader.result;
         db.set('spbu_cfg', settings);
+        markUpdated();
         applySettingsToForm();
     };
     reader.readAsDataURL(file);
@@ -534,33 +420,34 @@ function handleNewLogo(e) {
 function clearLogo() {
     settings.logo = '';
     db.set('spbu_cfg', settings);
+    markUpdated();
     applySettingsToForm();
 }
 
 function renderOpList() {
     const sel = document.getElementById('selOperator');
-    const admin = document.getElementById('opListAdmin');
-    sel.innerHTML = operators.map(o => `<option value="${o}">${o}</option>`).join('');
-    
-    admin.innerHTML = operators.map((o, i) => `
+    sel.innerHTML = operators.map(o => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('');
+    document.getElementById('opListAdmin').innerHTML = operators.map((o, i) => `
         <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
-            <span style="font-size:13px;">${o}</span>
+            <span style="font-size:13px;">${escapeHtml(o)}</span>
             <button onclick="delOp(${i})" style="color:var(--red); background:none; border:none; cursor:pointer;">✕</button>
         </div>
     `).join('');
 }
 function addOperator() {
     const val = document.getElementById('inNewOp').value.trim().toUpperCase();
-    if(!val) return;
-    if(!operators.includes(val)) operators.push(val);
+    if(!val || operators.includes(val)) return;
+    operators.push(val);
     document.getElementById('inNewOp').value = '';
     db.set('spbu_operators', operators);
+    markUpdated();
     renderOpList();
 }
 function delOp(i) {
     showConfirm('Hapus Operator?', `Hapus "${operators[i]}" dari daftar?`, () => {
         operators.splice(i,1);
         db.set('spbu_operators', operators);
+        markUpdated();
         renderOpList();
     });
 }
@@ -581,12 +468,10 @@ function savePrices() {
     prices['PERTAMINA DEX'] = parseFloat(document.getElementById('p_dex').value) || 14500;
     prices['BIOSOLAR'] = parseFloat(document.getElementById('p_solar').value) || 6800;
     db.set('spbu_prices', prices);
+    markUpdated();
     applyPrice();
 }
 
-// ==========================================
-// MESIN PREVIEW & RENDER
-// ==========================================
 function render() {
     const get = id => document.getElementById(id).value;
     const set = (id, val) => { document.getElementById(id).innerText = val; };
@@ -595,7 +480,6 @@ function render() {
     set('outShift', get('inShift'));
     set('outTrans', get('inTrans'));
     
-    // Format Waktu yang benar sesuai inputan Waktu Transaksi
     const wt = get('inWaktu');
     if (wt) {
         const d = new Date(wt);
@@ -619,18 +503,13 @@ function render() {
     set('outCash', f(tot));
 }
 
-// ==========================================
-// RIWAYAT TRANSAKSI (SIMPAN, EDIT, HAPUS)
-// ==========================================
 function saveToHistory() {
     const ts = Date.now();
     const noTrans = document.getElementById('inTrans').value;
     const id = editingId || (noTrans + "_" + ts);
     
     const record = {
-        id: id,
-        ts: ts, // update waktu cetak/edit terakhir
-        noTrans: noTrans,
+        id: id, ts: ts, noTrans: noTrans,
         waktuRaw: document.getElementById('inWaktu').value,
         waktuFormat: document.getElementById('outWaktu').innerText,
         shift: document.getElementById('inShift').value,
@@ -647,12 +526,11 @@ function saveToHistory() {
     if(editingId) {
         const idx = historyData.findIndex(x => x.id === editingId);
         if(idx >= 0) historyData[idx] = record;
-        cancelEdit(); // Keluar mode edit setelah cetak
+        cancelEdit();
     } else {
         historyData.push(record);
-        if(historyData.length > 500) historyData.shift(); // Batas 500 struk
+        if(historyData.length > 500) historyData.shift();
     }
-
     db.set('spbu_history_v2', historyData);
     renderHistory();
 }
@@ -665,18 +543,16 @@ function renderHistory() {
         cont.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text2); font-size:12px;">Belum ada riwayat.</div>`;
         return;
     }
-
     const f = n => new Intl.NumberFormat('id-ID').format(n);
     const sorted = [...historyData].sort((a,b) => b.ts - a.ts);
-    
     cont.innerHTML = sorted.map(r => `
         <div class="history-item">
             <div class="hi-main">
-                <div class="hi-no">No. ${r.noTrans}</div>
-                <div class="hi-sub">${r.waktuFormat} • ${r.produk} • Rp ${f(r.total)}</div>
+                <div class="hi-no">No. ${escapeHtml(r.noTrans)}</div>
+                <div class="hi-sub">${escapeHtml(r.waktuFormat)} • ${escapeHtml(r.produk)} • Rp ${f(r.total)}</div>
             </div>
-            <button class="btn-edit-hist" onclick="loadToEdit('${r.id}')">✏️ Edit</button>
-            <button class="btn-del-hist" onclick="deleteHistory('${r.id}')">🗑️</button>
+            <button class="btn-edit-hist" onclick="loadToEdit('${escapeJsAttr(r.id)}')">✏️ Edit</button>
+            <button class="btn-del-hist" onclick="deleteHistory('${escapeJsAttr(r.id)}')">🗑️</button>
         </div>
     `).join('');
 }
@@ -692,22 +568,14 @@ function deleteHistory(id) {
 function loadToEdit(id) {
     const r = historyData.find(x => x.id === id);
     if(!r) return;
-    
     editingId = id;
     document.getElementById('editBanner').style.display = 'flex';
     document.getElementById('editNoTrans').textContent = r.noTrans;
     
     const set = (elId, val) => { document.getElementById(elId).value = val; };
-    set('inTrans', r.noTrans);
-    set('inWaktu', r.waktuRaw);
-    set('inShift', r.shift);
-    set('inPompa', r.pompa);
-    set('inBBM', r.produk);
-    set('inHarga', r.harga);
-    set('inLiter', r.liter);
-    set('selOperator', r.operator);
-    set('inPlat', r.plat);
-    set('inOdo', r.odo);
+    set('inTrans', r.noTrans); set('inWaktu', r.waktuRaw); set('inShift', r.shift);
+    set('inPompa', r.pompa); set('inBBM', r.produk); set('inHarga', r.harga);
+    set('inLiter', r.liter); set('selOperator', r.operator); set('inPlat', r.plat); set('inOdo', r.odo);
     
     render();
     closeDrawer('historyDrawer');
@@ -717,115 +585,83 @@ function loadToEdit(id) {
 function cancelEdit() {
     editingId = null;
     document.getElementById('editBanner').style.display = 'none';
-    generateRandomTrans(); // Buat nomor baru
+    generateRandomTrans();
 }
 
-// ==========================================
-// CLOUD SYNC (GAS 1 TOMBOL)
-// ==========================================
 async function syncAllWithCloud() {
     const url = document.getElementById('cloudUrl').value.trim();
-    if(!url) { showAlert('Error', 'Masukkan URL Web App Apps Script terlebih dahulu.'); return; }
+    if(!url) return showAlert('Error', 'Masukkan URL Web App Apps Script terlebih dahulu.');
     
     db.set('spbu_gas_url', url);
-    setStatus('⏳ Menarik data dari Cloud...', 'loading');
+    setStatus('⏳ Sinkronisasi pintar sedang berjalan...', 'loading');
+    
+    // Kirim data HP kita dan minta Cloud melakukan "Smart Sync"
+    const payload = {
+        ts: db.get('spbu_update_ts', 0),
+        settings: settings,
+        operators: operators,
+        prices: prices,
+        history: historyData
+    };
     
     try {
-        // TAHAP 1: TARIK DATA (PULL) DARI SHEETS DULUAN
-        const pullRes = await fetch(url, {
+        const response = await fetch(url, {
             method: 'POST',
-            body: JSON.stringify({ action: 'pull' }),
+            body: JSON.stringify(payload),
             headers: { 'Content-Type': 'text/plain' }
         });
         
-        if(!pullRes.ok) throw new Error("HTTP " + pullRes.status);
-        const pullData = await pullRes.json();
+        if(!response.ok) throw new Error("HTTP " + response.status);
+        const resData = await response.json();
         
-        if(pullData.status === 'success' && pullData.data) {
-            // Gunakan data Cloud (jika ada) untuk menimpa data bawaan/default di HP baru
-            if(pullData.data.settings && Object.keys(pullData.data.settings).length > 0) settings = pullData.data.settings;
-            if(pullData.data.operators && pullData.data.operators.length > 0) operators = pullData.data.operators;
-            if(pullData.data.prices && Object.keys(pullData.data.prices).length > 0) prices = pullData.data.prices;
+        if(resData.status === 'success' && resData.data) {
+            // Terapkan data final yang diputuskan oleh Cloud (Siapa yg menang)
+            settings = resData.data.settings || settings;
+            operators = resData.data.operators || operators;
+            prices = resData.data.prices || prices;
+            historyData = resData.data.history || historyData;
             
-            // Gabung riwayat tanpa duplikat
-            if(pullData.data.history && Array.isArray(pullData.data.history)) {
-                const map = new Map();
-                pullData.data.history.forEach(x => map.set(x.id, x)); // Cloud masuk duluan
-                historyData.forEach(x => {
-                    const existing = map.get(x.id);
-                    // Data lokal menimpa hanya jika ada struk yang baru saja diketik saat offline
-                    if (!existing || x.ts >= existing.ts) map.set(x.id, x); 
-                });
-                historyData = Array.from(map.values());
-            }
+            db.set('spbu_cfg', settings);
+            db.set('spbu_operators', operators);
+            db.set('spbu_prices', prices);
+            db.set('spbu_history_v2', historyData);
+            db.set('spbu_update_ts', resData.data.ts || 0); // Samakan zona waktu HP dgn Cloud
+            
+            applySettingsToForm();
+            renderOpList();
+            loadPricesToInputs();
+            applyPrice();
+            renderHistory();
+            
+            setStatus('✅ Sinkronisasi Selesai!', 'success');
+            setTimeout(() => { closeDrawer('settingsDrawer'); }, 1500);
+        } else {
+            throw new Error(resData.message || "Gagal parsing cloud");
         }
-
-        // TAHAP 2: KIRIM KEMBALI DATA HASIL GABUNGAN (PUSH)
-        setStatus('⏳ Menyimpan pembaruan ke Cloud...', 'loading');
-        const pushPayload = {
-            action: 'push',
-            settings: settings,
-            operators: operators,
-            prices: prices,
-            history: historyData
-        };
-        
-        const pushRes = await fetch(url, {
-            method: 'POST',
-            body: JSON.stringify(pushPayload),
-            headers: { 'Content-Type': 'text/plain' }
-        });
-        const pushData = await pushRes.json();
-        if(pushData.status !== 'success') throw new Error(pushData.message);
-
-        // TAHAP 3: SIMPAN KE MEMORI HP & PERBARUI LAYAR
-        db.set('spbu_cfg', settings);
-        db.set('spbu_operators', operators);
-        db.set('spbu_prices', prices);
-        db.set('spbu_history_v2', historyData);
-        
-        applySettingsToForm();
-        renderOpList();
-        loadPricesToInputs();
-        applyPrice();
-        renderHistory();
-        
-        setStatus('✅ Data tersinkron 100% dengan Cloud!', 'success');
-        setTimeout(() => { closeDrawer('settingsDrawer'); }, 1500);
-        
     } catch(err) {
         console.error(err);
-        setStatus('❌ Gagal sinkronisasi.', 'error');
-        showAlert('Koneksi Gagal', err.message || 'Pastikan URL Apps Script benar.');
+        setStatus('❌ Gagal sinkronisasi. Cek URL.', 'error');
+        showAlert('Koneksi Gagal', 'Pastikan URL Apps Script benar dan di-deploy sebagai "Versi Baru".');
     }
 }
 
-
-// ==========================================
-// FUNGSI CETAK (BLUETOOTH & THERMER)
-// ==========================================
 function printThermer() {
-    saveToHistory();
+    // PENTING: ambil teks struk DULU sebelum saveToHistory().
+    // Jika sedang mode edit, saveToHistory() akan memanggil cancelEdit() -> generateRandomTrans()
+    // yang mengubah nomor transaksi di layar. Kalau teks diambil SESUDAHNYA, struk yang
+    // tercetak bisa salah nomor (tidak sesuai data yang baru saja disimpan).
     const s = document.getElementById('struk');
-    const txt = s.innerText; // Ambil text asli dari tampilan
+    const txt = s.innerText; 
+    saveToHistory();
     const intentUrl = `intent://print?text=${encodeURIComponent(txt)}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
     
-    if (/android/i.test(navigator.userAgent)) {
-        window.location.href = intentUrl;
-    } else {
-        showAlert('Info', 'Cetak Thermer hanya untuk HP Android. Di Laptop gunakan Bluetooth langsung.');
-    }
-    
-    // Pastikan setelah cetak, nomor di-reset dengan nomor baru yg unik
+    if (/android/i.test(navigator.userAgent)) window.location.href = intentUrl;
+    else showAlert('Info', 'Cetak Thermer hanya untuk HP Android. Di Laptop gunakan Bluetooth langsung.');
     setTimeout(generateRandomTrans, 500);
 }
 
-// Esc/Pos Logic (Bluetooth murni)
 async function printBluetooth() {
-    if (!navigator.bluetooth) {
-        showAlert('Browser Tidak Mendukung', 'Web Bluetooth API diblokir atau tidak tersedia di browser ini. Jika Anda menggunakan HP Android, gunakan tombol "Cetak via Thermer".');
-        return;
-    }
+    if (!navigator.bluetooth) return showAlert('Browser Tidak Mendukung', 'Web Bluetooth API diblokir. Jika Anda menggunakan HP Android dari luar Chrome, gunakan tombol "Cetak via Thermer".');
 
     try {
         setStatus('📡 Pilih printer Bluetooth...', 'loading');
@@ -834,7 +670,7 @@ async function printBluetooth() {
             optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', '00001101-0000-1000-8000-00805f9b34fb', '49535343-fe7d-4ae5-8fa9-9fafd205e455']
         });
         
-        setStatus('🔗 Menghubungkan ke ' + device.name + '...', 'loading');
+        setStatus('🔗 Menghubungkan...', 'loading');
         const server = await device.gatt.connect();
         const services = await server.getPrimaryServices();
         
@@ -847,41 +683,32 @@ async function printBluetooth() {
             if (targetChar) break;
         }
 
-        if(!targetChar) throw new Error("Characteristic untuk Print tidak ditemukan.");
+        if(!targetChar) throw new Error("Characteristic tidak ditemukan.");
 
-        setStatus('🖨️ Mengirim data ke printer...', 'loading');
-        
-        // Byte builder sederhana (hanya teks biasa)
+        setStatus('🖨️ Mengirim data...', 'loading');
         const encoder = new TextEncoder();
-        let bytes = new Uint8Array([0x1B, 0x40]); // Init
+        let bytes = new Uint8Array([0x1B, 0x40]);
         const textToPrint = document.getElementById('struk').innerText + "\n\n\n";
         
         const chunk = encoder.encode(textToPrint);
         const finalPayload = new Uint8Array(bytes.length + chunk.length);
-        finalPayload.set(bytes, 0);
-        finalPayload.set(chunk, bytes.length);
+        finalPayload.set(bytes, 0); finalPayload.set(chunk, bytes.length);
 
-        // Kirim dalam potongan kecil (Chunk) agar printer tidak macet
-        const CHUNK_SIZE = 100;
-        for (let i = 0; i < finalPayload.length; i += CHUNK_SIZE) {
-            const slice = finalPayload.slice(i, i + CHUNK_SIZE);
-            if (targetChar.properties.writeWithoutResponse) {
-                await targetChar.writeValueWithoutResponse(slice);
-            } else {
-                await targetChar.writeValue(slice);
-            }
+        for (let i = 0; i < finalPayload.length; i += 100) {
+            const slice = finalPayload.slice(i, i + 100);
+            if (targetChar.properties.writeWithoutResponse) await targetChar.writeValueWithoutResponse(slice);
+            else await targetChar.writeValue(slice);
             await new Promise(r => setTimeout(r, 40));
         }
 
         setStatus('✅ Struk berhasil dicetak!', 'success');
         saveToHistory();
-        
-        // Pastikan setelah sukses cetak, form direset dengan nomor yg belum pernah ada
         setTimeout(generateRandomTrans, 500);
         
     } catch(err) {
-        setStatus('❌ Gagal: ' + err.message, 'error');
-        if(err.message.includes('User cancelled')) setStatus('Batal memilih printer', 'warning');
+        const errMsg = (err && err.message) ? err.message : 'Terjadi kesalahan tidak dikenal.';
+        setStatus('❌ Gagal: ' + errMsg, 'error');
+        if(errMsg.includes('User cancelled')) setStatus('Batal memilih printer', 'warning');
     }
 }
 </script>
