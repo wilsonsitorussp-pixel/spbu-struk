@@ -292,18 +292,6 @@ const db = {
     set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
 };
 
-// Mencegah HTML/atribut rusak saat nama operator atau nomor transaksi
-// mengandung karakter khusus seperti " < > &
-function escapeHtml(str) {
-    return String(str ?? '').replace(/[&<>"']/g, ch => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[ch]));
-}
-// Untuk ID yang disisipkan ke dalam string JS ber-kutip-satu di atribut onclick
-function escapeJsAttr(str) {
-    return String(str ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-}
-
 let randomSec = "00";
 let editingId = null; 
 let historyData = db.get('spbu_history_v2', []);
@@ -319,7 +307,7 @@ let settings = db.get('spbu_cfg', {
     fontSize: 9
 });
 
-// Penanda waktu agar Cloud tahu HP mana yang paling update
+// Penanda waktu agar Cloud tahu HP mana yang paling update (Conflict Resolution)
 function markUpdated() {
     db.set('spbu_update_ts', Date.now());
 }
@@ -366,6 +354,7 @@ window.onload = () => {
 function generateRandomTrans() {
     if(editingId) return;
     let isUnique = false; let newTrans = "";
+    // Anti duplikat transaksi
     while (!isUnique) {
         newTrans = Math.floor(100000 + Math.random() * 900000).toString();
         const isExist = historyData.some(record => record.noTrans === newTrans);
@@ -411,7 +400,7 @@ function handleNewLogo(e) {
     reader.onload = function() {
         settings.logo = reader.result;
         db.set('spbu_cfg', settings);
-        markUpdated();
+        markUpdated(); // Lapor pembaruan ke sistem cloud
         applySettingsToForm();
     };
     reader.readAsDataURL(file);
@@ -420,16 +409,16 @@ function handleNewLogo(e) {
 function clearLogo() {
     settings.logo = '';
     db.set('spbu_cfg', settings);
-    markUpdated();
+    markUpdated(); // Lapor pembaruan ke sistem cloud
     applySettingsToForm();
 }
 
 function renderOpList() {
     const sel = document.getElementById('selOperator');
-    sel.innerHTML = operators.map(o => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('');
+    sel.innerHTML = operators.map(o => `<option value="${o}">${o}</option>`).join('');
     document.getElementById('opListAdmin').innerHTML = operators.map((o, i) => `
         <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
-            <span style="font-size:13px;">${escapeHtml(o)}</span>
+            <span style="font-size:13px;">${o}</span>
             <button onclick="delOp(${i})" style="color:var(--red); background:none; border:none; cursor:pointer;">✕</button>
         </div>
     `).join('');
@@ -440,14 +429,14 @@ function addOperator() {
     operators.push(val);
     document.getElementById('inNewOp').value = '';
     db.set('spbu_operators', operators);
-    markUpdated();
+    markUpdated(); // Lapor pembaruan ke sistem cloud
     renderOpList();
 }
 function delOp(i) {
     showConfirm('Hapus Operator?', `Hapus "${operators[i]}" dari daftar?`, () => {
         operators.splice(i,1);
         db.set('spbu_operators', operators);
-        markUpdated();
+        markUpdated(); // Lapor pembaruan ke sistem cloud
         renderOpList();
     });
 }
@@ -468,7 +457,7 @@ function savePrices() {
     prices['PERTAMINA DEX'] = parseFloat(document.getElementById('p_dex').value) || 14500;
     prices['BIOSOLAR'] = parseFloat(document.getElementById('p_solar').value) || 6800;
     db.set('spbu_prices', prices);
-    markUpdated();
+    markUpdated(); // Lapor pembaruan ke sistem cloud
     applyPrice();
 }
 
@@ -548,11 +537,11 @@ function renderHistory() {
     cont.innerHTML = sorted.map(r => `
         <div class="history-item">
             <div class="hi-main">
-                <div class="hi-no">No. ${escapeHtml(r.noTrans)}</div>
-                <div class="hi-sub">${escapeHtml(r.waktuFormat)} • ${escapeHtml(r.produk)} • Rp ${f(r.total)}</div>
+                <div class="hi-no">No. ${r.noTrans}</div>
+                <div class="hi-sub">${r.waktuFormat} • ${r.produk} • Rp ${f(r.total)}</div>
             </div>
-            <button class="btn-edit-hist" onclick="loadToEdit('${escapeJsAttr(r.id)}')">✏️ Edit</button>
-            <button class="btn-del-hist" onclick="deleteHistory('${escapeJsAttr(r.id)}')">🗑️</button>
+            <button class="btn-edit-hist" onclick="loadToEdit('${r.id}')">✏️ Edit</button>
+            <button class="btn-del-hist" onclick="deleteHistory('${r.id}')">🗑️</button>
         </div>
     `).join('');
 }
@@ -597,7 +586,7 @@ async function syncAllWithCloud() {
     
     // Kirim data HP kita dan minta Cloud melakukan "Smart Sync"
     const payload = {
-        ts: db.get('spbu_update_ts', 0),
+        ts: db.get('spbu_update_ts', 0), // Waktu terakhir setting di HP diubah
         settings: settings,
         operators: operators,
         prices: prices,
@@ -625,7 +614,9 @@ async function syncAllWithCloud() {
             db.set('spbu_operators', operators);
             db.set('spbu_prices', prices);
             db.set('spbu_history_v2', historyData);
-            db.set('spbu_update_ts', resData.data.ts || 0); // Samakan zona waktu HP dgn Cloud
+            
+            // Samakan waktu lokal dengan waktu cloud agar sinkron
+            db.set('spbu_update_ts', resData.data.ts || 0); 
             
             applySettingsToForm();
             renderOpList();
@@ -646,13 +637,9 @@ async function syncAllWithCloud() {
 }
 
 function printThermer() {
-    // PENTING: ambil teks struk DULU sebelum saveToHistory().
-    // Jika sedang mode edit, saveToHistory() akan memanggil cancelEdit() -> generateRandomTrans()
-    // yang mengubah nomor transaksi di layar. Kalau teks diambil SESUDAHNYA, struk yang
-    // tercetak bisa salah nomor (tidak sesuai data yang baru saja disimpan).
+    saveToHistory();
     const s = document.getElementById('struk');
     const txt = s.innerText; 
-    saveToHistory();
     const intentUrl = `intent://print?text=${encodeURIComponent(txt)}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
     
     if (/android/i.test(navigator.userAgent)) window.location.href = intentUrl;
@@ -706,9 +693,8 @@ async function printBluetooth() {
         setTimeout(generateRandomTrans, 500);
         
     } catch(err) {
-        const errMsg = (err && err.message) ? err.message : 'Terjadi kesalahan tidak dikenal.';
-        setStatus('❌ Gagal: ' + errMsg, 'error');
-        if(errMsg.includes('User cancelled')) setStatus('Batal memilih printer', 'warning');
+        setStatus('❌ Gagal: ' + err.message, 'error');
+        if(err.message.includes('User cancelled')) setStatus('Batal memilih printer', 'warning');
     }
 }
 </script>
