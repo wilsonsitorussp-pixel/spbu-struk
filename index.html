@@ -222,9 +222,15 @@
                 <p style="font-size:11px; color:var(--text2); margin-bottom:4px;">Masukkan URL Apps Script untuk komunikasi data.</p>
                 <input type="url" id="cloudUrl" placeholder="https://script.google.com/macros/s/.../exec">
                 <div class="row" style="margin-top:8px;">
-                    <button class="btn btn-outline" onclick="pullDataFromCloud()" style="color:var(--accent); border-color:var(--accent); padding:10px; font-size:12px;">⬇️ Tarik Data</button>
-                    <button class="btn btn-sync" onclick="pushDataToCloud()" style="padding:10px; font-size:12px;">⬆️ Simpan Data</button>
+                    <button class="btn btn-outline" id="btnPull" onclick="pullDataFromCloud()" style="color:var(--accent); border-color:var(--accent); padding:10px; font-size:12px;">⬇️ Tarik Data</button>
+                    <button class="btn btn-sync" id="btnPush" onclick="pushDataToCloud()" style="padding:10px; font-size:12px;">⬆️ Simpan Data</button>
                 </div>
+                
+                <!-- PROGRESS BAR UI -->
+                <div id="syncProgressWrap" style="display:none; width: 100%; height: 6px; background: var(--surface2); border-radius: 4px; overflow: hidden; margin-top: 12px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);">
+                    <div id="syncProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.4s ease-out, background 0.4s;"></div>
+                </div>
+                <div id="syncProgressText" style="display:none; font-size:10px; color:var(--text2); text-align:center; margin-top:6px; font-weight:600; letter-spacing:0.5px;">0%</div>
             </div>
         </div>
 
@@ -295,6 +301,18 @@ const db = {
     get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e){ return d; } },
     set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
 };
+
+// Mencegah HTML/atribut rusak saat nama operator atau nomor transaksi
+// mengandung karakter khusus seperti " < > &
+function escapeHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+}
+// Untuk ID yang disisipkan ke dalam string JS ber-kutip-satu di atribut onclick
+function escapeJsAttr(str) {
+    return String(str ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
 
 let randomSec = "00";
 let editingId = null; 
@@ -419,10 +437,10 @@ function clearLogo() {
 function renderOpList() {
     const sel = document.getElementById('selOperator');
     const admin = document.getElementById('opListAdmin');
-    sel.innerHTML = operators.map(o => `<option value="${o}">${o}</option>`).join('');
+    sel.innerHTML = operators.map(o => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('');
     admin.innerHTML = operators.map((o, i) => `
         <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
-            <span style="font-size:13px;">${o}</span>
+            <span style="font-size:13px;">${escapeHtml(o)}</span>
             <button onclick="delOp(${i})" style="color:var(--red); background:none; border:none; cursor:pointer;">✕</button>
         </div>
     `).join('');
@@ -543,11 +561,11 @@ function renderHistory() {
     cont.innerHTML = sorted.map(r => `
         <div class="history-item">
             <div class="hi-main">
-                <div class="hi-no">No. ${r.noTrans}</div>
-                <div class="hi-sub">${r.waktuFormat} • ${r.produk} • Rp ${f(r.total)}</div>
+                <div class="hi-no">No. ${escapeHtml(r.noTrans)}</div>
+                <div class="hi-sub">${escapeHtml(r.waktuFormat)} • ${escapeHtml(r.produk)} • Rp ${f(r.total)}</div>
             </div>
-            <button class="btn-edit-hist" onclick="loadToEdit('${r.id}')">✏️ Edit</button>
-            <button class="btn-del-hist" onclick="deleteHistory('${r.id}')">🗑️</button>
+            <button class="btn-edit-hist" onclick="loadToEdit('${escapeJsAttr(r.id)}')">✏️ Edit</button>
+            <button class="btn-del-hist" onclick="deleteHistory('${escapeJsAttr(r.id)}')">🗑️</button>
         </div>
     `).join('');
 }
@@ -584,6 +602,70 @@ function cancelEdit() {
     generateRandomTrans();
 }
 
+// === LOGIKA PROGRESS BAR PINTAR ===
+let progressInterval;
+
+function startProgress(msg) {
+    const wrap = document.getElementById('syncProgressWrap');
+    const bar = document.getElementById('syncProgressBar');
+    const text = document.getElementById('syncProgressText');
+    const btnPull = document.getElementById('btnPull');
+    const btnPush = document.getElementById('btnPush');
+    
+    // Tampilkan elemen
+    wrap.style.display = 'block';
+    text.style.display = 'block';
+    bar.style.width = '0%';
+    bar.style.background = 'linear-gradient(90deg, var(--accent), var(--accent2))';
+    text.textContent = msg + '... 0%';
+    
+    // Kunci tombol agar tidak diklik ganda
+    btnPull.disabled = true; btnPull.style.opacity = '0.5';
+    btnPush.disabled = true; btnPush.style.opacity = '0.5';
+
+    let percent = 5;
+    bar.style.width = percent + '%';
+    
+    // Simulasi loading berjalan perlahan hingga 85%
+    progressInterval = setInterval(() => {
+        if (percent < 85) {
+            percent += Math.floor(Math.random() * 8) + 2; // Acak tambah 2-10%
+            if (percent > 85) percent = 85;
+            bar.style.width = percent + '%';
+            text.textContent = msg + '... ' + percent + '%';
+        }
+    }, 300);
+}
+
+function finishProgress(isError = false) {
+    clearInterval(progressInterval);
+    const bar = document.getElementById('syncProgressBar');
+    const text = document.getElementById('syncProgressText');
+    const btnPull = document.getElementById('btnPull');
+    const btnPush = document.getElementById('btnPush');
+    
+    if (isError) {
+        bar.style.background = 'var(--red)';
+        text.textContent = 'Gagal!';
+        text.style.color = 'var(--red)';
+    } else {
+        bar.style.width = '100%';
+        bar.style.background = 'var(--green)';
+        text.textContent = '100% Selesai';
+        text.style.color = 'var(--green)';
+    }
+
+    // Sembunyikan progress bar setelah 2 detik dan normalkan tombol
+    setTimeout(() => {
+        document.getElementById('syncProgressWrap').style.display = 'none';
+        document.getElementById('syncProgressText').style.display = 'none';
+        text.style.color = 'var(--text2)'; // reset warna teks
+        
+        btnPull.disabled = false; btnPull.style.opacity = '1';
+        btnPush.disabled = false; btnPush.style.opacity = '1';
+    }, 2000);
+}
+
 
 // Tombol 1: TARIK DATA DARI CLOUD (Menimpa HP)
 async function pullDataFromCloud() {
@@ -592,6 +674,7 @@ async function pullDataFromCloud() {
     
     db.set('spbu_gas_url', url);
     setStatus('⬇️ Menarik data dari Cloud...', 'loading');
+    startProgress('Mengunduh'); // Mulai Progress Bar
     
     try {
         const response = await fetch(url, {
@@ -631,11 +714,15 @@ async function pullDataFromCloud() {
             renderHistory();
             
             setStatus('✅ ' + resData.message, 'success');
+            finishProgress(false); // Progress 100% Sukses
         } else {
             throw new Error(resData.message || "Gagal parsing cloud");
         }
     } catch(err) {
-        setStatus('❌ Tarik data gagal. Cek URL.', 'error');
+        const errMsg = (err && err.message) ? err.message : 'Terjadi kesalahan tidak dikenal.';
+        setStatus('❌ Tarik data gagal.', 'error');
+        showAlert('Tarik Data Gagal', errMsg);
+        finishProgress(true); // Progress Error (Merah)
     }
 }
 
@@ -646,6 +733,7 @@ async function pushDataToCloud() {
     
     db.set('spbu_gas_url', url);
     setStatus('⬆️ Menyimpan data ke Cloud...', 'loading');
+    startProgress('Mengupload'); // Mulai Progress Bar
     
     const payload = {
         action: 'push',
@@ -673,17 +761,25 @@ async function pushDataToCloud() {
                 renderHistory();
             }
             setStatus('✅ ' + resData.message, 'success');
+            finishProgress(false); // Progress 100% Sukses
         } else {
             throw new Error(resData.message || "Gagal menyimpan ke cloud");
         }
     } catch(err) {
-        setStatus('❌ Simpan data gagal. Cek URL.', 'error');
+        const errMsg = (err && err.message) ? err.message : 'Terjadi kesalahan tidak dikenal.';
+        setStatus('❌ Simpan data gagal.', 'error');
+        showAlert('Simpan Data Gagal', errMsg);
+        finishProgress(true); // Progress Error (Merah)
     }
 }
 
 function printThermer() {
-    saveToHistory();
+    // PENTING: ambil teks struk DULU sebelum saveToHistory().
+    // Jika sedang mode edit, saveToHistory() akan memanggil cancelEdit() -> generateRandomTrans()
+    // yang mengubah nomor transaksi di layar. Kalau teks diambil SESUDAHNYA, struk yang
+    // tercetak bisa salah nomor (tidak sesuai data yang baru saja disimpan).
     const txt = document.getElementById('struk').innerText;
+    saveToHistory();
     const intentUrl = `intent://print?text=${encodeURIComponent(txt)}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
     
     if (/android/i.test(navigator.userAgent)) {
@@ -739,8 +835,9 @@ async function printBluetooth() {
         setTimeout(generateRandomTrans, 500);
         
     } catch(err) {
-        setStatus('❌ Gagal: ' + err.message, 'error');
-        if(err.message.includes('User cancelled')) setStatus('Batal memilih printer', 'warning');
+        const errMsg = (err && err.message) ? err.message : 'Terjadi kesalahan tidak dikenal.';
+        setStatus('❌ Gagal: ' + errMsg, 'error');
+        if(errMsg.includes('User cancelled')) setStatus('Batal memilih printer', 'warning');
     }
 }
 </script>
