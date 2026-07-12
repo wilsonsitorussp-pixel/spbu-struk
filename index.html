@@ -2,320 +2,261 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPBU Pro - Cloud Native</title>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SPBU Pro - Cetak Struk</title>
     <style>
+        /* === CSS UTAMA (ORISINAL) === */
         :root {
-            --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a; --border: #2e3352;
-            --accent: #4f8ef7; --accent2: #7c3aed; --green: #10b981; --yellow: #f59e0b;
-            --red: #ef4444; --text: #e2e8f0; --text2: #8892a4;
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #22263a;
+            --border: #2e3352;
+            --accent: #4f8ef7;
+            --accent2: #7c3aed;
+            --green: #10b981;
+            --yellow: #f59e0b;
+            --red: #ef4444;
+            --text: #e2e8f0;
+            --text2: #8892a4;
             --mono: 'Courier New', 'Lucida Console', monospace;
             --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        body {
+            font-family: var(--sans); background: var(--bg); color: var(--text);
+            min-height: 100vh; padding: 16px; padding-bottom: 30px;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+        }
         
-        .app-header { width: 100%; max-width: 500px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
-        .app-header .icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-        .app-header h1 { font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
-        .app-header p { font-size: 10px; color: var(--text2); margin-top: 1px; }
+        .app-header {
+            width: 100%; max-width: 500px; display: flex; align-items: center; gap: 12px;
+            margin-bottom: 16px; padding: 14px 18px; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 14px;
+        }
+        .app-header .icon {
+            width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;
+        }
+        .app-header h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
+        .app-header p { font-size: 11px; color: var(--text2); margin-top: 1px; }
         
-        .bt-bar { width: 100%; max-width: 500px; padding: 10px 14px; border-radius: 10px; font-size: 12px; font-family: var(--mono); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; border: 1px solid transparent; transition: all 0.3s; display: none; }
-        .bt-bar.info { display:flex; background:#1e2d4a; border-color:#2d4a7a; color:#7ab3f5; }
+        /* Tombol Top Menu */
+        .top-btn-group { margin-left: auto; display: flex; gap: 8px; }
+        .btn-top {
+            background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+            width: 38px; height: 38px; border-radius: 10px; font-size: 16px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        
+        .bt-bar {
+            width: 100%; max-width: 500px; padding: 10px 14px; border-radius: 10px;
+            font-size: 12px; font-family: var(--mono); display: flex; align-items: center; gap: 8px;
+            margin-bottom: 10px; border: 1px solid transparent; transition: all 0.3s; display: none;
+        }
+        .bt-bar.info    { display:flex; background:#1e2d4a; border-color:#2d4a7a; color:#7ab3f5; }
         .bt-bar.success { display:flex; background:#0d2b20; border-color:#1a5c3a; color:#34d399; }
-        .bt-bar.error { display:flex; background:#2b1010; border-color:#5c1a1a; color:#f87171; }
+        .bt-bar.error   { display:flex; background:#2b1010; border-color:#5c1a1a; color:#f87171; }
         .bt-bar.warning { display:flex; background:#2b2010; border-color:#5c3a1a; color:#fbbf24; }
-        .bt-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-        .bt-bar.info .bt-dot { background:#4f8ef7; animation: pulse 1.5s infinite; }
-        .bt-bar.success .bt-dot { background:#10b981; }
-        .bt-bar.error .bt-dot { background:#ef4444; }
-        .bt-bar.warning .bt-dot { background:#f59e0b; }
-        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
         
         .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
-        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-        .panel-header { padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 10px; }
+        .panel-header {
+            padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border);
+            font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text2);
+        }
         .panel-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
         
         label { font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; display: block; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13px; font-family: var(--sans); outline: none; transition: border-color 0.2s; }
+        input, select, textarea {
+            width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); font-size: 13px; font-family: var(--sans); outline: none; transition: border-color 0.2s;
+        }
         input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-        .row { display: flex; gap: 8px; } .row > * { flex: 1; }
+        .row { display: flex; gap: 8px; }
+        .row > * { flex: 1; min-width: 0; }
         
-        .odo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-        .btn-odo { background: var(--surface2); border: 1px solid var(--border); color: var(--accent); padding: 8px 2px; border-radius: 7px; font-size: 10px; font-weight: 600; font-family: var(--mono); cursor: pointer; transition: all 0.15s; }
-        .btn-odo:active { background: var(--accent); color: white; transform: scale(0.95); }
+        .odo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 6px; }
+        .btn-odo {
+            background: var(--surface2); border: 1px solid var(--border); color: var(--accent);
+            padding: 8px 2px; border-radius: 7px; font-size: 10px; font-weight: 600; font-family: var(--mono); cursor: pointer;
+        }
         
-        .btn { padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.15s; font-family: var(--sans); }
-        .btn:active { transform: scale(0.97); }
-        .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; }
-        .btn-green { background: var(--surface2); border: 1px solid #1a5c3a; color: var(--green); }
-        .btn-blue { background: var(--surface2); border: 1px solid #1e2d4a; color: var(--accent); }
-        .btn-red { background: var(--surface2); border: 1px solid #5c1a1a; color: var(--red); }
-        .btn-save { background: var(--accent); color: white; border: none; }
-        .btn-excel { background: #1e6f3f; color: white; border: none; }
+        .btn { padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; text-align: center; font-family: var(--sans); }
+        .btn-save { background: var(--accent); color: white; }
+        .btn-sync { background: linear-gradient(135deg, #10b981, #059669); color: white; border: 1px solid #064e3b; padding: 12px; font-size: 14px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); border: 1px solid #7f1d1d; color: #ef4444; }
         
-        .print-section { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
-        .btn-print-bt { width: 100%; padding: 15px; background: linear-gradient(135deg, #1e3a8a, #2d1b69); border: 1px solid #3b5bdb; border-radius: 12px; color: white; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
-        .btn-print-bt:active { transform: scale(0.98); }
-        .btn-print-thermer { width: 100%; padding: 13px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text2); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-print-dialog { width: 100%; padding: 11px; background: transparent; border: 1px dashed var(--border); border-radius: 10px; color: var(--text2); font-size: 12px; cursor: pointer; }
-        
-        .receipt-wrap { display: flex; justify-content: center; padding: 20px 16px; background: #13151f; border-top: 1px solid var(--border); overflow: hidden; }
-        .receipt { background: #fff; width: 58mm; min-width: 58mm; max-width: 58mm; padding: 6mm 3mm; text-align: center; font-size: var(--receipt-font, 9px); color: #000; line-height: 1.4; font-family: 'Courier New', Courier, monospace; box-shadow: 0 8px 32px rgba(0,0,0,0.5); overflow: hidden; }
-        .receipt .logo-img { display: block; margin: 0 auto; }
+        /* Tombol Cetak */
+        .btn-print-bt { width: 100%; padding: 15px; background: linear-gradient(135deg, #1e3a8a, #2d1b69); border: 1px solid #3b5bdb; border-radius: 12px; color: white; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-print-thermer { width: 100%; padding: 13px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text2); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+
+        /* Struk Preview */
+        .receipt-wrap { display: flex; justify-content: center; padding: 20px 16px; background: #13151f; border-top: 1px solid var(--border); }
+        .receipt {
+            background: #fff; width: 58mm; padding: 6mm 3mm; text-align: center;
+            font-size: var(--receipt-font, 9px); color: #000; line-height: 1.4;
+            font-family: 'Courier New', Courier, monospace; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
         .receipt .r-line { border-top: 1px dashed #000; margin: 4px 0; }
         .receipt .r-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         .receipt .r-table td { padding: 1px 0; vertical-align: top; text-align: left; font-size: var(--receipt-font, 9px); }
         .receipt .lc { width: 22mm; } .receipt .cc { width: 4mm; text-align: center; }
-        .receipt .footer-txt { margin-top: 8px; text-align: center; text-transform: uppercase; white-space: pre-wrap; }
-        @media print { body { background: white; padding: 0; } .no-print { display: none !important; } .receipt-wrap { padding: 0; background: white; border: none; } .receipt { box-shadow: none; width: 58mm; } @page { size: 58mm auto; margin: 0; } }
-        
-        .edit-mode-bar { display: none; align-items: center; gap: 8px; background: #2a2410; border: 1px solid var(--yellow); border-radius: 8px; padding: 9px 12px; margin-bottom: 10px; font-size: 12px; color: var(--yellow); line-height: 1.5; }
-        .edit-mode-bar.show { display: flex; }
-        .edit-mode-bar b { color: #fff; }
-        .edit-mode-bar .btn-cancel-edit { margin-left: auto; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; flex-shrink: 0; }
-        
-        .history-item { display: flex; align-items: center; gap: 8px; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; }
+
+        /* === MENU ANDROID NATIVE STYLE === */
+        .android-drawer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 2000;
+            transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column;
+        }
+        .android-drawer.open { transform: translateX(0); }
+        .android-header {
+            background: var(--surface2); padding: 16px; display: flex; align-items: center; gap: 16px;
+            border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 2;
+        }
+        .android-header button { background: transparent; border: none; color: var(--text); font-size: 22px; padding: 4px; cursor: pointer; }
+        .android-header h2 { font-size: 18px; margin: 0; font-weight: 600; color: #fff; }
+        .android-content {
+            flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 40px;
+            -webkit-overflow-scrolling: touch; /* Scroll lancar di HP */
+        }
+
+        /* History Items */
+        .history-item {
+            display: flex; align-items: center; gap: 8px; padding: 12px;
+            background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px;
+        }
         .history-item .hi-main { flex: 1; min-width: 0; }
         .history-item .hi-no { font-size: 13px; font-weight: 700; color: var(--text); }
-        .history-item .hi-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
-        .history-item .btn-edit-hist { background: var(--surface2); border: 1px solid var(--accent); color: var(--accent); padding: 8px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; flex-shrink: 0; font-weight:bold; }
-        .history-item .btn-del-hist { background: var(--surface2); border: 1px solid var(--red); color: var(--red); padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer; flex-shrink: 0; }
+        .history-item .hi-sub { font-size: 11px; color: var(--text2); margin-top: 4px; }
+        .btn-edit-hist { background: rgba(79, 142, 247, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+        .btn-del-hist { background: transparent; border: none; color: var(--red); font-size: 16px; padding: 8px; cursor: pointer; opacity: 0.7; }
         
-        .top-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 16px; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.2s; }
-        .top-btn:active { background: var(--border); }
+        /* Custom Modal Box */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000;
+            display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-box {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+            width: 90%; max-width: 320px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transform: scale(0.95); transition: transform 0.2s;
+        }
+        .modal-overlay.show .modal-box { transform: scale(1); }
+        .modal-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .modal-msg { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 20px; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
         
-        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.25s ease; }
-        .drawer-overlay.show { opacity: 1; visibility: visible; }
-        .drawer { position: fixed; top: 0; bottom: 0; width: min(400px, 90vw); background: var(--bg); z-index: 1001; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; overflow: hidden; box-shadow: -5px 0 25px rgba(0,0,0,0.5); }
-        
-        /* Sidebar slides from right */
-        .sidebar-drawer { right: 0; border-left: 1px solid var(--border); transform: translateX(100%); }
-        .sidebar-drawer.open { transform: translateX(0); }
-        
-        /* History slides from bottom (full screen on mobile, panel on desktop) */
-        .history-drawer { left: 50%; width: 100%; max-width: 500px; height: 85vh; top: auto; bottom: 0; transform: translate(-50%, 100%); border-top-left-radius: 20px; border-top-right-radius: 20px; border: 1px solid var(--border); border-bottom: none; }
-        .history-drawer.open { transform: translate(-50%, 0); }
-        
-        .drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border); background: var(--surface2); }
-        .drawer-header h2 { font-size: 15px; font-weight: 700; }
-        .drawer-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; }
-        
-        .kelola-section { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
-        .kelola-section-header { display: flex; align-items: center; padding: 12px; background: var(--surface2); cursor: pointer; font-size: 12px; font-weight: 700; }
-        .kelola-section-body { display: none; padding: 12px; } .kelola-section-body.open { display: block; }
-        
-        .custom-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.2s; padding: 20px; }
-        .custom-modal-overlay.show { opacity: 1; visibility: visible; }
-        .custom-modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 320px; padding: 20px; text-align: center; transform: scale(0.95); transition: 0.2s; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .custom-modal-overlay.show .custom-modal { transform: scale(1); }
-        .custom-modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
-        .custom-modal p { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
-        .custom-modal .btn-row { display: flex; gap: 10px; justify-content: center; }
-        .custom-modal .btn-row .btn { flex: 1; padding: 12px; }
+        /* Utility */
+        .edit-banner {
+            background: rgba(245, 158, 11, 0.1); border: 1px solid var(--yellow); color: var(--yellow);
+            padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; display: none; align-items: center;
+        }
+        @media print { body { padding:0; background:#fff; } .no-print { display:none !important; } .receipt-wrap { padding:0; border:none; background:#fff; } .receipt { box-shadow:none; } }
     </style>
 </head>
 <body>
 
+<!-- Custom Modal Box -->
+<div id="customModal" class="modal-overlay no-print">
+    <div class="modal-box">
+        <div id="modalTitle" class="modal-title">Konfirmasi</div>
+        <div id="modalMsg" class="modal-msg">Pesan.</div>
+        <div class="modal-actions" id="modalActions"></div>
+    </div>
+</div>
+
 <div class="app-header no-print">
     <div class="icon">⛽</div>
-    <div style="flex:1;">
-        <h1>SPBU PRO</h1>
-        <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
-            <p>Cloud Native System</p>
-            <span id="gasBadge" style="display:none; font-size:9px; padding:2px 6px; border-radius:10px; background:#2b1010; border:1px solid #5c1a1a; color:#f87171;">Offline</span>
-        </div>
-    </div>
-    <button class="top-btn" onclick="openHistory()" aria-label="Riwayat" title="Riwayat Transaksi">📜</button>
-    <button class="top-btn" onclick="openSidebar()" aria-label="Menu" title="Pengaturan">☰</button>
-</div>
-<div id="btBar" class="bt-bar no-print"><div class="bt-dot"></div><span id="btMsg">—</span></div>
-
-<div class="custom-modal-overlay no-print" id="customModalOverlay">
-    <div class="custom-modal">
-        <h3 id="cModalTitle">Judul</h3>
-        <p id="cModalMsg">Pesan</p>
-        <div class="btn-row">
-            <button class="btn btn-icon" id="cModalCancel" onclick="closeModal()">Batal</button>
-            <button class="btn btn-save" id="cModalOk">OK</button>
-        </div>
+    <div><h1>SPBU PRO</h1><p>Sistem Cetak Digital</p></div>
+    <div class="top-btn-group">
+        <button class="btn-top" onclick="openDrawer('historyDrawer')" aria-label="Riwayat">📜</button>
+        <button class="btn-top" onclick="openDrawer('settingsDrawer')" aria-label="Pengaturan">⚙️</button>
     </div>
 </div>
 
-<div class="drawer-overlay no-print" id="drawerOverlay" onclick="closeDrawers()"></div>
-
-<div class="drawer history-drawer no-print" id="historyDrawer">
-    <div class="drawer-header">
-        <h2>📜 Riwayat Transaksi</h2>
-        <button class="top-btn" onclick="closeDrawers()">✕</button>
-    </div>
-    <div class="drawer-body">
-        <button class="btn btn-excel" onclick="exportToExcel()" style="width:100%;">📊 Ekspor ke Excel (.xlsx)</button>
-        <p style="font-size:11px; color:var(--text2); text-align:center;">Total tersimpan: <b id="histCount">0</b> struk</p>
-        <div id="historyList" style="display:flex; flex-direction:column;"></div>
-    </div>
-</div>
-
-<div class="drawer sidebar-drawer no-print" id="sidebarDrawer">
-    <div class="drawer-header">
-        <h2>⚙️ Pengaturan</h2>
-        <button class="top-btn" onclick="closeDrawers()">✕</button>
-    </div>
-    <div class="drawer-body">
-        
-        <!-- Panel Koneksi Utama (Disederhanakan) -->
-        <div class="panel" style="border-color:var(--accent);">
-            <div class="panel-header" style="background:#1e2d4a; color:white;">🗄️ CLOUD SINKRONISASI</div>
-            <div class="panel-body">
-                <p style="font-size:10px; color:var(--text2); line-height:1.4;">Satu tombol untuk menyamakan semua pengaturan, harga, operator, dan riwayat antar HP melalui Google Sheets.</p>
-                <input type="url" id="gasUrlInput" placeholder="URL Web App Google Sheets">
-                <button class="btn btn-save" onclick="unifiedSync()" style="padding:12px; font-size:14px; width:100%;">🔄 Sinkronisasi (2-Arah)</button>
-            </div>
-        </div>
-
-        <!-- Panel Konfigurasi SPBU -->
-        <div class="panel">
-            <div class="panel-header">⚙️ Konfigurasi Struk</div>
-            <div class="panel-body">
-                <label>Header / Nama & Alamat</label>
-                <textarea id="inAlamat" rows="3" oninput="render()">SPBU POLONIA&#10;11.201.106</textarea>
-                
-                <label>Logo</label>
-                <div class="row">
-                    <select id="selLogo" onchange="applySavedLogo()" style="flex:2"></select>
-                    <button class="btn btn-icon" onclick="document.getElementById('fileLogo').click()">+ Logo</button>
-                    <input type="file" id="fileLogo" accept="image/*" style="display:none" onchange="handleNewLogo(event)">
-                </div>
-                
-                <div class="row" style="margin-top:5px;">
-                    <div><label>Lebar Logo</label><select id="inLogoWidth" onchange="render()"><option value="20">20mm</option><option value="25">25mm</option><option value="30" selected>30mm</option></select></div>
-                    <div><label>Margin Bawah</label><select id="inLogoMargin" onchange="render()"><option value="0" selected>0mm</option><option value="5">5mm</option></select></div>
-                </div>
-
-                <label>Ukuran Font Struk</label>
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono);">5</span>
-                    <input type="range" id="inFontSize" min="5" max="15" value="9" step="1" oninput="updateFontSize()" style="flex:1; accent-color:var(--accent); height:4px; cursor:pointer;">
-                    <span style="font-size:11px; color:var(--text2); font-family:var(--mono);">15</span>
-                    <span id="fontSizeLabel" style="font-size:12px; font-weight:700; font-family:var(--mono); color:var(--accent); background:var(--surface2); padding:4px 8px; border-radius:6px;">9px</span>
-                </div>
-
-                <label>Pesan Footer</label>
-                <textarea id="inPesan" rows="3" oninput="render()">TERIMA KASIH</textarea>
-                <p style="font-size:10px; color:var(--text2); text-align:center; margin-top:5px;">Perubahan di panel ini otomatis tersimpan secara lokal. Gunakan tombol Sinkronisasi di atas untuk menyimpan ke Cloud.</p>
-            </div>
-        </div>
-
-        <!-- Panel Kelola Data Master -->
-        <div class="panel">
-            <div class="panel-header">⚙️ Kelola Data Master</div>
-            <div class="panel-body">
-                <div class="kelola-section">
-                    <div class="kelola-section-header" onclick="toggleKelolaSection('kelolaHarga')">💰 Harga BBM per Liter <span style="margin-left:auto;">▼</span></div>
-                    <div class="kelola-section-body" id="kelolaHarga">
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                            <div><label>PERTALITE</label><input type="number" id="pricePertalite" value="10000" onchange="saveBBMPrice()"></div>
-                            <div><label>PERTAMAX</label><input type="number" id="pricePertamax" value="12500" onchange="saveBBMPrice()"></div>
-                            <div><label>TURBO</label><input type="number" id="priceTurbo" value="14000" onchange="saveBBMPrice()"></div>
-                            <div><label>DEXLITE</label><input type="number" id="priceDexlite" value="13500" onchange="saveBBMPrice()"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="kelola-section">
-                    <div class="kelola-section-header" onclick="toggleKelolaSection('kelolaOperator')">👤 Database Operator <span style="margin-left:auto;">▼</span></div>
-                    <div class="kelola-section-body" id="kelolaOperator">
-                        <div id="opList" style="display:flex; flex-direction:column; gap:6px; max-height:180px; overflow-y:auto; margin-bottom:10px;"></div>
-                        <div class="row">
-                            <input type="text" id="inNewOp" placeholder="Nama operator baru...">
-                            <button class="btn btn-green" onclick="addOperator()">+ Tambah</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </div>
+<div id="btBar" class="bt-bar no-print">
+    <div class="bt-dot" style="width:8px;height:8px;border-radius:50%;background:currentColor;"></div>
+    <span id="btMsg">—</span>
 </div>
 
 <div class="container">
+    <!-- Panel Data Transaksi -->
     <div class="panel no-print">
         <div class="panel-header">🧾 Data Transaksi</div>
         <div class="panel-body">
-            
-            <div id="editModeBar" class="edit-mode-bar">
-                <span>✏️ Mode Edit struk No. <b id="editModeTrans"></b></span>
-                <button class="btn-cancel-edit" onclick="cancelEditMode()">Batal</button>
+            <div id="editBanner" class="edit-banner">
+                <span style="flex:1">✏️ <b>Mode Edit:</b> Struk No. <span id="editNoTrans"></span>. Cetak ulang akan menimpa data lama.</span>
+                <button onclick="cancelEdit()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:10px;">Batal</button>
             </div>
-
+            
             <div class="row">
                 <div><label>Shift</label><select id="inShift" onchange="render()"><option>1</option><option>2</option><option>3</option></select></div>
-                <div>
-                    <label>Pompa</label>
-                    <select id="inPompa" onchange="render()">
-                        <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-                        <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
-                    </select>
-                </div>
+                <div><label>Pompa / Pulau</label><select id="inPompa" onchange="render()"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></div>
             </div>
             
             <div>
-                <label>No. Transaksi & Produk BBM</label>
+                <label>No. Transaksi & Produk</label>
                 <div class="row">
-                    <input type="text" id="inTrans" maxlength="6" oninput="render()" placeholder="Auto">
-                    <button class="btn btn-green" onclick="generateUniqueRandom()">🔄</button>
-                    <select id="inBBM" onchange="onBBMChange()" style="flex:1.5">
-                        <option>PERTALITE</option><option>PERTAMAX</option><option>PERTAMAX TURBO</option><option>DEXLITE</option>
+                    <input type="text" id="inTrans" maxlength="8" oninput="render()" placeholder="Auto">
+                    <button class="btn btn-outline" onclick="generateRandomTrans()" style="padding:10px;">🔄</button>
+                    <select id="inBBM" onchange="applyPrice()" style="flex:1.5">
+                        <option>PERTALITE</option><option>PERTAMAX</option><option>PERTAMAX TURBO</option><option>DEXLITE</option><option>PERTAMINA DEX</option><option>BIOSOLAR</option>
                     </select>
                 </div>
+            </div>
+            
+            <!-- FITUR WAKTU TRANSAKSI -->
+            <div>
+                <label>Waktu Transaksi</label>
+                <input type="datetime-local" id="inWaktu" onchange="render()">
             </div>
             
             <div class="row">
                 <div><label>Harga / Liter</label><input type="number" id="inHarga" oninput="render()"></div>
-                <div><label>Volume (L)</label><input type="number" id="inLiter" value="5" oninput="render()"></div>
+                <div><label>Volume (L)</label><input type="number" id="inLiter" value="5" step="0.01" oninput="render()"></div>
             </div>
             
             <div>
-                <label>Operator & No. Plat</label>
-                <div class="row">
-                    <select id="selOperator" onchange="render()"></select>
-                    <input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()">
-                </div>
+                <label>Operator</label>
+                <select id="selOperator" onchange="render()"></select>
             </div>
+            
+            <div><label>No. Plat</label><input type="text" id="inPlat" value="BK 2854 ADK" oninput="render()"></div>
             
             <div>
                 <label>Odo Meter (KM)</label>
                 <input type="number" id="inOdo" value="25430" oninput="render()">
-                <div class="odo-grid" style="margin-top:6px">
+                <div class="odo-grid">
                     <button class="btn-odo" onclick="adjOdo(5)">+5</button>
                     <button class="btn-odo" onclick="adjOdo(10)">+10</button>
-                    <button class="btn-odo" onclick="adjOdo(20)">+20</button>
+                    <button class="btn-odo" onclick="adjOdo(15)">+15</button>
+                    <button class="btn-odo" onclick="adjOdo(25)">+25</button>
                     <button class="btn-odo" onclick="adjOdo(50)">+50</button>
-                    <button class="btn-odo" onclick="adjOdo(100)">+100</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Panel Cetak -->
     <div class="panel no-print">
-        <div class="panel-header">🖨️ Cetak Struk</div>
+        <div class="panel-header">🖨️ Tindakan Cetak</div>
         <div class="panel-body">
-            <div class="print-section">
-                <button class="btn-print-bt" id="btBtn" onclick="printBluetooth()"><span>🔵</span><span id="btBtnLabel">CETAK VIA BLUETOOTH</span></button>
-                <button class="btn-print-thermer" onclick="printThermer()">🟡 Cetak via Thermer App (Android)</button>
-                <button class="btn-print-dialog" onclick="printDialog()">🖨️ Print Dialog Biasa</button>
-            </div>
+            <button class="btn-print-bt" onclick="printBluetooth()">🔵 CETAK BLUETOOTH (RAW)</button>
+            <button class="btn-print-thermer" onclick="printThermer()">🟡 Cetak via App Thermer (Android)</button>
         </div>
     </div>
 
+    <!-- Preview Struk -->
     <div class="panel">
-        <div class="panel-header no-print">👁️ Preview Struk <span style="margin-left:auto; font-size:10px; color:var(--accent); font-family:var(--mono);">58mm</span></div>
+        <div class="panel-header no-print">👁️ Preview <span style="float:right; font-size:9px; color:var(--accent); border:1px solid var(--accent); padding:2px 6px; border-radius:10px;">Kertas 58mm</span></div>
         <div class="receipt-wrap">
             <div class="receipt" id="struk">
-                <img id="outLogo" src="" class="logo-img">
-                <div id="outAlamat" style="font-weight:bold;text-transform:uppercase;font-size:9.5px;margin-bottom:4px;white-space:pre-wrap;"></div>
+                <img id="outLogo" src="" style="display:block; margin:0 auto; width:30mm;">
+                <div id="outAlamat" style="font-weight:bold;text-transform:uppercase;font-size:10px;margin-bottom:4px;white-space:pre-wrap;"></div>
                 <div style="display:flex;justify-content:space-between;font-size:8.5px;">
                     <span>Shift: <span id="outShift"></span></span>
                     <span>No. Trans: <span id="outTrans"></span></span>
@@ -338,482 +279,598 @@
                     <tr><td class="lc">Odo Meter</td><td class="cc">:</td><td id="outOdo"></td></tr>
                 </table>
                 <div class="r-line"></div>
-                <div id="outPesan" class="footer-txt"></div>
+                <div id="outPesan" style="margin-top:8px;text-align:center;text-transform:uppercase;white-space:pre-wrap;font-size:8px;"></div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- ========================================== -->
+<!-- LACI PENGATURAN (ANDROID MENU STYLE)       -->
+<!-- ========================================== -->
+<div id="settingsDrawer" class="android-drawer no-print">
+    <div class="android-header">
+        <button onclick="closeDrawer('settingsDrawer')">←</button>
+        <h2>Menu Pengaturan</h2>
+    </div>
+    <div class="android-content">
+        
+        <!-- Koneksi Cloud (1 Tombol Sinkronisasi) -->
+        <div class="panel">
+            <div class="panel-header">☁️ Database Cloud (Google Sheets)</div>
+            <div class="panel-body">
+                <p style="font-size:11px; color:var(--text2); margin-bottom:4px;">Masukkan URL Apps Script untuk menyinkronkan data otomatis.</p>
+                <input type="url" id="cloudUrl" placeholder="https://script.google.com/macros/s/.../exec">
+                <button class="btn btn-sync" onclick="syncAllWithCloud()" style="width:100%; margin-top:8px;">🔄 SINKRONISASI DATA</button>
+            </div>
+        </div>
+
+        <!-- Konfigurasi Header & Struk -->
+        <div class="panel">
+            <div class="panel-header">⚙️ Desain Struk</div>
+            <div class="panel-body">
+                <div><label>Header / Alamat</label><textarea id="inAlamat" rows="3" oninput="render()">SPBU POLONIA&#10;11.201.106&#10;JL. Imam Bonjol, Medan</textarea></div>
+                
+                <div>
+                    <label>Logo Gambar</label>
+                    <div class="row">
+                        <input type="file" id="fileLogo" accept="image/*" style="display:none" onchange="handleNewLogo(event)">
+                        <button class="btn btn-outline" onclick="document.getElementById('fileLogo').click()">Pilih Foto</button>
+                        <button class="btn btn-danger" onclick="clearLogo()">Hapus Logo</button>
+                    </div>
+                </div>
+
+                <!-- FITUR UKURAN FONT -->
+                <div style="margin-top:8px;">
+                    <label>Ukuran Font Struk: <span id="fontLabel" style="color:var(--accent);">9px</span></label>
+                    <input type="range" id="inFontSize" min="6" max="14" value="9" step="1" oninput="changeFontSize()" style="accent-color:var(--accent); width:100%;">
+                </div>
+
+                <div><label>Pesan Footer</label><textarea id="inPesan" rows="3" oninput="render()">TERIMA KASIH&#10;SELAMAT JALAN</textarea></div>
+                <button class="btn btn-save" onclick="saveSettings()">💾 Terapkan & Simpan</button>
+            </div>
+        </div>
+
+        <!-- Kelola Data Master -->
+        <div class="panel">
+            <div class="panel-header">💰 Kelola Data Master</div>
+            <div class="panel-body">
+                <label style="color:#fff;">Harga BBM / Liter</label>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <div><label>PERTALITE</label><input type="number" id="p_pertalite" onchange="savePrices()"></div>
+                    <div><label>PERTAMAX</label><input type="number" id="p_pertamax" onchange="savePrices()"></div>
+                    <div><label>PERTAMAX TURBO</label><input type="number" id="p_turbo" onchange="savePrices()"></div>
+                    <div><label>DEXLITE</label><input type="number" id="p_dexlite" onchange="savePrices()"></div>
+                    <div><label>PERTAMINA DEX</label><input type="number" id="p_dex" onchange="savePrices()"></div>
+                    <div><label>BIOSOLAR</label><input type="number" id="p_solar" onchange="savePrices()"></div>
+                </div>
+                
+                <hr style="border:0; border-top:1px solid var(--border); margin:12px 0;">
+                
+                <label style="color:#fff;">Daftar Operator</label>
+                <div class="row">
+                    <input type="text" id="inNewOp" placeholder="Nama Baru...">
+                    <button class="btn btn-outline" onclick="addOperator()">+ Tambah</button>
+                </div>
+                <div id="opListAdmin" style="margin-top:10px; display:flex; flex-direction:column; gap:6px;"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- LACI RIWAYAT TRANSAKSI                     -->
+<!-- ========================================== -->
+<div id="historyDrawer" class="android-drawer no-print">
+    <div class="android-header">
+        <button onclick="closeDrawer('historyDrawer')">←</button>
+        <h2>Riwayat Struk</h2>
+    </div>
+    <div class="android-content">
+        <p style="font-size:11px; color:var(--text2); margin-bottom:12px;">Data otomatis tersimpan saat dicetak. Tersimpan <b id="histCount">0</b> data.</p>
+        <div id="historyListContainer"></div>
+    </div>
+</div>
+
 <script>
+// ==========================================
+// STATE & DATABASE LOKAL
+// ==========================================
 const db = {
-    get: (k,d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e){ return d; } },
-    set: (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+    get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e){ return d; } },
+    set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
 };
 
-let operators = db.get('spbu_ops', ["ADMIN"]);
-let savedLogos = db.get('spbu_logos', []);
-let transactionHistory = db.get('spbu_history', []);
-let usedTransNumbers = db.get('spbu_used_numbers', []);
-let editingRecordTs = null;
 let randomSec = "00";
-let bbmPrices = db.get('spbu_harga_bbm', { 'PERTALITE': 10000, 'PERTAMAX': 12500, 'PERTAMAX TURBO': 14000, 'DEXLITE': 13500 });
-
-let modalCallback = null;
-function showModal(title, msg, type = 'alert', callback = null) {
-    document.getElementById('cModalTitle').textContent = title;
-    document.getElementById('cModalMsg').innerHTML = msg;
-    const btnCancel = document.getElementById('cModalCancel');
-    const btnOk = document.getElementById('cModalOk');
-    
-    if (type === 'confirm') {
-        btnCancel.style.display = 'block';
-        btnOk.className = 'btn btn-red'; // Red OK button for destructive actions
-    } else {
-        btnCancel.style.display = 'none';
-        btnOk.className = 'btn btn-save';
-    }
-    
-    modalCallback = callback;
-    document.getElementById('customModalOverlay').classList.add('show');
-}
-function closeModal() {
-    document.getElementById('customModalOverlay').classList.remove('show');
-    modalCallback = null;
-}
-document.getElementById('cModalOk').addEventListener('click', () => {
-    const cb = modalCallback;
-    closeModal();
-    if (cb) cb();
+let editingId = null; 
+let historyData = db.get('spbu_history_v2', []);
+let operators = db.get('spbu_operators', ['KASIR 1', 'KASIR 2']);
+let prices = db.get('spbu_prices', {
+    'PERTALITE': 10000, 'PERTAMAX': 12500, 'PERTAMAX TURBO': 14000,
+    'DEXLITE': 13500, 'PERTAMINA DEX': 14500, 'BIOSOLAR': 6800
+});
+let settings = db.get('spbu_cfg', {
+    alamat: 'SPBU POLONIA\n11.201.106\nJL. Imam Bonjol, Medan',
+    pesan: 'TERIMA KASIH\nSELAMAT JALAN',
+    logo: '',
+    fontSize: 9
 });
 
-
-const cloudAPI = {
-    get url() { return db.get('spbu_gas_url', ''); },
-    set url(v) { db.set('spbu_gas_url', v); },
-    
-    async post(action, dataObj) {
-        if (!this.url) throw new Error("URL Cloud belum diisi.");
-        const payload = JSON.stringify({ action: action, data: dataObj });
-        const res = await fetch(this.url, { method: 'POST', body: payload });
-        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-        
-        const text = await res.text();
-        try {
-            const json = JSON.parse(text);
-            if (!json.success) throw new Error(json.error || "Ditolak server");
-            return json;
-        } catch(e) {
-            if (text.toLowerCase().includes("<!doctype html>")) throw new Error("URL Apps Script harus dideploy dengan akses 'Siapa Saja (Anyone)'. Silakan deploy ulang (New Version).");
-            throw new Error("Respon server tidak valid.");
-        }
-    },
-    
-    async get(action) {
-        if (!this.url) throw new Error("URL Cloud belum diisi.");
-        const res = await fetch(this.url + '?action=' + encodeURIComponent(action));
-        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-        const text = await res.text();
-        try {
-            const json = JSON.parse(text);
-            if (!json.success) throw new Error(json.error || "Gagal mengambil data");
-            return json;
-        } catch(e) {
-            if (text.toLowerCase().includes("<!doctype html>")) throw new Error("Akses ditolak Google. Pastikan deploy dengan akses 'Siapa Saja'.");
-            throw new Error("Respon invalid dari server.");
-        }
-    }
-};
-
+// ==========================================
+// UI KONTROL & MODAL
+// ==========================================
+function openDrawer(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden'; // cegah scroll background
+}
+function closeDrawer(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+}
 function setStatus(msg, type='info') {
     const bar = document.getElementById('btBar');
     bar.className = 'bt-bar no-print ' + type;
     document.getElementById('btMsg').textContent = msg;
+    if(type !== 'loading') setTimeout(() => { bar.className = 'bt-bar no-print'; }, 3000);
 }
-function clearStatus() { document.getElementById('btBar').style.display = 'none'; }
-
-function openSidebar() { document.getElementById('sidebarDrawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('show'); document.body.style.overflow='hidden';}
-function openHistory() { document.getElementById('historyDrawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('show'); document.body.style.overflow='hidden';}
-function closeDrawers() { document.getElementById('sidebarDrawer').classList.remove('open'); document.getElementById('historyDrawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('show'); document.body.style.overflow='';}
-
-function toggleKelolaSection(id) {
-    const body = document.getElementById(id);
-    const isOpen = body.classList.contains('open');
-    body.classList.toggle('open', !isOpen);
-    if (!isOpen && id === 'kelolaOperator') renderOpList();
+function showConfirm(title, msg, onConfirm) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalMsg').textContent = msg;
+    const actions = document.getElementById('modalActions');
+    actions.innerHTML = `
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-save" id="btnConfirmModal">Ya, Lanjutkan</button>
+    `;
+    document.getElementById('btnConfirmModal').onclick = () => { closeModal(); onConfirm(); };
+    document.getElementById('customModal').classList.add('show');
 }
-
-function updateGasBadge(isConnected) {
-    const badge = document.getElementById('gasBadge');
-    badge.style.display = 'inline-block';
-    if(isConnected) { badge.textContent = '🟢 Online'; badge.style.background = '#0d2b20'; badge.style.borderColor = '#1a5c3a'; badge.style.color = '#34d399'; }
-    else { badge.textContent = '🔴 Offline'; badge.style.background = '#2b1010'; badge.style.borderColor = '#5c1a1a'; badge.style.color = '#f87171'; }
+function showAlert(title, msg) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalMsg').textContent = msg;
+    document.getElementById('modalActions').innerHTML = `<button class="btn btn-save" onclick="closeModal()">OK</button>`;
+    document.getElementById('customModal').classList.add('show');
 }
+function closeModal() { document.getElementById('customModal').classList.remove('show'); }
 
-async function unifiedSync() {
-    const inputUrl = document.getElementById('gasUrlInput').value.trim();
-    if(!inputUrl) return showModal("Perhatian", "Silakan masukkan URL Web App Google Sheets terlebih dahulu.", "alert");
-    cloudAPI.url = inputUrl;
+// ==========================================
+// INISIALISASI & FUNGSI DASAR
+// ==========================================
+window.onload = () => {
+    // Set Input Waktu ke waktu lokal saat ini
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('inWaktu').value = now.toISOString().slice(0,16);
+
+    document.getElementById('cloudUrl').value = db.get('spbu_gas_url', '');
     
-    setStatus("🔄 Menarik & Menggabungkan data dengan Cloud...", "info");
-    try {
-        // 1. Tarik Data dari Cloud
-        const remote = await cloudAPI.get('getAll');
-        const rd = remote.data;
+    applySettingsToForm();
+    renderOpList();
+    loadPricesToInputs();
+    applyPrice();
+    generateRandomTrans();
+    renderHistory();
+};
+
+// MENCEGAH DUPLIKASI KODE TRANSAKSI
+function generateRandomTrans() {
+    if(editingId) return; // Jika mode edit, jangan ubah
+    
+    let isUnique = false;
+    let newTrans = "";
+    
+    // Looping terus sampai dapat angka acak yang TIDAK ADA di historyData
+    while (!isUnique) {
+        newTrans = Math.floor(100000 + Math.random() * 900000).toString();
         
-        // 2. Gabungkan Pengaturan (Lokal menang jika ada perubahan lokal, tapi ini sinkronisasi 2 arah sederhana: kita timpa dengan gabungan terbaru)
-        const localSettings = db.get('spbu_settings', {});
-        const newSettings = Object.assign({}, rd.settings || {}, localSettings); // Simpan input lokal terbaru
-        db.set('spbu_settings', newSettings);
-        loadSettingsToForm(newSettings);
+        // Pengecekan aktif ke riwayat lokal (dan hasil sinkronisasi cloud)
+        const isExist = historyData.some(record => record.noTrans === newTrans);
         
-        // Master Data (Gabungkan tanpa duplikat)
-        if(rd.operators) {
-            operators = Array.from(new Set([...operators, ...rd.operators]));
-            db.set('spbu_ops', operators);
+        if (!isExist) {
+            isUnique = true; // Angka aman dipakai! Keluar dari loop.
         }
-        if(rd.prices) {
-            bbmPrices = Object.assign({}, rd.prices, bbmPrices); // Lokal diutamakan saat sinkronisasi manual
-            db.set('spbu_harga_bbm', bbmPrices);
-        }
-        if(rd.logos && rd.logos.length > 0 && savedLogos.length === 0) {
-            savedLogos = rd.logos; db.set('spbu_logos', savedLogos);
-        }
-        
-        // Riwayat (Gabung cerdas)
-        if(rd.history) {
-            transactionHistory = mergeHistories(transactionHistory, rd.history);
-            db.set('spbu_history', transactionHistory);
-        }
-        
-        // 3. Dorong (Push) Semua Hasil Gabungan ke Cloud agar server ikut update
-        setStatus("☁️ Mengupload hasil gabungan ke Cloud...", "info");
-        await cloudAPI.post('saveConfig', { settings: newSettings, prices: bbmPrices, operators: operators, logos: savedLogos });
-        
-        // Update UI
-        updateLogoList(); updateOpList(); renderOpList(); loadBBMPrices(); onBBMChange(); updateHistCount(); renderHistoryList(); render();
-        
-        updateGasBadge(true);
-        setStatus("✅ Sinkronisasi 2-Arah Berhasil!", "success");
-        setTimeout(clearStatus, 3000);
-    } catch(e) {
-        updateGasBadge(false);
-        setStatus("❌ Gagal Sinkronisasi: " + e.message, "error");
     }
-}
 
-// Background sync (otomatis saat buka web jika URL ada)
-async function backgroundPull() {
-    if(!cloudAPI.url) return;
-    try {
-        const res = await cloudAPI.get('getAll');
-        const d = res.data;
-        if(d.settings) { db.set('spbu_settings', Object.assign({}, d.settings, db.get('spbu_settings', {}))); loadSettingsToForm(db.get('spbu_settings')); }
-        if(d.operators) { operators = Array.from(new Set([...operators, ...d.operators])); db.set('spbu_ops', operators); }
-        if(d.prices) { bbmPrices = Object.assign({}, d.prices, bbmPrices); db.set('spbu_harga_bbm', bbmPrices); }
-        if(d.history) { transactionHistory = mergeHistories(transactionHistory, d.history); db.set('spbu_history', transactionHistory); }
-        
-        updateOpList(); loadBBMPrices(); updateHistCount(); renderHistoryList(); updateGasBadge(true);
-    } catch(e) { updateGasBadge(false); console.warn("Background Sync Error:", e); }
-}
-
-function updateFontSize() {
-    const val = document.getElementById('inFontSize').value;
-    document.getElementById('fontSizeLabel').textContent = val + 'px';
-    document.getElementById('struk').style.setProperty('--receipt-font', val + 'px');
-    saveSettingsLocal(); // Simpan otomatis saat diubah
-}
-
-function saveSettingsLocal() {
-    const settings = {
-        alamat: document.getElementById('inAlamat').value,
-        logoWidth: document.getElementById('inLogoWidth').value,
-        logoMargin: document.getElementById('inLogoMargin').value,
-        pesan: document.getElementById('inPesan').value,
-        selectedLogo: document.getElementById('selLogo').value,
-        fontSize: document.getElementById('inFontSize').value
-    };
-    db.set('spbu_settings', settings);
-}
-
-function loadSettingsToForm(settings) {
-    if(!settings) return;
-    const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
-    set('inAlamat', settings.alamat); set('inLogoWidth', settings.logoWidth); set('inLogoMargin', settings.logoMargin); set('inPesan', settings.pesan);
-    if(settings.fontSize) { set('inFontSize', settings.fontSize); updateFontSize(); }
-    if(settings.selectedLogo) { setTimeout(() => { document.getElementById('selLogo').value = settings.selectedLogo; applySavedLogo(); }, 100); }
-}
-
-function loadBBMPrices() {
-    document.getElementById('pricePertalite').value = bbmPrices['PERTALITE'] || 10000;
-    document.getElementById('pricePertamax').value = bbmPrices['PERTAMAX'] || 12500;
-    document.getElementById('priceTurbo').value = bbmPrices['PERTAMAX TURBO'] || 14000;
-    document.getElementById('priceDexlite').value = bbmPrices['DEXLITE'] || 13500;
-}
-function saveBBMPrice() {
-    bbmPrices = {
-        'PERTALITE': parseFloat(document.getElementById('pricePertalite').value) || 10000,
-        'PERTAMAX': parseFloat(document.getElementById('pricePertamax').value) || 12500,
-        'PERTAMAX TURBO': parseFloat(document.getElementById('priceTurbo').value) || 14000,
-        'DEXLITE': parseFloat(document.getElementById('priceDexlite').value) || 13500
-    };
-    db.set('spbu_harga_bbm', bbmPrices);
-    onBBMChange();
-}
-function onBBMChange() {
-    const produk = document.getElementById('inBBM').value;
-    document.getElementById('inHarga').value = bbmPrices[produk] || 10000;
+    document.getElementById('inTrans').value = newTrans;
+    randomSec = Math.floor(Math.random() * 60).toString().padStart(2, '0');
     render();
 }
-function adjOdo(v) { const el = document.getElementById('inOdo'); el.value = parseInt(el.value||0) + v; render(); }
 
-function renderOpList() {
-    const list = document.getElementById('opList');
-    list.innerHTML = operators.map((op,i)=>`
-        <div style="display:flex; align-items:center; padding:8px 10px; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
-            <span style="font-size:12px; flex:1;">${op}</span>
-            <button onclick="confirmDeleteOperator(${i})" style="background:transparent; border:none; color:var(--red); font-size:16px; cursor:pointer;">✕</button>
-        </div>
-    `).join('');
+function adjOdo(v) {
+    const el = document.getElementById('inOdo');
+    el.value = (parseInt(el.value) || 0) + v;
+    render();
 }
-function updateOpList() {
-    const sel = document.getElementById('selOperator');
-    const cur = sel.value;
-    sel.innerHTML = operators.map(o=>`<option value="${o}">${o}</option>`).join('');
-    if(operators.includes(cur)) sel.value = cur;
+
+function applyPrice() {
+    const prod = document.getElementById('inBBM').value;
+    document.getElementById('inHarga').value = prices[prod] || 10000;
+    render();
 }
-function addOperator() {
-    const val = document.getElementById('inNewOp').value.trim().toUpperCase();
-    if(val && !operators.includes(val)) {
-        operators.push(val); db.set('spbu_ops', operators);
-        document.getElementById('inNewOp').value=''; updateOpList(); renderOpList();
-        document.getElementById('selOperator').value = val; render();
-    }
+
+function changeFontSize() {
+    const val = document.getElementById('inFontSize').value;
+    document.getElementById('fontLabel').textContent = val + 'px';
+    document.getElementById('struk').style.setProperty('--receipt-font', val + 'px');
 }
-function confirmDeleteOperator(idx) {
-    showModal('Konfirmasi', `Hapus operator <b>${operators[idx]}</b>?`, 'confirm', () => {
-        operators.splice(idx,1); db.set('spbu_ops', operators);
-        updateOpList(); renderOpList(); render();
-    });
+
+// ==========================================
+// PENGATURAN & MASTER DATA
+// ==========================================
+function applySettingsToForm() {
+    document.getElementById('inAlamat').value = settings.alamat || '';
+    document.getElementById('inPesan').value = settings.pesan || '';
+    document.getElementById('outLogo').src = settings.logo || '';
+    if(settings.logo) document.getElementById('outLogo').style.display = 'block';
+    else document.getElementById('outLogo').style.display = 'none';
+    
+    const fsize = settings.fontSize || 9;
+    document.getElementById('inFontSize').value = fsize;
+    changeFontSize();
+    render();
+}
+
+function saveSettings() {
+    settings.alamat = document.getElementById('inAlamat').value;
+    settings.pesan = document.getElementById('inPesan').value;
+    settings.fontSize = document.getElementById('inFontSize').value;
+    db.set('spbu_cfg', settings);
+    showAlert('Berhasil', 'Pengaturan struk telah disimpan ke memori HP.');
+    render();
 }
 
 function handleNewLogo(e) {
+    const file = e.target.files[0];
+    if(!file) return;
     const reader = new FileReader();
     reader.onload = function() {
-        savedLogos = [{ name: e.target.files[0].name.substring(0,8), data: reader.result }]; // Simplify: just keep 1 logo to save localstorage space
-        db.set('spbu_logos', savedLogos);
-        updateLogoList(); document.getElementById('selLogo').value = reader.result; applySavedLogo();
-        saveSettingsLocal();
-    }; reader.readAsDataURL(e.target.files[0]);
-}
-function updateLogoList() { document.getElementById('selLogo').innerHTML = savedLogos.map(l=>`<option value="${l.data}">${l.name}</option>`).join('') + `<option value="">— Tanpa Logo —</option>`; }
-function applySavedLogo() { document.getElementById('outLogo').src = document.getElementById('selLogo').value || ''; render(); saveSettingsLocal(); }
-
-function generateUniqueTransactionNumber() {
-    const existing = new Set([...transactionHistory.map(r => String(r.noTrans)), ...usedTransNumbers.map(String)]);
-    let attempts = 0, num;
-    do {
-        num = Math.floor(100000 + Math.random() * 900000).toString();
-        attempts++;
-        if(attempts > 200) { num = (Math.floor(10000+Math.random()*90000)).toString() + Date.now().toString().slice(-1); break; }
-    } while(existing.has(num));
-    return num.slice(0,6);
-}
-function generateUniqueRandom() {
-    document.getElementById('inTrans').value = generateUniqueTransactionNumber();
-    randomSec = Math.floor(Math.random()*60).toString().padStart(2,'0'); render();
+        settings.logo = reader.result;
+        db.set('spbu_cfg', settings);
+        applySettingsToForm();
+    };
+    reader.readAsDataURL(file);
 }
 
-function loadHistoryRecord(ts) {
-    const rec = transactionHistory.find(r => r.ts === ts);
-    if (!rec) return showModal('Error', 'Riwayat tidak ditemukan.', 'alert');
+function clearLogo() {
+    settings.logo = '';
+    db.set('spbu_cfg', settings);
+    applySettingsToForm();
+}
+
+function renderOpList() {
+    const sel = document.getElementById('selOperator');
+    const admin = document.getElementById('opListAdmin');
+    sel.innerHTML = operators.map(o => `<option value="${o}">${o}</option>`).join('');
     
-    const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
-    set('inShift', rec.shift); set('inPompa', rec.pompa); set('inTrans', rec.noTrans);
-    set('inBBM', rec.produk); set('inHarga', rec.hargaLiter); set('inLiter', rec.volume);
-    set('selOperator', rec.operator); set('inPlat', rec.plat); set('inOdo', rec.odo);
-    if(rec.randomSec) randomSec = rec.randomSec;
-
-    editingRecordTs = ts;
-    document.getElementById('editModeBar').classList.add('show');
-    document.getElementById('editModeTrans').textContent = rec.noTrans;
-    render(); 
-    closeDrawers();
-    setStatus('✏️ Siap diedit & cetak ulang.', 'info'); setTimeout(clearStatus, 3000);
+    admin.innerHTML = operators.map((o, i) => `
+        <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
+            <span style="font-size:13px;">${o}</span>
+            <button onclick="delOp(${i})" style="color:var(--red); background:none; border:none; cursor:pointer;">✕</button>
+        </div>
+    `).join('');
 }
-
-function cancelEditMode() {
-    editingRecordTs = null;
-    document.getElementById('editModeBar').classList.remove('show');
-    generateUniqueRandom();
+function addOperator() {
+    const val = document.getElementById('inNewOp').value.trim().toUpperCase();
+    if(!val) return;
+    if(!operators.includes(val)) operators.push(val);
+    document.getElementById('inNewOp').value = '';
+    db.set('spbu_operators', operators);
+    renderOpList();
 }
-
-function confirmDeleteHistory(ts, noTrans) {
-    showModal('Konfirmasi Hapus', `Hapus struk No. <b>${noTrans}</b> permanen dari riwayat?`, 'confirm', () => {
-        transactionHistory = transactionHistory.filter(r => r.ts !== ts);
-        db.set('spbu_history', transactionHistory);
-        updateHistCount(); renderHistoryList();
-        
-        // Hapus dari cloud di background
-        if(cloudAPI.url) {
-            cloudAPI.post('deleteTransaction', { ts: ts }).catch(e=>console.warn("Gagal hapus di cloud:", e));
-        }
+function delOp(i) {
+    showConfirm('Hapus Operator?', `Hapus "${operators[i]}" dari daftar?`, () => {
+        operators.splice(i,1);
+        db.set('spbu_operators', operators);
+        renderOpList();
     });
 }
 
-function mergeHistories(local, remote) {
-    const map = new Map();
-    [...remote, ...local].forEach(r => {
-        const key = (r.noTrans || '') + '_' + (r.ts || r.waktuCetak || Math.random());
-        const existing = map.get(key);
-        if (!existing || (r.updatedAt || r.ts || 0) >= (existing.updatedAt || existing.ts || 0)) map.set(key, r);
-    });
-    const merged = Array.from(map.values()).sort((a,b) => (b.ts||0) - (a.ts||0));
-    return merged.length > 1000 ? merged.slice(0, 1000) : merged; // Limit 1000
+function loadPricesToInputs() {
+    document.getElementById('p_pertalite').value = prices['PERTALITE'] || 10000;
+    document.getElementById('p_pertamax').value = prices['PERTAMAX'] || 12500;
+    document.getElementById('p_turbo').value = prices['PERTAMAX TURBO'] || 14000;
+    document.getElementById('p_dexlite').value = prices['DEXLITE'] || 13500;
+    document.getElementById('p_dex').value = prices['PERTAMINA DEX'] || 14500;
+    document.getElementById('p_solar').value = prices['BIOSOLAR'] || 6800;
+}
+function savePrices() {
+    prices['PERTALITE'] = parseFloat(document.getElementById('p_pertalite').value) || 10000;
+    prices['PERTAMAX'] = parseFloat(document.getElementById('p_pertamax').value) || 12500;
+    prices['PERTAMAX TURBO'] = parseFloat(document.getElementById('p_turbo').value) || 14000;
+    prices['DEXLITE'] = parseFloat(document.getElementById('p_dexlite').value) || 13500;
+    prices['PERTAMINA DEX'] = parseFloat(document.getElementById('p_dex').value) || 14500;
+    prices['BIOSOLAR'] = parseFloat(document.getElementById('p_solar').value) || 6800;
+    db.set('spbu_prices', prices);
+    applyPrice();
 }
 
-function updateHistCount() { document.getElementById('histCount').textContent = transactionHistory.length; }
-function renderHistoryList() {
-    const c = document.getElementById('historyList');
-    if(transactionHistory.length === 0) return c.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text2);font-size:12px;">Riwayat kosong</div>';
-    
+// ==========================================
+// MESIN PREVIEW & RENDER
+// ==========================================
+function render() {
+    const get = id => document.getElementById(id).value;
+    const set = (id, val) => { document.getElementById(id).innerText = val; };
     const f = n => new Intl.NumberFormat('id-ID').format(n);
-    c.innerHTML = transactionHistory.slice(0, 100).map(r => `
+    
+    set('outShift', get('inShift'));
+    set('outTrans', get('inTrans'));
+    
+    // Format Waktu yang benar sesuai inputan Waktu Transaksi
+    const wt = get('inWaktu');
+    if (wt) {
+        const d = new Date(wt);
+        const df = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${randomSec}`;
+        set('outWaktu', df);
+    }
+
+    set('outPompa', get('inPompa'));
+    set('outBBM', get('inBBM'));
+    set('outOperator', get('selOperator'));
+    set('outPlat', get('inPlat').toUpperCase());
+    set('outOdo', get('inOdo'));
+    
+    const hrg = parseFloat(get('inHarga')) || 0;
+    const ltr = parseFloat(get('inLiter')) || 0;
+    const tot = hrg * ltr;
+    
+    set('outHarga', 'Rp ' + f(hrg));
+    set('outLiter', '(L) ' + ltr);
+    set('outTotal', 'Rp ' + f(tot));
+    set('outCash', f(tot));
+}
+
+// ==========================================
+// RIWAYAT TRANSAKSI (SIMPAN, EDIT, HAPUS)
+// ==========================================
+function saveToHistory() {
+    const ts = Date.now();
+    const noTrans = document.getElementById('inTrans').value;
+    const id = editingId || (noTrans + "_" + ts);
+    
+    const record = {
+        id: id,
+        ts: ts, // update waktu cetak/edit terakhir
+        noTrans: noTrans,
+        waktuRaw: document.getElementById('inWaktu').value,
+        waktuFormat: document.getElementById('outWaktu').innerText,
+        shift: document.getElementById('inShift').value,
+        pompa: document.getElementById('inPompa').value,
+        produk: document.getElementById('inBBM').value,
+        harga: parseFloat(document.getElementById('inHarga').value),
+        liter: parseFloat(document.getElementById('inLiter').value),
+        total: parseFloat(document.getElementById('inHarga').value) * parseFloat(document.getElementById('inLiter').value),
+        operator: document.getElementById('selOperator').value,
+        plat: document.getElementById('inPlat').value.toUpperCase(),
+        odo: document.getElementById('inOdo').value
+    };
+
+    if(editingId) {
+        const idx = historyData.findIndex(x => x.id === editingId);
+        if(idx >= 0) historyData[idx] = record;
+        cancelEdit(); // Keluar mode edit setelah cetak
+    } else {
+        historyData.push(record);
+        if(historyData.length > 500) historyData.shift(); // Batas 500 struk
+    }
+
+    db.set('spbu_history_v2', historyData);
+    renderHistory();
+}
+
+function renderHistory() {
+    document.getElementById('histCount').textContent = historyData.length;
+    const cont = document.getElementById('historyListContainer');
+    
+    if(historyData.length === 0) {
+        cont.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text2); font-size:12px;">Belum ada riwayat.</div>`;
+        return;
+    }
+
+    const f = n => new Intl.NumberFormat('id-ID').format(n);
+    const sorted = [...historyData].sort((a,b) => b.ts - a.ts);
+    
+    cont.innerHTML = sorted.map(r => `
         <div class="history-item">
             <div class="hi-main">
-                <div class="hi-no">No. ${r.noTrans}${r.direvisi ? ' <span style="color:var(--accent);font-size:10px;">(revisi)</span>' : ''}</div>
-                <div class="hi-sub">${r.waktuTransaksi || '-'} • Rp ${f(r.total||0)}</div>
-                <div class="hi-sub">${r.produk} • Op: ${r.operator}</div>
+                <div class="hi-no">No. ${r.noTrans}</div>
+                <div class="hi-sub">${r.waktuFormat} • ${r.produk} • Rp ${f(r.total)}</div>
             </div>
-            <button class="btn-edit-hist" onclick="loadHistoryRecord(${r.ts})">✏️ Edit</button>
-            <button class="btn-del-hist" onclick="confirmDeleteHistory(${r.ts}, '${r.noTrans}')">🗑️</button>
+            <button class="btn-edit-hist" onclick="loadToEdit('${r.id}')">✏️ Edit</button>
+            <button class="btn-del-hist" onclick="deleteHistory('${r.id}')">🗑️</button>
         </div>
     `).join('');
 }
 
-function exportToExcel() {
-    if(transactionHistory.length === 0) return showModal("Kosong", "Tidak ada data untuk diekspor", "alert");
-    const headers = ['Waktu Cetak', 'Waktu Transaksi', 'Shift', 'Pompa', 'No. Trans', 'Produk', 'Harga/Liter', 'Volume', 'Total', 'Operator', 'Plat', 'Odo'];
-    const rows = transactionHistory.map(r => [r.waktuCetak, r.waktuTransaksi, r.shift, r.pompa, r.noTrans, r.produk, r.hargaLiter, r.volume, r.total, r.operator, r.plat, r.odo]);
-    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Riwayat');
-    XLSX.writeFile(wb, `Riwayat_SPBU_${new Date().toISOString().slice(0,10)}.xlsx`);
+function deleteHistory(id) {
+    showConfirm('Hapus Struk?', 'Data riwayat struk ini akan dihapus permanen.', () => {
+        historyData = historyData.filter(x => x.id !== id);
+        db.set('spbu_history_v2', historyData);
+        renderHistory();
+    });
 }
 
-async function saveCurrentTransaction() {
-    saveSettingsLocal();
-    const get = id => document.getElementById(id).value;
-    const rec = {
-        ts: editingRecordTs || Date.now(),
-        updatedAt: Date.now(),
-        waktuCetak: new Date().toLocaleString('id-ID'),
-        waktuTransaksi: document.getElementById('outWaktu').innerText,
-        randomSec: randomSec, shift: get('inShift'), pompa: get('inPompa'), noTrans: get('inTrans'),
-        produk: get('inBBM'), hargaLiter: parseFloat(get('inHarga')), volume: parseFloat(get('inLiter')),
-        total: parseFloat(get('inHarga')) * parseFloat(get('inLiter')),
-        operator: get('selOperator'), plat: get('inPlat').toUpperCase(), odo: get('inOdo'),
-        direvisi: !!editingRecordTs
+function loadToEdit(id) {
+    const r = historyData.find(x => x.id === id);
+    if(!r) return;
+    
+    editingId = id;
+    document.getElementById('editBanner').style.display = 'flex';
+    document.getElementById('editNoTrans').textContent = r.noTrans;
+    
+    const set = (elId, val) => { document.getElementById(elId).value = val; };
+    set('inTrans', r.noTrans);
+    set('inWaktu', r.waktuRaw);
+    set('inShift', r.shift);
+    set('inPompa', r.pompa);
+    set('inBBM', r.produk);
+    set('inHarga', r.harga);
+    set('inLiter', r.liter);
+    set('selOperator', r.operator);
+    set('inPlat', r.plat);
+    set('inOdo', r.odo);
+    
+    render();
+    closeDrawer('historyDrawer');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelEdit() {
+    editingId = null;
+    document.getElementById('editBanner').style.display = 'none';
+    generateRandomTrans(); // Buat nomor baru
+}
+
+// ==========================================
+// CLOUD SYNC (GAS 1 TOMBOL)
+// ==========================================
+async function syncAllWithCloud() {
+    const url = document.getElementById('cloudUrl').value.trim();
+    if(!url) { showAlert('Error', 'Masukkan URL Web App Apps Script terlebih dahulu.'); return; }
+    
+    db.set('spbu_gas_url', url);
+    setStatus('⏳ Menyinkronkan data dengan Cloud...', 'loading');
+    
+    const payload = {
+        settings: settings,
+        operators: operators,
+        prices: prices,
+        history: historyData
     };
     
-    if(editingRecordTs) {
-        const idx = transactionHistory.findIndex(r => r.ts === editingRecordTs);
-        if(idx >= 0) transactionHistory[idx] = rec; else transactionHistory.push(rec);
-    } else transactionHistory.push(rec);
-    
-    db.set('spbu_history', transactionHistory);
-    usedTransNumbers.push(String(rec.noTrans)); db.set('spbu_used_numbers', usedTransNumbers);
-    updateHistCount(); renderHistoryList();
-    
-    if(cloudAPI.url) {
-        cloudAPI.post(editingRecordTs ? 'updateTransaction' : 'saveTransaction', rec).catch(e => console.warn(e));
-    }
-    
-    if(editingRecordTs) cancelEditMode(); else generateUniqueRandom();
-}
-
-function render() {
-    const get = id => document.getElementById(id);
-    get('outLogo').style.width = get('inLogoWidth').value + 'mm';
-    get('outLogo').style.marginBottom = get('inLogoMargin').value + 'mm';
-    get('outAlamat').innerText = get('inAlamat').value;
-    get('outPesan').innerText = get('inPesan').value;
-    get('outShift').innerText = get('inShift').value;
-    get('outTrans').innerText = get('inTrans').value;
-    
-    const d = new Date();
-    get('outWaktu').innerText = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${randomSec}`;
-    
-    get('outPompa').innerText = get('inPompa').value;
-    get('outBBM').innerText = get('inBBM').value;
-    get('outOperator').innerText = get('selOperator').value;
-    get('outPlat').innerText = get('inPlat').value.toUpperCase();
-    get('outOdo').innerText = get('inOdo').value;
-    
-    const h = parseFloat(get('inHarga').value)||0, l = parseFloat(get('inLiter').value)||0, tot = h*l;
-    const f = n => new Intl.NumberFormat('id-ID').format(n);
-    get('outHarga').innerText = 'Rp '+f(h); get('outLiter').innerText = '(L) '+l;
-    get('outTotal').innerText = 'Rp '+f(tot); get('outCash').innerText = f(tot);
-    
-    // Setup listeners for save settings
-    get('inAlamat').addEventListener('change', saveSettingsLocal);
-    get('inPesan').addEventListener('change', saveSettingsLocal);
-}
-
-function printThermer() {
-    saveCurrentTransaction();
-    const f = n => new Intl.NumberFormat('id-ID').format(n);
-    const text = [
-        document.getElementById('inAlamat').value, '--------------------------------',
-        `Shift: ${document.getElementById('inShift').value}    No: ${document.getElementById('inTrans').value}`,
-        `Waktu: ${document.getElementById('outWaktu').innerText}`, '--------------------------------',
-        `Pulau/Pompa : ${document.getElementById('inPompa').value}`, `Nama Produk : ${document.getElementById('inBBM').value}`,
-        `Harga/Liter : Rp ${f(document.getElementById('inHarga').value)}`, `Volume      : (L) ${document.getElementById('inLiter').value}`,
-        `Total Harga : Rp ${f(document.getElementById('outTotal').innerText.replace(/\D/g,''))}`, `Operator    : ${document.getElementById('selOperator').value}`,
-        '--------------------------------', `CASH             ${f(document.getElementById('outTotal').innerText.replace(/\D/g,''))}`, '--------------------------------',
-        `No. Plat    : ${document.getElementById('inPlat').value.toUpperCase()}`, `Odo Meter   : ${document.getElementById('inOdo').value}`,
-        '--------------------------------', document.getElementById('inPesan').value
-    ].join('\n');
-    window.location.href = `intent://print?text=${encodeURIComponent(text)}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
-}
-
-function printDialog() { saveCurrentTransaction(); window.print(); }
-
-async function printBluetooth() {
     try {
-        if (!navigator.bluetooth) throw new Error("Fitur Bluetooth diblokir. Pastikan Anda membuka web ini dari Google Chrome dan bukan dari iframe (Gunakan GitHub Pages).");
-        setStatus('📡 Meminta akses Bluetooth...', 'info');
-        const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] });
-        const server = await device.gatt.connect();
+        const response = await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'text/plain' } // Hindari error CORS preflight
+        });
         
-        setStatus('✅ Terhubung! (Simulasi Kirim Data...)', 'success');
-        saveCurrentTransaction();
-        setTimeout(clearStatus, 3000);
+        if(!response.ok) throw new Error("HTTP " + response.status);
+        const resData = await response.json();
+        
+        if(resData.status === 'success') {
+            // Penggabungan (Merge) jika ada balasan dari cloud
+            if(resData.data) {
+                if(resData.data.settings) settings = resData.data.settings;
+                if(resData.data.operators) operators = resData.data.operators;
+                if(resData.data.prices) prices = resData.data.prices;
+                
+                // Gabung riwayat tanpa duplikat
+                if(resData.data.history && Array.isArray(resData.data.history)) {
+                    const map = new Map();
+                    historyData.forEach(x => map.set(x.id, x));
+                    resData.data.history.forEach(x => map.set(x.id, x));
+                    historyData = Array.from(map.values());
+                }
+                
+                // Simpan ke HP
+                db.set('spbu_cfg', settings);
+                db.set('spbu_operators', operators);
+                db.set('spbu_prices', prices);
+                db.set('spbu_history_v2', historyData);
+                
+                // Update Layar
+                applySettingsToForm();
+                renderOpList();
+                loadPricesToInputs();
+                applyPrice();
+                renderHistory();
+            }
+            setStatus('✅ Data tersinkron dengan Cloud!', 'success');
+            setTimeout(() => { closeDrawer('settingsDrawer'); }, 1500);
+        } else {
+            throw new Error(resData.message || "Gagal parsing cloud");
+        }
     } catch(err) {
-        if(err.message.includes('User cancelled')) { clearStatus(); return; }
-        showModal('Error Bluetooth', `<b>Gagal:</b> ${err.message}<br><br><i>Saran: Gunakan aplikasi Thermer atau Print Dialog jika masalah berlanjut.</i>`, 'alert');
-        clearStatus();
+        console.error(err);
+        setStatus('❌ Gagal sinkronisasi. Cek URL/Koneksi.', 'error');
+        showAlert('Koneksi Gagal', 'Pastikan URL Apps Script benar dan di-deploy dengan opsi akses "Siapa saja (Anyone)".');
     }
 }
 
-window.onload = function() {
-    const settings = db.get('spbu_settings', null);
-    loadSettingsToForm(settings);
-    updateLogoList();
-    if(savedLogos.length > 0) applySavedLogo();
-    updateOpList();
-    loadBBMPrices();
-    onBBMChange();
-    updateHistCount();
-    renderHistoryList();
-    generateUniqueRandom();
+
+// ==========================================
+// FUNGSI CETAK (BLUETOOTH & THERMER)
+// ==========================================
+function printThermer() {
+    saveToHistory();
+    const s = document.getElementById('struk');
+    const txt = s.innerText; // Ambil text asli dari tampilan
+    const intentUrl = `intent://print?text=${encodeURIComponent(txt)}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
     
-    document.getElementById('gasUrlInput').value = cloudAPI.url || '';
-    
-    if(cloudAPI.url) {
-        backgroundPull();
+    if (/android/i.test(navigator.userAgent)) {
+        window.location.href = intentUrl;
     } else {
-        updateGasBadge(false);
+        showAlert('Info', 'Cetak Thermer hanya untuk HP Android. Di Laptop gunakan Bluetooth langsung.');
     }
-};
+    
+    // Pastikan setelah cetak, nomor di-reset dengan nomor baru yg unik
+    setTimeout(generateRandomTrans, 500);
+}
+
+// Esc/Pos Logic (Bluetooth murni)
+async function printBluetooth() {
+    if (!navigator.bluetooth) {
+        showAlert('Browser Tidak Mendukung', 'Web Bluetooth API diblokir atau tidak tersedia di browser ini. Jika Anda menggunakan HP Android, gunakan tombol "Cetak via Thermer".');
+        return;
+    }
+
+    try {
+        setStatus('📡 Pilih printer Bluetooth...', 'loading');
+        const device = await navigator.bluetooth.requestDevice({
+            acceptAllDevices: true,
+            optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', '00001101-0000-1000-8000-00805f9b34fb', '49535343-fe7d-4ae5-8fa9-9fafd205e455']
+        });
+        
+        setStatus('🔗 Menghubungkan ke ' + device.name + '...', 'loading');
+        const server = await device.gatt.connect();
+        const services = await server.getPrimaryServices();
+        
+        let targetChar = null;
+        for (const svc of services) {
+            const chars = await svc.getCharacteristics();
+            for (const ch of chars) {
+                if (ch.properties.write || ch.properties.writeWithoutResponse) { targetChar = ch; break; }
+            }
+            if (targetChar) break;
+        }
+
+        if(!targetChar) throw new Error("Characteristic untuk Print tidak ditemukan.");
+
+        setStatus('🖨️ Mengirim data ke printer...', 'loading');
+        
+        // Byte builder sederhana (hanya teks biasa)
+        const encoder = new TextEncoder();
+        let bytes = new Uint8Array([0x1B, 0x40]); // Init
+        const textToPrint = document.getElementById('struk').innerText + "\n\n\n";
+        
+        const chunk = encoder.encode(textToPrint);
+        const finalPayload = new Uint8Array(bytes.length + chunk.length);
+        finalPayload.set(bytes, 0);
+        finalPayload.set(chunk, bytes.length);
+
+        // Kirim dalam potongan kecil (Chunk) agar printer tidak macet
+        const CHUNK_SIZE = 100;
+        for (let i = 0; i < finalPayload.length; i += CHUNK_SIZE) {
+            const slice = finalPayload.slice(i, i + CHUNK_SIZE);
+            if (targetChar.properties.writeWithoutResponse) {
+                await targetChar.writeValueWithoutResponse(slice);
+            } else {
+                await targetChar.writeValue(slice);
+            }
+            await new Promise(r => setTimeout(r, 40));
+        }
+
+        setStatus('✅ Struk berhasil dicetak!', 'success');
+        saveToHistory();
+        
+        // Pastikan setelah sukses cetak, form direset dengan nomor yg belum pernah ada
+        setTimeout(generateRandomTrans, 500);
+        
+    } catch(err) {
+        setStatus('❌ Gagal: ' + err.message, 'error');
+        if(err.message.includes('User cancelled')) setStatus('Batal memilih printer', 'warning');
+    }
+}
 </script>
 </body>
 </html>
