@@ -46,7 +46,7 @@
         
         .btn { padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; text-align: center; font-family: var(--sans); }
         .btn-save { background: var(--accent); color: white; }
-        .btn-sync { background: linear-gradient(135deg, #10b981, #059669); color: white; border: 1px solid #064e3b; padding: 12px; font-size: 14px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+        .btn-sync { background: linear-gradient(135deg, #10b981, #059669); color: white; border: 1px solid #064e3b; padding: 12px; font-size: 13px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
         .btn-danger { background: rgba(239, 68, 68, 0.1); border: 1px solid #7f1d1d; color: #ef4444; }
         
@@ -115,7 +115,7 @@
         <div class="panel-header">🧾 Data Transaksi</div>
         <div class="panel-body">
             <div id="editBanner" class="edit-banner">
-                <span style="flex:1">✏️ <b>Mode Edit:</b> Struk <span id="editNoTrans"></span></span>
+                <span style="flex:1">✏️ <b>Mode Edit:</b> Struk No. <span id="editNoTrans"></span>.</span>
                 <button onclick="cancelEdit()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:10px;">Batal</button>
             </div>
             
@@ -215,12 +215,16 @@
     </div>
     <div class="android-content">
         
+        <!-- Dua Tombol Manual Cloud Sync -->
         <div class="panel">
             <div class="panel-header">☁️ Database Cloud (Google Sheets)</div>
             <div class="panel-body">
-                <p style="font-size:11px; color:var(--text2); margin-bottom:4px;">Masukkan URL Apps Script untuk menyinkronkan data otomatis.</p>
+                <p style="font-size:11px; color:var(--text2); margin-bottom:4px;">Masukkan URL Apps Script untuk komunikasi data.</p>
                 <input type="url" id="cloudUrl" placeholder="https://script.google.com/macros/s/.../exec">
-                <button class="btn btn-sync" onclick="syncAllWithCloud()" style="width:100%; margin-top:8px;">🔄 SINKRONISASI PINTAR</button>
+                <div class="row" style="margin-top:8px;">
+                    <button class="btn btn-outline" onclick="pullDataFromCloud()" style="color:var(--accent); border-color:var(--accent); padding:10px; font-size:12px;">⬇️ Tarik Data</button>
+                    <button class="btn btn-sync" onclick="pushDataToCloud()" style="padding:10px; font-size:12px;">⬆️ Simpan Data</button>
+                </div>
             </div>
         </div>
 
@@ -307,11 +311,6 @@ let settings = db.get('spbu_cfg', {
     fontSize: 9
 });
 
-// Penanda waktu agar Cloud tahu HP mana yang paling update (Conflict Resolution)
-function markUpdated() {
-    db.set('spbu_update_ts', Date.now());
-}
-
 function openDrawer(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeDrawer(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
 function setStatus(msg, type='info') {
@@ -324,7 +323,10 @@ function showConfirm(title, msg, onConfirm) {
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalMsg').textContent = msg;
     const actions = document.getElementById('modalActions');
-    actions.innerHTML = `<button class="btn btn-outline" onclick="closeModal()">Batal</button> <button class="btn btn-save" id="btnConfirmModal">Ya, Lanjutkan</button>`;
+    actions.innerHTML = `
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-save" id="btnConfirmModal">Ya, Lanjutkan</button>
+    `;
     document.getElementById('btnConfirmModal').onclick = () => { closeModal(); onConfirm(); };
     document.getElementById('customModal').classList.add('show');
 }
@@ -352,14 +354,17 @@ window.onload = () => {
 };
 
 function generateRandomTrans() {
-    if(editingId) return;
-    let isUnique = false; let newTrans = "";
-    // Anti duplikat transaksi
+    if(editingId) return; 
+    let isUnique = false;
+    let newTrans = "";
+    
+    // Looping pastikan nomor belum pernah ada di history
     while (!isUnique) {
         newTrans = Math.floor(100000 + Math.random() * 900000).toString();
         const isExist = historyData.some(record => record.noTrans === newTrans);
         if (!isExist) isUnique = true;
     }
+
     document.getElementById('inTrans').value = newTrans;
     randomSec = Math.floor(Math.random() * 60).toString().padStart(2, '0');
     render();
@@ -377,7 +382,8 @@ function applySettingsToForm() {
     document.getElementById('inAlamat').value = settings.alamat || '';
     document.getElementById('inPesan').value = settings.pesan || '';
     document.getElementById('outLogo').src = settings.logo || '';
-    document.getElementById('outLogo').style.display = settings.logo ? 'block' : 'none';
+    if(settings.logo) document.getElementById('outLogo').style.display = 'block';
+    else document.getElementById('outLogo').style.display = 'none';
     document.getElementById('inFontSize').value = settings.fontSize || 9;
     changeFontSize();
     render();
@@ -388,8 +394,7 @@ function saveSettings() {
     settings.pesan = document.getElementById('inPesan').value;
     settings.fontSize = document.getElementById('inFontSize').value;
     db.set('spbu_cfg', settings);
-    markUpdated(); // Lapor pembaruan ke sistem cloud
-    showAlert('Berhasil', 'Pengaturan struk telah disimpan ke memori HP.');
+    showAlert('Berhasil', 'Pengaturan struk telah disimpan ke memori lokal.');
     render();
 }
 
@@ -400,7 +405,6 @@ function handleNewLogo(e) {
     reader.onload = function() {
         settings.logo = reader.result;
         db.set('spbu_cfg', settings);
-        markUpdated(); // Lapor pembaruan ke sistem cloud
         applySettingsToForm();
     };
     reader.readAsDataURL(file);
@@ -409,14 +413,14 @@ function handleNewLogo(e) {
 function clearLogo() {
     settings.logo = '';
     db.set('spbu_cfg', settings);
-    markUpdated(); // Lapor pembaruan ke sistem cloud
     applySettingsToForm();
 }
 
 function renderOpList() {
     const sel = document.getElementById('selOperator');
+    const admin = document.getElementById('opListAdmin');
     sel.innerHTML = operators.map(o => `<option value="${o}">${o}</option>`).join('');
-    document.getElementById('opListAdmin').innerHTML = operators.map((o, i) => `
+    admin.innerHTML = operators.map((o, i) => `
         <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
             <span style="font-size:13px;">${o}</span>
             <button onclick="delOp(${i})" style="color:var(--red); background:none; border:none; cursor:pointer;">✕</button>
@@ -429,14 +433,12 @@ function addOperator() {
     operators.push(val);
     document.getElementById('inNewOp').value = '';
     db.set('spbu_operators', operators);
-    markUpdated(); // Lapor pembaruan ke sistem cloud
     renderOpList();
 }
 function delOp(i) {
     showConfirm('Hapus Operator?', `Hapus "${operators[i]}" dari daftar?`, () => {
         operators.splice(i,1);
         db.set('spbu_operators', operators);
-        markUpdated(); // Lapor pembaruan ke sistem cloud
         renderOpList();
     });
 }
@@ -457,7 +459,6 @@ function savePrices() {
     prices['PERTAMINA DEX'] = parseFloat(document.getElementById('p_dex').value) || 14500;
     prices['BIOSOLAR'] = parseFloat(document.getElementById('p_solar').value) || 6800;
     db.set('spbu_prices', prices);
-    markUpdated(); // Lapor pembaruan ke sistem cloud
     applyPrice();
 }
 
@@ -495,10 +496,12 @@ function render() {
 function saveToHistory() {
     const ts = Date.now();
     const noTrans = document.getElementById('inTrans').value;
-    const id = editingId || (noTrans + "_" + ts);
+    const id = editingId || (noTrans + "_" + ts); // ID permanen
     
     const record = {
-        id: id, ts: ts, noTrans: noTrans,
+        id: id,
+        ts: ts, // Timestamp akan update jika diedit agar menang saat sinkronisasi
+        noTrans: noTrans,
         waktuRaw: document.getElementById('inWaktu').value,
         waktuFormat: document.getElementById('outWaktu').innerText,
         shift: document.getElementById('inShift').value,
@@ -520,6 +523,7 @@ function saveToHistory() {
         historyData.push(record);
         if(historyData.length > 500) historyData.shift();
     }
+
     db.set('spbu_history_v2', historyData);
     renderHistory();
 }
@@ -532,8 +536,10 @@ function renderHistory() {
         cont.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text2); font-size:12px;">Belum ada riwayat.</div>`;
         return;
     }
+
     const f = n => new Intl.NumberFormat('id-ID').format(n);
     const sorted = [...historyData].sort((a,b) => b.ts - a.ts);
+    
     cont.innerHTML = sorted.map(r => `
         <div class="history-item">
             <div class="hi-main">
@@ -547,7 +553,7 @@ function renderHistory() {
 }
 
 function deleteHistory(id) {
-    showConfirm('Hapus Struk?', 'Data riwayat struk ini akan dihapus permanen.', () => {
+    showConfirm('Hapus Struk?', 'Data ini akan dihapus permanen dari HP Anda.', () => {
         historyData = historyData.filter(x => x.id !== id);
         db.set('spbu_history_v2', historyData);
         renderHistory();
@@ -557,6 +563,7 @@ function deleteHistory(id) {
 function loadToEdit(id) {
     const r = historyData.find(x => x.id === id);
     if(!r) return;
+    
     editingId = id;
     document.getElementById('editBanner').style.display = 'flex';
     document.getElementById('editNoTrans').textContent = r.noTrans;
@@ -577,16 +584,71 @@ function cancelEdit() {
     generateRandomTrans();
 }
 
-async function syncAllWithCloud() {
+
+// Tombol 1: TARIK DATA DARI CLOUD (Menimpa HP)
+async function pullDataFromCloud() {
     const url = document.getElementById('cloudUrl').value.trim();
-    if(!url) return showAlert('Error', 'Masukkan URL Web App Apps Script terlebih dahulu.');
+    if(!url) { showAlert('Error', 'Masukkan URL Apps Script.'); return; }
     
     db.set('spbu_gas_url', url);
-    setStatus('⏳ Sinkronisasi pintar sedang berjalan...', 'loading');
+    setStatus('⬇️ Menarik data dari Cloud...', 'loading');
     
-    // Kirim data HP kita dan minta Cloud melakukan "Smart Sync"
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'pull' }),
+            headers: { 'Content-Type': 'text/plain' }
+        });
+        
+        if(!response.ok) throw new Error("HTTP " + response.status);
+        const resData = await response.json();
+        
+        if(resData.status === 'success' && resData.data) {
+            // Timpa data lokal dengan data cloud
+            if(resData.data.settings) settings = resData.data.settings;
+            if(resData.data.operators) operators = resData.data.operators;
+            if(resData.data.prices) prices = resData.data.prices;
+            
+            // Khusus riwayat: SELALU digabung (Merge) agar tidak ada struk yang hilang
+            if(resData.data.history && Array.isArray(resData.data.history)) {
+                const map = new Map();
+                historyData.forEach(x => map.set(x.id, x));
+                resData.data.history.forEach(x => map.set(x.id, x));
+                historyData = Array.from(map.values());
+            }
+            
+            // Simpan perubahan ke memori HP
+            db.set('spbu_cfg', settings);
+            db.set('spbu_operators', operators);
+            db.set('spbu_prices', prices);
+            db.set('spbu_history_v2', historyData);
+            
+            // Segarkan UI
+            applySettingsToForm();
+            renderOpList();
+            loadPricesToInputs();
+            applyPrice();
+            renderHistory();
+            
+            setStatus('✅ ' + resData.message, 'success');
+        } else {
+            throw new Error(resData.message || "Gagal parsing cloud");
+        }
+    } catch(err) {
+        setStatus('❌ Tarik data gagal. Cek URL.', 'error');
+    }
+}
+
+// Tombol 2: SIMPAN DATA KE CLOUD (Menimpa Cloud)
+async function pushDataToCloud() {
+    const url = document.getElementById('cloudUrl').value.trim();
+    if(!url) { showAlert('Error', 'Masukkan URL Apps Script.'); return; }
+    
+    db.set('spbu_gas_url', url);
+    setStatus('⬆️ Menyimpan data ke Cloud...', 'loading');
+    
     const payload = {
-        ts: db.get('spbu_update_ts', 0), // Waktu terakhir setting di HP diubah
+        action: 'push',
         settings: settings,
         operators: operators,
         prices: prices,
@@ -603,64 +665,49 @@ async function syncAllWithCloud() {
         if(!response.ok) throw new Error("HTTP " + response.status);
         const resData = await response.json();
         
-        if(resData.status === 'success' && resData.data) {
-            // Terapkan data final yang diputuskan oleh Cloud (Siapa yg menang)
-            settings = resData.data.settings || settings;
-            operators = resData.data.operators || operators;
-            prices = resData.data.prices || prices;
-            historyData = resData.data.history || historyData;
-            
-            db.set('spbu_cfg', settings);
-            db.set('spbu_operators', operators);
-            db.set('spbu_prices', prices);
-            db.set('spbu_history_v2', historyData);
-            
-            // Samakan waktu lokal dengan waktu cloud agar sinkron
-            db.set('spbu_update_ts', resData.data.ts || 0); 
-            
-            applySettingsToForm();
-            renderOpList();
-            loadPricesToInputs();
-            applyPrice();
-            renderHistory();
-            
-            setStatus('✅ Sinkronisasi Selesai!', 'success');
-            setTimeout(() => { closeDrawer('settingsDrawer'); }, 1500);
+        if(resData.status === 'success') {
+            // Pastikan jika ada gabungan history dari device lain, kita tarik balik
+            if(resData.data && resData.data.history) {
+                historyData = resData.data.history;
+                db.set('spbu_history_v2', historyData);
+                renderHistory();
+            }
+            setStatus('✅ ' + resData.message, 'success');
         } else {
-            throw new Error(resData.message || "Gagal parsing cloud");
+            throw new Error(resData.message || "Gagal menyimpan ke cloud");
         }
     } catch(err) {
-        console.error(err);
-        setStatus('❌ Gagal sinkronisasi. Cek URL.', 'error');
-        showAlert('Koneksi Gagal', 'Pastikan URL Apps Script benar dan di-deploy sebagai "Versi Baru".');
+        setStatus('❌ Simpan data gagal. Cek URL.', 'error');
     }
 }
 
 function printThermer() {
     saveToHistory();
-    const s = document.getElementById('struk');
-    const txt = s.innerText; 
+    const txt = document.getElementById('struk').innerText;
     const intentUrl = `intent://print?text=${encodeURIComponent(txt)}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
     
-    if (/android/i.test(navigator.userAgent)) window.location.href = intentUrl;
-    else showAlert('Info', 'Cetak Thermer hanya untuk HP Android. Di Laptop gunakan Bluetooth langsung.');
+    if (/android/i.test(navigator.userAgent)) {
+        window.location.href = intentUrl;
+    } else {
+        showAlert('Info', 'Cetak Thermer hanya untuk HP Android.');
+    }
     setTimeout(generateRandomTrans, 500);
 }
 
 async function printBluetooth() {
-    if (!navigator.bluetooth) return showAlert('Browser Tidak Mendukung', 'Web Bluetooth API diblokir. Jika Anda menggunakan HP Android dari luar Chrome, gunakan tombol "Cetak via Thermer".');
-
+    if (!navigator.bluetooth) {
+        showAlert('Browser Tidak Mendukung', 'Web Bluetooth API diblokir. Gunakan versi GitHub Pages atau tombol "Cetak via Thermer" di Android.');
+        return;
+    }
     try {
         setStatus('📡 Pilih printer Bluetooth...', 'loading');
         const device = await navigator.bluetooth.requestDevice({
             acceptAllDevices: true,
             optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', '00001101-0000-1000-8000-00805f9b34fb', '49535343-fe7d-4ae5-8fa9-9fafd205e455']
         });
-        
-        setStatus('🔗 Menghubungkan...', 'loading');
+        setStatus('🔗 Menghubungkan ke ' + device.name + '...', 'loading');
         const server = await device.gatt.connect();
         const services = await server.getPrimaryServices();
-        
         let targetChar = null;
         for (const svc of services) {
             const chars = await svc.getCharacteristics();
@@ -669,10 +716,9 @@ async function printBluetooth() {
             }
             if (targetChar) break;
         }
+        if(!targetChar) throw new Error("Characteristic Print tidak ditemukan.");
 
-        if(!targetChar) throw new Error("Characteristic tidak ditemukan.");
-
-        setStatus('🖨️ Mengirim data...', 'loading');
+        setStatus('🖨️ Mengirim data ke printer...', 'loading');
         const encoder = new TextEncoder();
         let bytes = new Uint8Array([0x1B, 0x40]);
         const textToPrint = document.getElementById('struk').innerText + "\n\n\n";
