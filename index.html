@@ -485,6 +485,7 @@ function render() {
     const set = (id, val) => { document.getElementById(id).innerText = val; };
     const f = n => new Intl.NumberFormat('id-ID').format(n);
     
+    set('outAlamat', get('inAlamat'));
     set('outShift', get('inShift'));
     set('outTrans', get('inTrans'));
     
@@ -509,6 +510,7 @@ function render() {
     set('outLiter', '(L) ' + ltr);
     set('outTotal', 'Rp ' + f(tot));
     set('outCash', f(tot));
+    set('outPesan', get('inPesan'));
 }
 
 function saveToHistory() {
@@ -773,12 +775,159 @@ async function pushDataToCloud() {
     }
 }
 
+// ================= GENERATOR TEKS STRUK (untuk PRINT, bukan untuk layar) =================
+// PENTING: jangan pernah pakai document.getElementById('struk').innerText untuk cetak.
+// innerText mengikuti hasil wrap visual CSS di layar HP (lebar 58mm, font kecil),
+// yang TIDAK sama dengan lebar karakter asli printer thermal fisik. Kalau dipaksa,
+// baris akan terpotong dua kali (oleh browser, lalu oleh printer) dan hasilnya
+// kata-kata terpenggal di tengah seperti "PERTALIT" + "E" di baris terpisah.
+//
+// Kalau hasil cetak masih terlalu lebar/sempit di printer Anda, ubah angka di
+// bawah ini (kebanyakan printer thermal 58mm = 32 karakter per baris).
+const RECEIPT_CHAR_WIDTH = 32;
+
+function padLine_(label, value, width) {
+    const lbl = String(label) + ' :';
+    const val = String(value);
+    if (lbl.length + 1 + val.length > width) {
+        // value kepanjangan untuk 1 baris -> taruh di baris baru, jangan biarkan printer motong sendiri
+        return lbl + '\n' + val;
+    }
+    const gap = width - lbl.length - val.length;
+    return lbl + ' '.repeat(gap) + val;
+}
+
+function wrapText_(text, width) {
+    const words = String(text || '').split(/\s+/).filter(Boolean);
+    const lines = [];
+    let cur = '';
+    words.forEach(w => {
+        while (w.length > width) {
+            if (cur) { lines.push(cur); cur = ''; }
+            lines.push(w.slice(0, width));
+            w = w.slice(width);
+        }
+        if ((cur + (cur ? ' ' : '') + w).length > width) {
+            if (cur) lines.push(cur);
+            cur = w;
+        } else {
+            cur = cur ? cur + ' ' + w : w;
+        }
+    });
+    if (cur) lines.push(cur);
+    return lines;
+}
+
+function centerText_(text, width) {
+    const t = String(text);
+    if (t.length >= width) return t;
+    return ' '.repeat(Math.floor((width - t.length) / 2)) + t;
+}
+
+function buildReceiptText_() {
+    const W = RECEIPT_CHAR_WIDTH;
+    const g = id => (document.getElementById(id).textContent || '').trim();
+    const lines = [];
+
+    // Header alamat (mendukung banyak baris manual + auto word-wrap yang aman)
+    String(document.getElementById('inAlamat').value || '').split('\n').forEach(row => {
+        if (row.trim() === '') { lines.push(''); return; }
+        wrapText_(row.trim().toUpperCase(), W).forEach(l => lines.push(centerText_(l, W)));
+    });
+    lines.push('-'.repeat(W));
+
+    const shiftPart = 'Shift: ' + g('outShift');
+    const transPart = 'No: ' + g('outTrans');
+    let gap = W - shiftPart.length - transPart.length;
+    lines.push(shiftPart + ' '.repeat(gap > 0 ? gap : 1) + transPart);
+    lines.push('Waktu: ' + g('outWaktu'));
+    lines.push('-'.repeat(W));
+
+    lines.push(padLine_('Pulau/Pompa', g('outPompa'), W));
+    lines.push(padLine_('Nama Produk', g('outBBM'), W));
+    lines.push(padLine_('Harga/Liter', g('outHarga'), W));
+    lines.push(padLine_('Volume', g('outLiter'), W));
+    lines.push(padLine_('Total Harga', g('outTotal'), W));
+    lines.push(padLine_('Operator', g('outOperator'), W));
+    lines.push('-'.repeat(W));
+
+    const cashLabel = 'CASH';
+    const cashVal = g('outCash');
+    gap = W - cashLabel.length - cashVal.length;
+    lines.push(cashLabel + ' '.repeat(gap > 0 ? gap : 1) + cashVal);
+    lines.push('-'.repeat(W));
+
+    lines.push(padLine_('No. Plat', g('outPlat'), W));
+    lines.push(padLine_('Odo Meter', g('outOdo'), W));
+    lines.push('-'.repeat(W));
+
+    const pesan = String(document.getElementById('inPesan').value || '');
+    pesan.split('\n').forEach(row => {
+        if (row.trim() === '') { lines.push(''); return; }
+        wrapText_(row.trim().toUpperCase(), W).forEach(l => lines.push(centerText_(l, W)));
+    });
+
+    return lines.join('\n');
+}
+
+// Ubah logo (settings.logo, base64) jadi perintah gambar ESC/POS (GS v 0)
+// supaya benar-benar tercetak sebagai gambar di printer thermal Bluetooth.
+// Catatan: ini HANYA berlaku untuk jalur "Cetak Bluetooth (RAW)". Jalur
+// "Cetak via Thermer" cuma bisa mengirim teks ke app Thermer, jadi logo di
+// jalur itu tergantung pengaturan header/logo di dalam app Thermer itu sendiri.
+function buildLogoRasterBytes_(maxWidthPx) {
+    if (!settings.logo) return Promise.resolve(null);
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            try {
+                let w = Math.min(img.width, maxWidthPx);
+                w = w - (w % 8); // lebar wajib kelipatan 8 untuk format raster ESC/POS
+                if (w <= 0) { resolve(null); return; }
+                const h = Math.round(img.height * (w / img.width));
+
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, w, h);
+                ctx.drawImage(img, 0, 0, w, h);
+                const px = ctx.getImageData(0, 0, w, h).data;
+
+                const widthBytes = w / 8;
+                const bitmap = new Uint8Array(widthBytes * h);
+                for (let y = 0; y < h; y++) {
+                    for (let x = 0; x < w; x++) {
+                        const i = (y * w + x) * 4;
+                        const gray = px[i] * 0.299 + px[i+1] * 0.587 + px[i+2] * 0.114;
+                        const isDark = px[i+3] > 128 && gray < 180; // threshold hitam-putih
+                        if (isDark) bitmap[y * widthBytes + (x >> 3)] |= (0x80 >> (x % 8));
+                    }
+                }
+
+                const header = new Uint8Array([
+                    0x1D, 0x76, 0x30, 0x00,
+                    widthBytes & 0xFF, (widthBytes >> 8) & 0xFF,
+                    h & 0xFF, (h >> 8) & 0xFF
+                ]);
+                const out = new Uint8Array(header.length + bitmap.length);
+                out.set(header, 0);
+                out.set(bitmap, header.length);
+                resolve(out);
+            } catch (e) {
+                console.error('Gagal konversi logo ke raster:', e);
+                resolve(null);
+            }
+        };
+        img.onerror = () => resolve(null);
+        img.src = settings.logo;
+    });
+}
+
 function printThermer() {
-    // PENTING: ambil teks struk DULU sebelum saveToHistory().
-    // Jika sedang mode edit, saveToHistory() akan memanggil cancelEdit() -> generateRandomTrans()
-    // yang mengubah nomor transaksi di layar. Kalau teks diambil SESUDAHNYA, struk yang
-    // tercetak bisa salah nomor (tidak sesuai data yang baru saja disimpan).
-    const txt = document.getElementById('struk').innerText;
+    // Ambil teks struk DULU (dari data, bukan DOM) sebelum saveToHistory() bisa
+    // memicu generateRandomTrans() saat mode edit dan mengubah nomor di layar.
+    const txt = buildReceiptText_();
     saveToHistory();
     const intentUrl = `intent://print?text=${encodeURIComponent(txt)}#Intent;scheme=thermer;package=mate.bluetoothprint;end`;
     
@@ -816,12 +965,16 @@ async function printBluetooth() {
 
         setStatus('🖨️ Mengirim data ke printer...', 'loading');
         const encoder = new TextEncoder();
-        let bytes = new Uint8Array([0x1B, 0x40]);
-        const textToPrint = document.getElementById('struk').innerText + "\n\n\n";
-        
-        const chunk = encoder.encode(textToPrint);
-        const finalPayload = new Uint8Array(bytes.length + chunk.length);
-        finalPayload.set(bytes, 0); finalPayload.set(chunk, bytes.length);
+        const initBytes = new Uint8Array([0x1B, 0x40]); // ESC @ (reset printer)
+        const logoBytes = await buildLogoRasterBytes_(384); // 384px ~ lebar penuh kertas 58mm
+        const textBytes = encoder.encode(buildReceiptText_() + "\n\n\n");
+
+        const totalLen = initBytes.length + (logoBytes ? logoBytes.length : 0) + textBytes.length;
+        const finalPayload = new Uint8Array(totalLen);
+        let offset = 0;
+        finalPayload.set(initBytes, offset); offset += initBytes.length;
+        if (logoBytes) { finalPayload.set(logoBytes, offset); offset += logoBytes.length; }
+        finalPayload.set(textBytes, offset);
 
         for (let i = 0; i < finalPayload.length; i += 100) {
             const slice = finalPayload.slice(i, i + 100);
